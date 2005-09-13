@@ -50,7 +50,6 @@ def handler(req):
     dirname, basename = os.path.split(template_path)
     levels = [{
             "basename": basename,
-            "path": template_path,
             "basepath": template_path,
             }]
 
@@ -62,27 +61,23 @@ def handler(req):
             dirname, basename = os.path.split(dirname_)
         levels.append({
                 "basename": basename,
-                "path": os.path.join(dirname_, ".pt"),
                 "basepath": os.path.join(dirname_, ""),
                 })
 
     # initialize the environment
-    def date_meta():
-        return "123"
-
     context = {
         "absolute_url": req.get_options()["SitePrefix"] + req.uri,
-        "imprint": "/impressum.html",
-        "date_meta": date_meta,
         }
 
     slots = {}
 
-    locals = {
-        "context": context,
-        "slots": slots,
-        "req": req,
-        }
+    script_globals = {}
+    script_globals.update(globals())
+    script_globals.update({
+            "context": context,
+            "req": req,
+            "slots": slots,
+            })
 
     # traverse the levels to manipulate the context
     templates = []
@@ -97,28 +92,35 @@ def handler(req):
             while ext:
                 pypath = path + ".py"
                 if os.path.exists(pypath):
-                    execfile(pypath, globals(), locals)
+                    execfile(pypath, script_globals)
                 path, ext = os.path.splitext(path)
-
-        # fail if the innermost template doesn't exist
-        if not os.path.exists(template_path):
-            req.log_error("Template for %s not found at %s." %
-                          (filename, template_path),
-                          apache.APLOG_ERR)
-            raise apache.SERVER_RETURN(apache.HTTP_NOT_FOUND)
     except StopTraversal:
         pass
 
     # evaluate the templates
     while templates:
         info = templates.pop()
-        if os.path.exists(info["path"]):
-            template = ContextPTF(info["path"])
-            slots["main"] = template(
-                context=context,
-                req=req,
-                slots=slots,
-                )
+
+        path = info["basepath"]
+        ext = True
+        while ext:
+            ptpath = path + ".pt"
+            if os.path.exists(ptpath):
+                template = ContextPTF(ptpath)
+                try:
+                    slots["main"] = template(
+                        context=context,
+                        req=req,
+                        slots=slots,
+                        )
+                except PTRunTimeError:
+                    # resource wasn't found if main slot wasn't filled in time
+                    req.log_error("%s: template at %s failed." % 
+                                  (filename, ptpath),
+                                  apache.APLOG_ERR)
+                    raise apache.SERVER_RETURN(apache.HTTP_NOT_FOUND)
+
+            path, ext = os.path.splitext(path)
 
     # deliver the page
     req.content_type = "text/html"
