@@ -17,7 +17,7 @@ class ContextPTF(PageTemplateFile):
 
     def pt_getContext(self, args=(), options={}, **kw):
         rval = PageTemplateFile.pt_getContext(self, args, options)
-        for key in ("context", "req"):
+        for key in ("context", "req", "slots"):
             rval[key] = options.pop(key, {})
         return rval
 
@@ -67,6 +67,8 @@ def handler(req):
         "date_meta": date_meta,
         }
 
+    slots = {}
+
     # walk the levels to manipulate the context
     levels.reverse()
     templates = levels
@@ -83,12 +85,13 @@ def handler(req):
         info = templates.pop()
         if os.path.exists(info["path"]):
             template = ContextPTF(info["path"])
-            context["main_slot"] = template(
+            slots["main"] = template(
                 context=context,
                 req=req,
+                slots=slots,
                 )
 
     # deliver the page
     req.content_type = "text/html"
-    req.write(context["main_slot"])
+    req.write(slots["main"])
     return apache.OK
