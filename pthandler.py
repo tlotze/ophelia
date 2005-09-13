@@ -8,6 +8,10 @@ from zope.pagetemplate.pagetemplatefile import PageTemplateFile
 from mod_python import apache, util
 
 
+class StopTraversal(Exception):
+    pass
+
+
 class ContextPTF(PageTemplateFile):
     """PageTemplateFile with a customized pt_getContext
 
@@ -47,17 +51,22 @@ def handler(req):
     levels = [{
             "basename": basename,
             "path": template_path,
+            "basepath": template_path,
             }]
 
-    while dirname != template_root:
+    while basename:
         dirname_ = dirname
-        dirname, basename = os.path.split(dirname_)
+        if dirname == template_root:
+            basename = ""
+        else:
+            dirname, basename = os.path.split(dirname_)
         levels.append({
                 "basename": basename,
-                "path": os.path.join(dirname, ".pt"),
+                "path": os.path.join(dirname_, ".pt"),
+                "basepath": os.path.join(dirname_, ""),
                 })
 
-    # initialize the context
+    # initialize the environment
     def date_meta():
         return "123"
 
@@ -69,16 +78,36 @@ def handler(req):
 
     slots = {}
 
-    # walk the levels to manipulate the context
-    levels.reverse()
-    templates = levels
+    locals = {
+        "context": context,
+        "slots": slots,
+        "req": req,
+        }
 
-    # fail if the innermost template doesn't exist
-    if not os.path.exists(template_path):
-        req.log_error("Template for %s not found at %s." %
-                      (filename, template_path),
-                      apache.APLOG_ERR)
-        raise apache.SERVER_RETURN(apache.HTTP_NOT_FOUND)
+    # traverse the levels to manipulate the context
+    templates = []
+
+    try:
+        while levels:
+            info = levels.pop()
+            templates.append(info)
+
+            path = info["basepath"]
+            ext = True
+            while ext:
+                pypath = path + ".py"
+                if os.path.exists(pypath):
+                    execfile(pypath, globals(), locals)
+                path, ext = os.path.splitext(path)
+
+        # fail if the innermost template doesn't exist
+        if not os.path.exists(template_path):
+            req.log_error("Template for %s not found at %s." %
+                          (filename, template_path),
+                          apache.APLOG_ERR)
+            raise apache.SERVER_RETURN(apache.HTTP_NOT_FOUND)
+    except StopTraversal:
+        pass
 
     # evaluate the templates
     while templates:
