@@ -5,13 +5,19 @@ import os.path
 from zope.pagetemplate.pagetemplatefile import PageTemplateFile
 
 # mod_python
-from mod_python import apache, util
+from mod_python import apache
 
 
 class StopTraversal(Exception):
     pass
 
 
+class Context:
+    """Objects which exist only to carry attributes"""
+
+    pass
+
+
 class ContextPTF(PageTemplateFile):
     """PageTemplateFile with a customized pt_getContext
 
@@ -52,15 +58,15 @@ def handler(req):
         levels.append(path)
 
     # initialize the environment
-    context = {
-        "absolute_url": req.get_options()["SitePrefix"] + req.uri,
-        }
+    context = Context()
+    context.absolute_url = req.get_options()["SitePrefix"] + req.uri
 
     slots = {}
 
     script_globals = {}
     script_globals.update(globals())
     script_globals.update({
+            "Context": Context,
             "context": context,
             "req": req,
             "levels": levels,
@@ -109,10 +115,10 @@ def handler(req):
                     req=req,
                     slots=slots,
                     )
-            except PTRunTimeError:
+            except Exception:
                 req.log_error("%s: template at %s failed." % (filename, path),
                               apache.APLOG_ERR)
-                raise apache.SERVER_RETURN(apache.HTTP_INTERNAL_SERVER_ERROR)
+                raise
 
     # deliver the page
     req.content_type = "text/html"
