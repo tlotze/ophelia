@@ -43,26 +43,13 @@ def handler(req):
 
     template_root = os.path.abspath(req.get_options()["TemplateRoot"])
     template_path = filename.replace(doc_root, template_root, 1)
-    if os.path.isdir(template_path):
-        template_path = os.path.join(template_path, "index.html")
 
     # create a stack of levels to walk
-    dirname, basename = os.path.split(template_path)
-    levels = [{
-            "basename": basename,
-            "basepath": template_path,
-            }]
-
-    while basename:
-        dirname_ = dirname
-        if dirname == template_root:
-            basename = ""
-        else:
-            dirname, basename = os.path.split(dirname_)
-        levels.append({
-                "basename": basename,
-                "basepath": os.path.join(dirname_, ""),
-                })
+    path = template_path
+    levels = [path]
+    while path != template_root:
+        path, ignored = os.path.split(path)
+        levels.append(path)
 
     # initialize the environment
     context = {
@@ -76,51 +63,56 @@ def handler(req):
     script_globals.update({
             "context": context,
             "req": req,
+            "levels": levels,
             "slots": slots,
             })
 
     # traverse the levels to manipulate the context
     templates = []
+    found_file = False
 
     try:
         while levels:
-            info = levels.pop()
-            templates.append(info)
+            path = levels.pop()
+            templates.append(path)
 
-            path = info["basepath"]
-            ext = True
-            while ext:
-                pypath = path + ".py"
-                if os.path.exists(pypath):
-                    execfile(pypath, script_globals)
-                path, ext = os.path.splitext(path)
+            if not os.path.exists(path):
+                req.log_error("%s: template not found %s." % (filename, path),
+                              apache.APLOG_ERR)
+                raise apache.SERVER_RETURN(apache.HTTP_NOT_FOUND)
+            elif os.path.isdir(path):
+                pypath = os.path.join(path, ".py")
+            else:
+                pypath += ".py"
+                found_file = True
+
+            if os.path.exists(pypath):
+                execfile(pypath, script_globals)
+
+            if not levels and not found_file:
+               levels.append(os.path.join(path, "index.html")) 
     except StopTraversal:
         pass
 
     # evaluate the templates
     while templates:
-        info = templates.pop()
+        path = templates.pop()
 
-        path = info["basepath"]
-        ext = True
-        while ext:
-            ptpath = path + ".pt"
-            if os.path.exists(ptpath):
-                template = ContextPTF(ptpath)
-                try:
-                    slots["main"] = template(
-                        context=context,
-                        req=req,
-                        slots=slots,
-                        )
-                except PTRunTimeError:
-                    # resource wasn't found if main slot wasn't filled in time
-                    req.log_error("%s: template at %s failed." % 
-                                  (filename, ptpath),
-                                  apache.APLOG_ERR)
-                    raise apache.SERVER_RETURN(apache.HTTP_NOT_FOUND)
+        if os.path.isdir(path):
+            path = os.path.join(path, ".pt")
 
-            path, ext = os.path.splitext(path)
+        if os.path.exists(path):
+            template = ContextPTF(path)
+            try:
+                slots["main"] = template(
+                    context=context,
+                    req=req,
+                    slots=slots,
+                    )
+            except PTRunTimeError:
+                req.log_error("%s: template at %s failed." % (filename, path),
+                              apache.APLOG_ERR)
+                raise apache.SERVER_RETURN(apache.HTTP_INTERNAL_SERVER_ERROR)
 
     # deliver the page
     req.content_type = "text/html"
