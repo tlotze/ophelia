@@ -1,6 +1,5 @@
 # Python
 import os.path
-from StringIO import StringIO
 
 # Zope
 from zope.tales.engine import Engine as TALESEngine
@@ -51,8 +50,6 @@ def handler(req):
     context = Namespace()
     context.absolute_url = req.get_options()["SitePrefix"] + req.uri
 
-    slots = Namespace()
-
     script_globals = {}
     script_globals.update(globals())
     script_globals.update({
@@ -61,11 +58,12 @@ def handler(req):
             "context": context,
             "req": req,
             "levels": levels,
-            "slots": slots,
             })
 
     # traverse the levels
-    templates = []
+    templates = {}
+    outer_template = "" # eek. must start out empty, used in boolean context
+    macros = {}
     found_file = False
 
     while levels:
@@ -95,44 +93,53 @@ def handler(req):
 
         # compile the templates
         if os.path.exists(path):
+            cur_template = outer_template + "_"
+            generator = TALGenerator(TALESEngine, xml=False, source_file=path)
+            generator.inMacroDef = 1
+            parser = HTMLTALParser(generator)
+
             try:
-                generator = TALGenerator(TALESEngine, xml=False,
-                                         source_file=path)
-                parser = HTMLTALParser(generator)
-                parser.parseFile(path)
-                templates.append((parser.getCode(), path))
+                if outer_template:
+                    generator.emitStartElement(
+                        "metal:block", [], {},
+                        {"use-macro": "templates/" + outer_template}, {})
+                    generator.emitStartElement(
+                        "metal:block", [], {},
+                        {"fill-slot": "magic"}, {})
+                    parser.parseFile(path)
+                    generator.emitEndElement("metal:block")
+                    generator.emitEndElement("metal:block")
+                else:
+                    parser.parseFile(path)
             except:
                 req.log_error("%s: can't compile template %s." %
                               (filename, path),
                               apache.APLOG_ERR)
                 raise
 
-    # evaluate the templates
+            program, _macros = parser.getCode()
+            templates[cur_template] = program
+            macros.update(_macros)
+            outer_template = cur_template
+
+    # evaluate the last compiled program and deliver the page
     engine_ns = {
         "req": req,
         "context": context,
-        "slots": slots,
+        "macros": macros,
+        "templates": templates,
         }
     engine_ns.update(TALESEngine.getBaseNames())
     engine_context = TALESEngine.getContext(engine_ns)
-    out = StringIO(u"")
 
-    while templates:
-        (program, macro_programs), path = templates.pop()
-
-        out.truncate(0)
-        try:
-            TALInterpreter(program, macro_programs, engine_context, out,
-                           strictinsert=False)()
-        except:
-            req.log_error("%s: can't interpret template %s." %
-                          (filename, path),
-                          apache.APLOG_ERR)
-            raise
-        else:
-            slots.main = out.getvalue()
-
-    # deliver the page
     req.content_type = "text/html"
-    req.write(slots.main)
+
+    try:
+        TALInterpreter(program, macros, engine_context, req,
+                       strictinsert=False)()
+    except:
+        req.log_error("%s: can't interpret template." % filename,
+                          apache.APLOG_ERR)
+        raise
+
     return apache.OK
