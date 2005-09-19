@@ -60,10 +60,11 @@ def handler(req):
             "levels": levels,
             })
 
-    # traverse the levels
     templates = {}
-    outer_template = "" # eek. must start out empty, used in boolean context
     macros = {}
+
+    # traverse the levels
+    outer_template = "" # eek. must start out empty, used in boolean context
     found_file = False
 
     while levels:
@@ -75,8 +76,8 @@ def handler(req):
                           apache.APLOG_ERR)
             raise apache.SERVER_RETURN(apache.HTTP_NOT_FOUND)
         elif os.path.isdir(path):
-            pypath = os.path.join(path, ".py")
-            path = os.path.join(path, ".pt")
+            pypath = os.path.join(path, "py")
+            path = os.path.join(path, "pt")
         else:
             pypath = path + ".py"
             found_file = True
@@ -100,15 +101,11 @@ def handler(req):
 
             try:
                 if outer_template:
-                    generator.emitStartElement(
-                        "metal:block", [], {},
-                        {"use-macro": "templates/" + outer_template}, {})
-                    generator.emitStartElement(
-                        "metal:block", [], {},
-                        {"fill-slot": "magic"}, {})
-                    parser.parseFile(path)
-                    generator.emitEndElement("metal:block")
-                    generator.emitEndElement("metal:block")
+                    text = file(path).read()
+                    parser.parseString("""\
+<metal:block use-macro="templates/%s">\
+<metal:block fill-slot="inner">""" % outer_template + text + 
+"""</metal:block></metal:block>""")
                 else:
                     parser.parseFile(path)
             except:
