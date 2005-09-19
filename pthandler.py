@@ -1,8 +1,12 @@
 # Python
 import os.path
+from StringIO import StringIO
 
 # Zope
-from zope.pagetemplate.pagetemplatefile import PageTemplateFile
+from zope.tales.engine import Engine as TALESEngine
+from zope.tal.htmltalparser import HTMLTALParser
+from zope.tal.talgenerator import TALGenerator
+from zope.tal.talinterpreter import TALInterpreter
 
 # mod_python
 from mod_python import apache
@@ -12,24 +16,10 @@ class StopTraversal(Exception):
     pass
 
 
-class Context:
+class Namespace:
     """Objects which exist only to carry attributes"""
 
     pass
-
-
-class ContextPTF(PageTemplateFile):
-    """PageTemplateFile with a customized pt_getContext
-
-    All items of a dict passed as context to the PT call are put in the
-    top-level namespace.
-    """
-
-    def pt_getContext(self, args=(), options={}, **kw):
-        rval = PageTemplateFile.pt_getContext(self, args, options)
-        for key in ("context", "req", "slots"):
-            rval[key] = options.pop(key, {})
-        return rval
 
 
 def handler(req):
@@ -58,15 +48,15 @@ def handler(req):
         levels.append(path)
 
     # initialize the environment
-    context = Context()
+    context = Namespace()
     context.absolute_url = req.get_options()["SitePrefix"] + req.uri
 
-    slots = {}
+    slots = Namespace()
 
     script_globals = {}
     script_globals.update(globals())
     script_globals.update({
-            "Context": Context,
+            "Namespace": Namespace,
             "context": context,
             "req": req,
             "levels": levels,
@@ -83,13 +73,13 @@ def handler(req):
             templates.append(path)
 
             if not os.path.exists(path):
-                req.log_error("%s: template not found %s." % (filename, path),
+                req.log_error("%s template not found: %s." % (filename, path),
                               apache.APLOG_ERR)
                 raise apache.SERVER_RETURN(apache.HTTP_NOT_FOUND)
             elif os.path.isdir(path):
                 pypath = os.path.join(path, ".py")
             else:
-                pypath += ".py"
+                pypath = path + ".py"
                 found_file = True
 
             if os.path.exists(pypath):
@@ -101,6 +91,15 @@ def handler(req):
         pass
 
     # evaluate the templates
+    engine_ns = {
+        "req": req,
+        "context": context,
+        "slots": slots,
+        }
+    engine_ns.update(TALESEngine.getBaseNames())
+    engine_context = TALESEngine.getContext(engine_ns)
+    out = StringIO(u"")
+
     while templates:
         path = templates.pop()
 
@@ -108,19 +107,23 @@ def handler(req):
             path = os.path.join(path, ".pt")
 
         if os.path.exists(path):
-            template = ContextPTF(path)
+            out.truncate(0)
             try:
-                slots["main"] = template(
-                    context=context,
-                    req=req,
-                    slots=slots,
-                    )
-            except Exception:
-                req.log_error("%s: template at %s failed." % (filename, path),
+                generator = TALGenerator(TALESEngine, xml=False,
+                                         source_file=path)
+                parser = HTMLTALParser(generator)
+                parser.parseFile(path)
+                program, macro_programs = parser.getCode()
+                TALInterpreter(program, macro_programs, engine_context, out,
+                               strictinsert=False)()
+            except:
+                req.log_error("%s: template %s failed." % (filename, path),
                               apache.APLOG_ERR)
                 raise
+            else:
+                slots.main = out.getvalue()
 
     # deliver the page
     req.content_type = "text/html"
-    req.write(slots["main"])
+    req.write(slots.main)
     return apache.OK
