@@ -57,38 +57,55 @@ def handler(req):
     script_globals.update(globals())
     script_globals.update({
             "Namespace": Namespace,
+            "StopTraversal": StopTraversal,
             "context": context,
             "req": req,
             "levels": levels,
             "slots": slots,
             })
 
-    # traverse the levels to manipulate the context
+    # traverse the levels
     templates = []
     found_file = False
 
-    try:
-        while levels:
-            path = levels.pop()
-            templates.append(path)
+    while levels:
+        path = levels.pop()
 
-            if not os.path.exists(path):
-                req.log_error("%s template not found: %s." % (filename, path),
-                              apache.APLOG_ERR)
-                raise apache.SERVER_RETURN(apache.HTTP_NOT_FOUND)
-            elif os.path.isdir(path):
-                pypath = os.path.join(path, ".py")
-            else:
-                pypath = path + ".py"
-                found_file = True
+        # some path house-keeping
+        if not os.path.exists(path):
+            req.log_error("%s template not found: %s." % (filename, path),
+                          apache.APLOG_ERR)
+            raise apache.SERVER_RETURN(apache.HTTP_NOT_FOUND)
+        elif os.path.isdir(path):
+            pypath = os.path.join(path, ".py")
+            path = os.path.join(path, ".pt")
+        else:
+            pypath = path + ".py"
+            found_file = True
 
+        # manipulate the context
+        try:
             if os.path.exists(pypath):
                 execfile(pypath, script_globals)
-
+        except StopTraversal:
+            del levels[:]
+        else:
             if not levels and not found_file:
-               levels.append(os.path.join(path, "index.html")) 
-    except StopTraversal:
-        pass
+                levels.append(os.path.join(path, "index.html")) 
+
+        # compile the templates
+        if os.path.exists(path):
+            try:
+                generator = TALGenerator(TALESEngine, xml=False,
+                                         source_file=path)
+                parser = HTMLTALParser(generator)
+                parser.parseFile(path)
+                templates.append((parser.getCode(), path))
+            except:
+                req.log_error("%s: can't compile template %s." %
+                              (filename, path),
+                              apache.APLOG_ERR)
+                raise
 
     # evaluate the templates
     engine_ns = {
@@ -101,27 +118,19 @@ def handler(req):
     out = StringIO(u"")
 
     while templates:
-        path = templates.pop()
+        (program, macro_programs), path = templates.pop()
 
-        if os.path.isdir(path):
-            path = os.path.join(path, ".pt")
-
-        if os.path.exists(path):
-            out.truncate(0)
-            try:
-                generator = TALGenerator(TALESEngine, xml=False,
-                                         source_file=path)
-                parser = HTMLTALParser(generator)
-                parser.parseFile(path)
-                program, macro_programs = parser.getCode()
-                TALInterpreter(program, macro_programs, engine_context, out,
-                               strictinsert=False)()
-            except:
-                req.log_error("%s: template %s failed." % (filename, path),
-                              apache.APLOG_ERR)
-                raise
-            else:
-                slots.main = out.getvalue()
+        out.truncate(0)
+        try:
+            TALInterpreter(program, macro_programs, engine_context, out,
+                           strictinsert=False)()
+        except:
+            req.log_error("%s: can't interpret template %s." %
+                          (filename, path),
+                          apache.APLOG_ERR)
+            raise
+        else:
+            slots.main = out.getvalue()
 
     # deliver the page
     req.content_type = "text/html"
