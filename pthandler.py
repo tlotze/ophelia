@@ -24,18 +24,22 @@ class Namespace:
 def handler(req):
     """generic request handler """
     # don't interfere with regular delivery (PHP will break, though)
-    if os.path.exists(req.filename):
+    filename = os.path.abspath(req.filename)
+    if os.path.isdir(filename):
+        if os.path.exists(os.path.join(filename, "index.html")):
+            return apache.DECLINED
+    elif os.path.exists(filename):
         return apache.DECLINED
 
-    # determine the template path
+    # sanity check
     doc_root = os.path.abspath(req.document_root())
-    filename = os.path.abspath(req.filename)
     if not filename.startswith(doc_root):
         req.log_error("Requested file %s not in document root %s." %
                       (req.filename, req.document_root()),
                       apache.APLOG_ERR)
         raise apache.SERVER_RETURN(apache.HTTP_INTERNAL_SERVER_ERROR)
 
+    # determine the template path
     template_root = os.path.abspath(req.get_options()["TemplateRoot"])
     template_path = filename.replace(doc_root, template_root, 1)
 
@@ -77,9 +81,10 @@ def handler(req):
             raise apache.SERVER_RETURN(apache.HTTP_NOT_FOUND)
         elif os.path.isdir(path):
             pypath = os.path.join(path, "py")
-            path = os.path.join(path, "pt")
+            ptpath = os.path.join(path, "pt")
         else:
             pypath = path + ".py"
+            ptpath = path
             found_file = True
 
         # manipulate the context
@@ -93,24 +98,25 @@ def handler(req):
                 levels.append(os.path.join(path, "index.html")) 
 
         # compile the templates
-        if os.path.exists(path):
+        if os.path.exists(ptpath):
             cur_template = outer_template + "_"
-            generator = TALGenerator(TALESEngine, xml=False, source_file=path)
+            generator = TALGenerator(TALESEngine, xml=False,
+                                     source_file=ptpath)
             generator.inMacroDef = 1
             parser = HTMLTALParser(generator)
 
             try:
                 if outer_template:
-                    text = file(path).read()
+                    text = file(ptpath).read()
                     parser.parseString("""\
 <metal:block use-macro="templates/%s">\
 <metal:block fill-slot="inner">""" % outer_template + text + 
 """</metal:block></metal:block>""")
                 else:
-                    parser.parseFile(path)
+                    parser.parseFile(ptpath)
             except:
                 req.log_error("%s: can't compile template %s." %
-                              (filename, path),
+                              (filename, ptpath),
                               apache.APLOG_ERR)
                 raise
 
