@@ -22,22 +22,22 @@ class Namespace:
 
 
 def handler(req):
-    """generic request handler """
-    # don't interfere with regular delivery (PHP will break, though)
-    filename = os.path.abspath(req.filename)
-    if os.path.isdir(filename):
-        if os.path.exists(os.path.join(filename, "index.html")):
-            return apache.DECLINED
-    elif os.path.exists(filename):
-        return apache.DECLINED
+    """generic request handler
 
-    # sanity check
+    never raises a 404 but declines instead
+    may raise anything else
+
+    The intent is for templates to take precedence, falling back on any static
+    content gracefully.
+    """
+    # do this prior to declining anything
+    req.content_type = "text/html"
+
+    # is this for us?
+    filename = os.path.abspath(req.filename)
     doc_root = os.path.abspath(req.document_root())
     if not filename.startswith(doc_root):
-        req.log_error("Requested file %s not in document root %s." %
-                      (req.filename, req.document_root()),
-                      apache.APLOG_ERR)
-        raise apache.SERVER_RETURN(apache.HTTP_INTERNAL_SERVER_ERROR)
+        return apache.DECLINED
 
     # determine the template path
     template_root = os.path.abspath(req.get_options()["TemplateRoot"])
@@ -69,33 +69,33 @@ def handler(req):
 
     # traverse the levels
     outer_template = "" # eek. must start out empty, used in boolean context
-    found_file = False
 
     while levels:
         path = levels.pop()
 
         # some path house-keeping
         if not os.path.exists(path):
-            req.log_error("%s template not found: %s." % (filename, path),
-                          apache.APLOG_ERR)
-            raise apache.SERVER_RETURN(apache.HTTP_NOT_FOUND)
+            return apache.DECLINED
         elif os.path.isdir(path):
             pypath = os.path.join(path, "py")
             ptpath = os.path.join(path, "pt")
+            if not levels:
+                levels.append(os.path.join(path, "index.html")) 
         else:
             pypath = path + ".py"
             ptpath = path
-            found_file = True
 
         # manipulate the context
-        try:
-            if os.path.exists(pypath):
+        if os.path.exists(pypath):
+            try:
                 execfile(pypath, script_globals)
-        except StopTraversal:
-            del levels[:]
-        else:
-            if not levels and not found_file:
-                levels.append(os.path.join(path, "index.html")) 
+            except apache.SERVER_RETURN, e:
+                if e[0] is apache.HTTP_NOT_FOUND:
+                    return apache.DECLINED
+                else:
+                    raise
+            except StopTraversal:
+                del levels[:]
 
         # compile the templates
         if os.path.exists(ptpath):
@@ -127,6 +127,7 @@ def handler(req):
 
     # evaluate the last compiled program and deliver the page
     engine_ns = {
+        "apache": apache,
         "req": req,
         "context": context,
         "macros": macros,
@@ -134,8 +135,6 @@ def handler(req):
         }
     engine_ns.update(TALESEngine.getBaseNames())
     engine_context = TALESEngine.getContext(engine_ns)
-
-    req.content_type = "text/html"
 
     try:
         TALInterpreter(program, macros, engine_context, req,
