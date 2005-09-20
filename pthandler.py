@@ -14,6 +14,18 @@ from mod_python import apache
 class StopTraversal(Exception):
     pass
 
+
+# some evil hackery to get around Apache's stupid way of ignoring other
+# modules after mod_python declined
+def EVILHACK_decline(req):
+    r = req.prev
+    while r:
+        if getattr(r, "EVILHACK_WAS_HERE", False):
+            raise apache.SERVER_RETURN(apache.HTTP_INTERNAL_SERVER_ERROR)
+        r = r.prev
+    req.internal_redirect("/EVILHACK" + req.uri)
+    raise apache.SERVER_RETURN(apache.OK)
+
 
 class Namespace:
     """Objects which exist only to carry attributes"""
@@ -30,13 +42,14 @@ def handler(req):
     The intent is for templates to take precedence, falling back on any static
     content gracefully.
     """
-    # do this prior to declining anything
-    req.content_type = "text/html"
+    # leave a mark to avoid loops in case an internal redirect leads back here
+    req.EVILHACK_WAS_HERE = True
 
     # is this for us?
     filename = os.path.abspath(req.filename)
     doc_root = os.path.abspath(req.document_root())
     if not filename.startswith(doc_root):
+        EVILHACK_decline(req)
         return apache.DECLINED
 
     # determine the template path
@@ -75,6 +88,7 @@ def handler(req):
 
         # some path house-keeping
         if not os.path.exists(path):
+            EVILHACK_decline(req)
             return apache.DECLINED
         elif os.path.isdir(path):
             pypath = os.path.join(path, "py")
@@ -91,6 +105,7 @@ def handler(req):
                 execfile(pypath, script_globals)
             except apache.SERVER_RETURN, e:
                 if e[0] is apache.HTTP_NOT_FOUND:
+                    EVILHACK_decline(req)
                     return apache.DECLINED
                 else:
                     raise
@@ -135,6 +150,8 @@ def handler(req):
         }
     engine_ns.update(TALESEngine.getBaseNames())
     engine_context = TALESEngine.getContext(engine_ns)
+
+    req.content_type = "text/html"
 
     try:
         TALInterpreter(program, macros, engine_context, req,
