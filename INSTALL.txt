@@ -1,0 +1,19 @@
+Example Apache 2 configuration
+------------------------------
+
+DocumentRoot /home/thomas/www.thomas-lotze.de/DocumentRoot
+PythonPath "['/home/thomas/www.thomas-lotze.de/python'] + sys.path"
+PythonOption TemplateRoot /home/thomas/www.thomas-lotze.de/TemplateRoot
+PythonOption SitePrefix http://www.thomas-lotze.de
+<Directory /home/thomas/www.thomas-lotze.de/DocumentRoot>
+           AddHandler mod_python .html
+           PythonHandler pthandler |.html
+           PythonDebug On
+</Directory>
+
+
+Directory indexes
+-----------------
+
+* index page: touch index.html so the handler is fired on the file name
+* automatic index: touch all files to be listed that are built by templating
