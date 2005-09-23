@@ -1,16 +1,46 @@
+Prerequisites
+=============
+
+- Apache2
+- Python 2.3 or better
+- mod_python 3.1 or better
+- the zope package from Zope3
+
+
+Installation
+============
+
+- copy pthandler.py into the system Python path or configure mod_python's
+  Python path according to where you put pthandler.py
+
+- choose a DocumentRoot, TemplateRoot, and maybe python path for your site's
+  files, and configure Apache accordingly (see below)
+
+- cause Apache to reload its configuration
+
+
 Example Apache 2 configuration
 ------------------------------
 
-DocumentRoot /home/thomas/www.thomas-lotze.de/DocumentRoot
-PythonPath "['/home/thomas/www.thomas-lotze.de/python'] + sys.path"
-PythonOption TemplateRoot /home/thomas/www.thomas-lotze.de/TemplateRoot
-PythonOption SitePrefix http://www.thomas-lotze.de
-<Directory /home/thomas/www.thomas-lotze.de/DocumentRoot>
+Assuming you put everything belonging to your site under a common directory,
+$SITE_PATH, add the following to your host's config:
+
+<Directory $SITE_PATH/DocumentRoot>
+           PythonPath "['$SITE_PATH/python'] + sys.path"
+           PythonOption DocumentRoot $SITE_PATH/DocumentRoot
+           PythonOption TemplateRoot $SITE_PATH/TemplateRoot
+           PythonOption SitePrefix http://my.address.tld/site-root
            AddHandler mod_python .html
            PythonHandler pthandler |.html
            PythonDebug On
 </Directory>
 
+The PythonOption DocumentRoot is optional; it defaults to Apache's
+DocumentRoot setting.
+
+
+Issues
+======
 
 Directory indexes
 -----------------

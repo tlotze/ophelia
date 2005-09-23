@@ -105,10 +105,8 @@ def handler(req):
 
         # manipulate the context
         if os.path.exists(pypath):
-            script_globals.update({
-                    "path": path,
-                    "tail": tail,
-                    })
+            spi.path = path
+            spi.tail = tail
             try:
                 execfile(pypath, script_globals)
             except apache.SERVER_RETURN, e:
