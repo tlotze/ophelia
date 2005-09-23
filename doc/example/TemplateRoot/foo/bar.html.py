@@ -1,0 +1,1 @@
+context.title = "bar page"

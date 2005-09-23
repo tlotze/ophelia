@@ -1,0 +1,2 @@
+<div class="boxed"
+     tal:content="structure slots/inner" />

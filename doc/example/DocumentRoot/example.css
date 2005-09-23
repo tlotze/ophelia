@@ -1,0 +1,8 @@
+body {
+     bg-color: yellow;
+     color: black;
+}
+
+.boxed {
+     border:1px solid red;
+}

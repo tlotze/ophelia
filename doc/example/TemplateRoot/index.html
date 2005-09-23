@@ -1,0 +1,24 @@
+<p>
+This is the index page of the
+<a href="http://svn.thomas-lotze.de/pthandler/">pthandler</a>
+example site.
+</p>
+
+<p>
+Take a look at the <a href="foo/">foo</a>, <a href="foo/bar.html">foo/bar</a>,
+and <a href="foo/baz.html">foo/baz</a> pages.
+</p>
+
+<p>
+This is the relevant part of the Apache2 configuration:
+</p>
+
+<pre>
+&lt;Directory /home/thomas/www.thomas-lotze.de/DocumentRoot/example&gt;
+    AddHandler mod_python .html
+    PythonOption DocumentRoot /home/thomas/www.thomas-lotze.de/DocumentRoot/example
+    PythonOption TemplateRoot /home/thomas/www.thomas-lotze.de/TemplateRoot/example
+    PythonOption SitePrefix http://www.thomas-lotze.de/example
+    PythonHandler pthandler |.html
+&lt;/Directory&gt;
+</pre>
