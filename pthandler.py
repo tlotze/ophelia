@@ -54,7 +54,7 @@ def handler(req):
     # create a stack of levels to walk
     path = template_path
     tail = ()
-    levels = [path, tail]
+    levels = [(path, tail)]
     while path != template_root:
         path, next = os.path.split(path)
         tail = (next, ) + tail
@@ -112,7 +112,7 @@ def handler(req):
     # compile the templates
     templates = []
 
-    for path in template_levels:
+    for ptpath in template_levels:
         if os.path.exists(ptpath):
             generator = TALGenerator(TALESEngine, xml=False,
                                      source_file=ptpath)
@@ -127,7 +127,7 @@ def handler(req):
                 raise
 
             program, _macros = parser.getCode()
-            templates.append(program)
+            templates.append((path, program))
             macros.update(_macros)
 
     # interpret the templates
@@ -141,17 +141,17 @@ def handler(req):
         }
     engine_ns.update(TALESEngine.getBaseNames())
     engine_context = TALESEngine.getContext(engine_ns)
-
-    out = StringIO()
+    out = StringIO(u"")
 
     while templates:
-        program = templates.pop()
+        path, program = templates.pop()
         out.truncate(0)
         try:
             TALInterpreter(program, macros, engine_context, out,
                            strictinsert=False)()
         except:
-            req.log_error("%s: can't interpret template." % filename,
+            req.log_error("%s: can't interpret template at %s." %
+                          (filename, path),
                           apache.APLOG_ERR)
             raise
         else:
