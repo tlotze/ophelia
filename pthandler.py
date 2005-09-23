@@ -16,6 +16,10 @@ class StopTraversal(Exception):
     """Flow control device for scripts to stop directory traversal."""
     pass
 
+class ResetTraversal(Exception):
+    """Flow control device for scripts to throw away out templates."""
+    pass
+
 
 class Namespace:
     """Objects which exist only to carry attributes"""
@@ -26,7 +30,8 @@ class Namespace:
 spi = Namespace()
 for item in [
     StopTraversal,
-    Namespace
+    ResetTraversal,
+    Namespace,
     ]:
     setattr(spi, item.__name__, item)
 
@@ -41,14 +46,17 @@ def handler(req):
     The intent is for templates to take precedence, falling back on any static
     content gracefully.
     """
+    req_options = req.get_options()
+
     # is this for us?
     filename = os.path.abspath(req.filename)
-    doc_root = os.path.abspath(req.document_root())
+    doc_root = os.path.abspath(req_options.get("DocumentRoot") or
+                               req.document_root())
     if not filename.startswith(doc_root):
         return apache.DECLINED
 
     # determine the template path
-    template_root = os.path.abspath(req.get_options()["TemplateRoot"])
+    template_root = os.path.abspath(req_options["TemplateRoot"])
     template_path = filename.replace(doc_root, template_root, 1)
 
     # create a stack of levels to walk
@@ -62,7 +70,9 @@ def handler(req):
 
     # initialize the environment
     context = Namespace()
-    context.absolute_url = req.get_options()["SitePrefix"] + req.uri
+    site_prefix = req_options["SitePrefix"]
+    context.site_prefix = site_prefix
+    context.absolute_url = site_prefix + req.uri
 
     slots = Namespace()
     macros = {}
@@ -106,6 +116,8 @@ def handler(req):
                     return apache.DECLINED
                 else:
                     raise
+            except ResetTraversal:
+                del template_levels[:-1]
             except StopTraversal:
                 break
 
@@ -137,7 +149,6 @@ def handler(req):
         "context": context,
         "slots": slots,
         "macros": macros,
-        "templates": templates,
         }
     engine_ns.update(TALESEngine.getBaseNames())
     engine_context = TALESEngine.getContext(engine_ns)
