@@ -12,17 +12,27 @@ from mod_python import apache
 
 
 class StopTraversal(Exception):
+    """Flow control device for scripts to stop directory traversal."""
     pass
 
 
 class Namespace:
     """Objects which exist only to carry attributes"""
-
     pass
 
 
+# script programmer's interface
+spi = Namespace()
+for item in [
+    StopTraversal,
+    Namespace
+    ]:
+    setattr(spi, item.__name__, item)
+
+
+# generic request handler
 def handler(req):
-    """generic request handler
+    """generic request handler building pages from TAL templates
 
     never raises a 404 but declines instead
     may raise anything else
@@ -42,10 +52,12 @@ def handler(req):
 
     # create a stack of levels to walk
     path = template_path
-    levels = [path]
+    tail = ()
+    levels = [path, tail]
     while path != template_root:
-        path, ignored = os.path.split(path)
-        levels.append(path)
+        path, next = os.path.split(path)
+        tail = (next, ) + tail
+        levels.append((path, tail))
 
     # initialize the environment
     context = Namespace()
@@ -54,11 +66,10 @@ def handler(req):
     script_globals = {}
     script_globals.update(globals())
     script_globals.update({
-            "Namespace": Namespace,
-            "StopTraversal": StopTraversal,
+            "apache": apache,
+            "spi": spi,
             "context": context,
             "req": req,
-            "levels": levels,
             })
 
     templates = {}
@@ -68,7 +79,7 @@ def handler(req):
     outer_template = "" # eek. must start out empty, used in boolean context
 
     while levels:
-        path = levels.pop()
+        path, tail = levels.pop()
 
         # some path house-keeping
         if not os.path.exists(path):
@@ -84,6 +95,10 @@ def handler(req):
 
         # manipulate the context
         if os.path.exists(pypath):
+            script_globals.update({
+                    "path": path,
+                    "tail": tail,
+                    })
             try:
                 execfile(pypath, script_globals)
             except apache.SERVER_RETURN, e:
@@ -107,8 +122,10 @@ def handler(req):
                     text = file(ptpath).read()
                     parser.parseString("""\
 <metal:block use-macro="templates/%s">\
-<metal:block fill-slot="inner">""" % outer_template + text + 
-"""</metal:block></metal:block>""")
+<metal:block fill-slot="inner">\
+%s\
+</metal:block></metal:block>\
+"""  % (outer_template, text))
                 else:
                     parser.parseFile(ptpath)
             except:
