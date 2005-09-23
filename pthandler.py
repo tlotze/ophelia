@@ -1,5 +1,6 @@
 # Python
 import os.path
+from StringIO import StringIO
 
 # Zope
 from zope.tales.engine import Engine as TALESEngine
@@ -57,12 +58,16 @@ def handler(req):
     while path != template_root:
         path, next = os.path.split(path)
         tail = (next, ) + tail
-        levels.append((path, tail))
+        levels.insert(0, (path, tail))
 
     # initialize the environment
     context = Namespace()
     context.absolute_url = req.get_options()["SitePrefix"] + req.uri
 
+    slots = Namespace()
+    macros = {}
+
+    # traverse the levels
     script_globals = {}
     script_globals.update(globals())
     script_globals.update({
@@ -72,15 +77,9 @@ def handler(req):
             "req": req,
             })
 
-    templates = {}
-    macros = {}
+    template_levels = []
 
-    # traverse the levels
-    outer_template = "" # eek. must start out empty, used in boolean context
-
-    while levels:
-        path, tail = levels.pop()
-
+    for path, tail in levels:
         # some path house-keeping
         if not os.path.exists(path):
             return apache.DECLINED
@@ -92,6 +91,7 @@ def handler(req):
         else:
             pypath = path + ".py"
             ptpath = path
+        template_levels.append(ptpath)
 
         # manipulate the context
         if os.path.exists(pypath):
@@ -107,27 +107,19 @@ def handler(req):
                 else:
                     raise
             except StopTraversal:
-                del levels[:]
+                break
 
-        # compile the templates
+    # compile the templates
+    templates = []
+
+    for path in template_levels:
         if os.path.exists(ptpath):
-            cur_template = outer_template + "_"
             generator = TALGenerator(TALESEngine, xml=False,
                                      source_file=ptpath)
-            generator.inMacroDef = 1
             parser = HTMLTALParser(generator)
 
             try:
-                if outer_template:
-                    text = file(ptpath).read()
-                    parser.parseString("""\
-<metal:block use-macro="templates/%s">\
-<metal:block fill-slot="inner">\
-%s\
-</metal:block></metal:block>\
-"""  % (outer_template, text))
-                else:
-                    parser.parseFile(ptpath)
+                parser.parseFile(ptpath)
             except:
                 req.log_error("%s: can't compile template %s." %
                               (filename, ptpath),
@@ -135,29 +127,37 @@ def handler(req):
                 raise
 
             program, _macros = parser.getCode()
-            templates[cur_template] = program
+            templates.append(program)
             macros.update(_macros)
-            outer_template = cur_template
 
-    # evaluate the last compiled program and deliver the page
+    # interpret the templates
     engine_ns = {
         "apache": apache,
         "req": req,
         "context": context,
+        "slots": slots,
         "macros": macros,
         "templates": templates,
         }
     engine_ns.update(TALESEngine.getBaseNames())
     engine_context = TALESEngine.getContext(engine_ns)
 
-    req.content_type = "text/html"
+    out = StringIO()
 
-    try:
-        TALInterpreter(program, macros, engine_context, req,
-                       strictinsert=False)()
-    except:
-        req.log_error("%s: can't interpret template." % filename,
+    while templates:
+        program = templates.pop()
+        out.truncate(0)
+        try:
+            TALInterpreter(program, macros, engine_context, out,
+                           strictinsert=False)()
+        except:
+            req.log_error("%s: can't interpret template." % filename,
                           apache.APLOG_ERR)
-        raise
+            raise
+        else:
+            slots.inner = out.getvalue()
 
+    # deliver the page
+    req.content_type = "text/html"
+    req.write(slots.inner)
     return apache.OK
