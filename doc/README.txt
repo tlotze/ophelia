@@ -44,6 +44,58 @@ beautiful language). Don't use pthandler for sites that are actually web
 interfaces to applications, content management systems and the like.
 
 
+How to write templates and scripts
+++++++++++++++++++++++++++++++++++
+
+For the Python language, see <http://docs.python.org/>.
+
+For Zope page templates, see
+<http://www.zope.org/Documentation/Books/ZopeBook/2_6Edition/AppendixC.stx>.
+
+For the mod_python API parts of which are accessible from templates and
+scripts, see <http://www.modpython.org/live/current/doc-html/>.
+
+Page template context
+---------------------
+
+The context of a page template, i.e. the set of variables that can be accessed
+by TALES expressions, contains:
+
+apache: the apache module from mod_python
+
+req: the request object passed by mod_python
+
+context: application-level context variables, modified by any relevant
+         scripts, both more and less specific
+
+slots: output material filled into slots by more specific templates and
+       scripts.
+
+       inner: the "magic" slot filled by evaluating the next more specific
+              template. Example use: <div tal:content="structure slots/inner">
+
+              Making this slot magic avoids writing any boiler-plate code at
+              all in run-of-the-mill templates and pages.
+
+macros: macros defined by any relevant templates and scripts, both more and
+        less specific
+
+Script context
+--------------
+
+apache, req, context: see above
+
+spi: the script programmers' interface defined by pthandler.
+
+     StopTraversal,
+     ResetTraversal: exceptions, see "controlling traversal" below
+
+     Namespace: a class whose instances do nothing but carry attributes
+
+                Not using dictionaries here makes for more aesthetic code if
+                nothing else.
+
+
 How pthandler behaves
 +++++++++++++++++++++
 
@@ -54,6 +106,9 @@ build a particular resource. pthandler never causes a File Not Found HTTP
 error. This means that pthandler can be installed on top of a static site,
 handling just some of the requests to HTML pages and letting Apache serve
 static files for all others.
+
+Caveat: For some reason, PHP files are not parsed correctly after Apache got
+        control back from pthandler.
 
 
 How pthandler works
@@ -86,7 +141,7 @@ can be set by Python scripts put in the template directory tree.
 On the way forward from the site root to the page, pthandler tries to execute
 a Python script named "py" in each directory, and finally one for the page.
 Each is passed some information about the request and allowed to modify the
-template context. Each script may also import module, define functions and set
+template context. Each script may also import modules, define functions and set
 values other than the context. They will be available to all scripts executed
 later.
 
@@ -96,7 +151,7 @@ in the context through TALES expressions.
 Controlling traversal
 ---------------------
 
-This is at the edge of what is in pthandler's scope.
+This is at the edge of pthandler's scope.
 
 There are two exception classes defined by pthandler and made available to
 scripts as spi.StopTraversal and spi.ResetTraversal (spi being the namespace
