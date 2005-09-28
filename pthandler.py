@@ -70,9 +70,14 @@ def handler(req):
 
     # initialize the environment
     context = Namespace()
+
     site_prefix = req_options["SitePrefix"]
     context.site_prefix = site_prefix
-    context.absolute_url = site_prefix + req.uri
+
+    uri_path = parsed_uri[apache.URI_PATH]
+    if uri_path.endswith("/index.html"):
+        uri_path = uri_path[:-10]
+    context.absolute_url = site_prefix + req.uri_path
 
     slots = Namespace()
     macros = {}
@@ -97,7 +102,7 @@ def handler(req):
             pypath = os.path.join(path, "py")
             ptpath = os.path.join(path, "pt")
             if not levels:
-                levels.append(os.path.join(path, "index.html")) 
+                levels.append((os.path.join(path, "index.html"), ()))
         else:
             pypath = path + ".py"
             ptpath = path
@@ -167,6 +172,14 @@ def handler(req):
             slots.inner = out.getvalue()
 
     # deliver the page
+    content = slots.inner.encode("utf-8")
+
     req.content_type = "text/html; charset=utf-8"
-    req.write(slots.inner.encode("utf-8"))
+    req.set_content_length(len(content))
+
+    if req.header_only:
+        req.write("")
+    else:
+        req.write(content)
+
     return apache.OK
