@@ -74,10 +74,10 @@ def handler(req):
     site_prefix = req_options["SitePrefix"]
     context.site_prefix = site_prefix
 
-    uri_path = parsed_uri[apache.URI_PATH]
+    uri_path = req.parsed_uri[apache.URI_PATH]
     if uri_path.endswith("/index.html"):
         uri_path = uri_path[:-10]
-    context.absolute_url = site_prefix + req.uri_path
+    context.absolute_url = site_prefix + uri_path
 
     slots = Namespace()
     macros = {}
