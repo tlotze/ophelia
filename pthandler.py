@@ -129,7 +129,7 @@ def handler(req):
             parser = HTMLTALParser(generator)
 
             try:
-                parser.parseFile(ptpath)
+                parser.parseString(unicode(file(ptpath).read(), "utf-8"))
             except:
                 req.log_error("%s: can't compile template %s." %
                               (filename, ptpath),
@@ -167,6 +167,6 @@ def handler(req):
             slots.inner = out.getvalue()
 
     # deliver the page
-    req.content_type = "text/html"
-    req.write(slots.inner)
+    req.content_type = "text/html; charset=utf-8"
+    req.write(slots.inner.encode("utf-8"))
     return apache.OK
