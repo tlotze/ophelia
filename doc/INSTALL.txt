@@ -13,6 +13,9 @@ Installation
 - copy pthandler.py into the system Python path or configure mod_python's
   Python path according to where you put pthandler.py
 
+- if you don't have the zope package installed system-wide, put it in
+  mod_python's Python path as well
+
 - choose a DocumentRoot, TemplateRoot, and maybe python path for your site's
   files, and configure Apache accordingly (see below)
 
