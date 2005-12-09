@@ -87,13 +87,18 @@ apache, req, context: see above
 
 spi: the script programmers' interface defined by pthandler.
 
-     StopTraversal,
-     ResetTraversal: exceptions, see "controlling traversal" below
+     StopTraversal: exception, see "controlling traversal" below
 
      Namespace: a class whose instances do nothing but carry attributes
 
                 Not using dictionaries here makes for more aesthetic code if
                 nothing else.
+
+     path: str, path traversed so far
+
+     tail: tuple of str, path segments yet to traverse from here
+
+     discardOuterTemplates: see "controlling traversal" below
 
 
 How pthandler behaves
@@ -153,14 +158,14 @@ Controlling traversal
 
 This is at the edge of pthandler's scope.
 
-There are two exception classes defined by pthandler and made available to
-scripts as spi.StopTraversal and spi.ResetTraversal (spi being the namespace
-for the script programmers' interface). Raising spi.StopTraversal in a script
-prevents more specific scripts from being executed and more specific templates
-from being evaluated. The raising script is responsible for filling the inner
-slot, possibly using the rest of the URL as input.
+There is an exception class defined by pthandler and made available to scripts
+as spi.StopTraversal (spi being the namespace for the script programmers'
+interface). Raising spi.StopTraversal in a script prevents more specific
+scripts from being executed and the current as well as more specific templates
+from being evaluated. The exception accepts a parameter which is used to fill
+the inner slot, possibly using the rest of the URL as input.
 
-Raising spi.ResetTraversal causes more general templates to be ignored, making
-the template corresponding to the script responsible for providing the outer
+Calling spi.discardOuterTemplates() causes more general templates to be
+ignored, making the current template responsible for providing the outer
 HTML structure. This allows for switching the layout completely in the middle
 of traversal while using the context manipulations made so far.

@@ -14,26 +14,26 @@ from mod_python import apache
 
 class StopTraversal(Exception):
     """Flow control device for scripts to stop directory traversal."""
-    pass
 
-class ResetTraversal(Exception):
-    """Flow control device for scripts to throw away out templates."""
-    pass
+    content = "" # str to use instead, interpreted as a template
 
-
-class Namespace:
+    def __init__(self, content=None):
+        self.content = content
+
+
+class Namespace(object):
     """Objects which exist only to carry attributes"""
     pass
 
-
-# script programmer's interface
-spi = Namespace()
-for item in [
-    StopTraversal,
-    ResetTraversal,
-    Namespace,
-    ]:
-    setattr(spi, item.__name__, item)
+
+class SPI(object):
+    """Basic script programmers' interface"""
+
+    StopTraversal = StopTraversal
+    Namespace = Namespace
+
+    def discardOuterTemplates(self):
+        del self.__templates__[:-1]
 
 
 # generic request handler
@@ -72,10 +72,10 @@ def handler(req):
     context = Namespace()
     slots = Namespace()
     macros = {}
+    spi = SPI()
 
-    # traverse the levels
-    script_globals = {}
-    script_globals.update(globals())
+    # scripting environment
+    script_globals = globals().copy()
     script_globals.update({
             "apache": apache,
             "spi": spi,
@@ -83,7 +83,9 @@ def handler(req):
             "req": req,
             })
 
+    # traverse the levels
     template_levels = []
+    spi.__templates__ = template_levels
 
     for path, tail in levels:
         # some path house-keeping
@@ -110,9 +112,9 @@ def handler(req):
                     return apache.DECLINED
                 else:
                     raise
-            except ResetTraversal:
-                del template_levels[:-1]
-            except StopTraversal:
+            except StopTraversal, e:
+                del template_levels[-1]
+                slots.inner = e.content
                 break
 
     # compile the templates
