@@ -1,6 +1,7 @@
 # Python
 import os.path
 from StringIO import StringIO
+import inspect
 
 # Zope
 from zope.tales.engine import Engine as TALESEngine
@@ -26,18 +27,49 @@ class Namespace(object):
     pass
 
 
+class ScriptGlobals(dict):
+    """Global variable dict for script calls."""
+    pass
+
+
 class SPI(object):
     """Basic script programmers' interface"""
 
     StopTraversal = StopTraversal
     Namespace = Namespace
 
+    def context(self):
+        return self._getScriptGlobals()["context"]
+    context = property(context)
+
+    def request(self):
+        return self._getScriptGlobals()["request"]
+    request = property(request)
+
+    def path(self):
+        return self._getScriptGlobals()["__path__"]
+    path = property(path)
+
+    def tail(self):
+        return self._getScriptGlobals()["__tail__"]
+    tail = property(tail)
+
     def discardOuterTemplates(self):
-        del self.__templates__[:-1]
+        templates = self._getScriptGlobals["__templates__"]
+        del templates[:-1]
+
+    def _getScriptGlobals(self):
+        for frame_record in inspect.stack():
+            candidate = frame_record[0].f_globals
+            if type(candidate) == ScriptGlobals:
+                return candidate
+        else:
+            raise LookupError("Could not find script globals.")
+spi = SPI()
 
 
 # generic request handler
-def handler(req):
+def handler(request):
     """generic request handler building pages from TAL templates
 
     never raises a 404 but declines instead
@@ -46,17 +78,17 @@ def handler(req):
     The intent is for templates to take precedence, falling back on any static
     content gracefully.
     """
-    req_options = req.get_options()
+    request_options = request.get_options()
 
     # is this for us?
-    filename = os.path.abspath(req.filename)
-    doc_root = os.path.abspath(req_options.get("DocumentRoot") or
-                               req.document_root())
+    filename = os.path.abspath(request.filename)
+    doc_root = os.path.abspath(request_options.get("DocumentRoot") or
+                               request.document_root())
     if not filename.startswith(doc_root):
         return apache.DECLINED
 
     # determine the template path
-    template_root = os.path.abspath(req_options["TemplateRoot"])
+    template_root = os.path.abspath(request_options["TemplateRoot"])
     template_path = filename.replace(doc_root, template_root, 1)
 
     # create a stack of levels to walk
@@ -72,20 +104,20 @@ def handler(req):
     context = Namespace()
     slots = Namespace()
     macros = {}
-    spi = SPI()
 
     # scripting environment
-    script_globals = globals().copy()
+    script_globals = ScriptGlobals(globals())
     script_globals.update({
+            "globals": lambda: script_globals,
             "apache": apache,
             "spi": spi,
             "context": context,
-            "req": req,
+            "request": request,
             })
 
     # traverse the levels
     template_levels = []
-    spi.__templates__ = template_levels
+    script_globals["__templates__"] = template_levels
 
     for path, tail in levels:
         # some path house-keeping
@@ -103,8 +135,8 @@ def handler(req):
 
         # manipulate the context
         if os.path.exists(pypath):
-            spi.path = path
-            spi.tail = tail
+            script_globals["__path__"] = path
+            script_globals["__tail__"] = tail
             try:
                 execfile(pypath, script_globals)
             except apache.SERVER_RETURN, e:
@@ -129,9 +161,9 @@ def handler(req):
             try:
                 parser.parseString(unicode(file(ptpath).read(), "utf-8"))
             except:
-                req.log_error("%s: can't compile template %s." %
-                              (filename, ptpath),
-                              apache.APLOG_ERR)
+                request.log_error("%s: can't compile template %s." %
+                                  (filename, ptpath),
+                                  apache.APLOG_ERR)
                 raise
 
             program, _macros = parser.getCode()
@@ -141,7 +173,7 @@ def handler(req):
     # interpret the templates
     engine_ns = {
         "apache": apache,
-        "req": req,
+        "request": request,
         "context": context,
         "slots": slots,
         "macros": macros,
@@ -157,9 +189,9 @@ def handler(req):
             TALInterpreter(program, macros, engine_context, out,
                            strictinsert=False)()
         except:
-            req.log_error("%s: can't interpret template at %s." %
-                          (filename, path),
-                          apache.APLOG_ERR)
+            request.log_error("%s: can't interpret template at %s." %
+                              (filename, path),
+                              apache.APLOG_ERR)
             raise
         else:
             slots.inner = out.getvalue()
@@ -167,12 +199,12 @@ def handler(req):
     # deliver the page
     content = slots.inner.encode("utf-8")
 
-    req.content_type = "text/html; charset=utf-8"
-    req.set_content_length(len(content))
+    request.content_type = "text/html; charset=utf-8"
+    request.set_content_length(len(content))
 
-    if req.header_only:
-        req.write("")
+    if request.header_only:
+        request.write("")
     else:
-        req.write(content)
+        request.write(content)
 
     return apache.OK

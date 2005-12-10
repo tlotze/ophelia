@@ -63,7 +63,7 @@ by TALES expressions, contains:
 
 apache: the apache module from mod_python
 
-req: the request object passed by mod_python
+request: the request object passed by mod_python
 
 context: application-level context variables, modified by any relevant
          scripts, both more and less specific
@@ -83,7 +83,7 @@ macros: macros defined by any relevant templates and scripts, both more and
 Script context
 --------------
 
-apache, req, context: see above
+apache, request, context: see above
 
 spi: the script programmers' interface defined by pthandler.
 
@@ -93,6 +93,10 @@ spi: the script programmers' interface defined by pthandler.
 
                 Not using dictionaries here makes for more aesthetic code if
                 nothing else.
+
+     context: the application-level context as available in templates and scripts
+
+     request: the request
 
      path: str, path traversed so far
 
