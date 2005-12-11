@@ -18,8 +18,9 @@ class StopTraversal(Exception):
 
     content = "" # str to use instead, interpreted as a template
 
-    def __init__(self, content=None):
+    def __init__(self, content=None, use_template=False):
         self.content = content
+        self.use_template = use_template
 
 
 class Namespace(object):
@@ -46,13 +47,13 @@ class SPI(object):
         return self._getScriptGlobals()["request"]
     request = property(request)
 
-    def path(self):
-        return self._getScriptGlobals()["__path__"]
-    path = property(path)
+    def trav_path(self):
+        return self._getScriptGlobals()["trav_path"]
+    trav_path = property(trav_path)
 
-    def tail(self):
-        return self._getScriptGlobals()["__tail__"]
-    tail = property(tail)
+    def trav_tail(self):
+        return self._getScriptGlobals()["trav_tail"]
+    trav_tail = property(trav_tail)
 
     def discardOuterTemplates(self):
         templates = self._getScriptGlobals["__templates__"]
@@ -91,14 +92,12 @@ def handler(request):
     template_root = os.path.abspath(request_options["TemplateRoot"])
     template_path = filename.replace(doc_root, template_root, 1)
 
-    # create a stack of levels to walk
+    # create a list of path elements to walk
     path = template_path
-    tail = ()
-    levels = [(path, tail)]
+    tail = []
     while path != template_root:
         path, next = os.path.split(path)
-        tail = (next, ) + tail
-        levels.insert(0, (path, tail))
+        tail.insert(0, next)
 
     # initialize the environment
     context = Namespace()
@@ -119,24 +118,24 @@ def handler(request):
     template_levels = []
     script_globals["__templates__"] = template_levels
 
-    for path, tail in levels:
+    while True:
         # some path house-keeping
         if not os.path.exists(path):
             return apache.DECLINED
         elif os.path.isdir(path):
             pypath = os.path.join(path, "py")
             ptpath = os.path.join(path, "pt")
-            if not levels:
-                levels.append((os.path.join(path, "index.html"), ()))
+            have_dir = True
         else:
             pypath = path + ".py"
             ptpath = path
+            have_dir = False
         template_levels.append(ptpath)
 
         # manipulate the context
         if os.path.exists(pypath):
-            script_globals["__path__"] = path
-            script_globals["__tail__"] = tail
+            script_globals["trav_path"] = path
+            script_globals["trav_tail"] = tuple(tail)
             try:
                 execfile(pypath, script_globals)
             except apache.SERVER_RETURN, e:
@@ -145,9 +144,19 @@ def handler(request):
                 else:
                     raise
             except StopTraversal, e:
-                del template_levels[-1]
+                if not e.use_template:
+                    del template_levels[-1]
                 slots.inner = e.content
                 break
+
+        # prepare the next traversal step, if any
+        if tail:
+            next = tail.pop(0)
+        elif have_dir:
+            next = "index.html"
+        else:
+            break
+        path = os.path.join(path, next)
 
     # compile the templates
     templates = []
