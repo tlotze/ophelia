@@ -1,7 +1,6 @@
 # Python
 import os.path
 from StringIO import StringIO
-import inspect
 
 # Zope
 from zope.tales.engine import Engine as TALESEngine
@@ -13,6 +12,9 @@ from zope.tal.talinterpreter import TALInterpreter
 from mod_python import apache
 
 
+########################
+# exceptions and classes
+
 class StopTraversal(Exception):
     """Flow control device for scripts to stop directory traversal."""
 
@@ -28,49 +30,15 @@ class Namespace(object):
     pass
 
 
-class ScriptGlobals(dict):
+class _ScriptGlobals(dict):
     """Global variable dict for script calls."""
     pass
 
-
-class SPI(object):
-    """Basic script programmers' interface"""
-
-    StopTraversal = StopTraversal
-    Namespace = Namespace
-
-    def context(self):
-        return self._getScriptGlobals()["context"]
-    context = property(context)
-
-    def request(self):
-        return self._getScriptGlobals()["request"]
-    request = property(request)
-
-    def trav_path(self):
-        return self._getScriptGlobals()["trav_path"]
-    trav_path = property(trav_path)
-
-    def trav_tail(self):
-        return self._getScriptGlobals()["trav_tail"]
-    trav_tail = property(trav_tail)
-
-    def discardOuterTemplates(self):
-        templates = self._getScriptGlobals["__templates__"]
-        del templates[:-1]
-
-    def _getScriptGlobals(self):
-        for frame_record in inspect.stack():
-            candidate = frame_record[0].f_globals
-            if type(candidate) == ScriptGlobals:
-                return candidate
-        else:
-            raise LookupError("Could not find script globals.")
-spi = SPI()
-
 
-# generic request handler
-def handler(request):
+###########
+# publisher
+
+def publish(path, root, request):
     """generic request handler building pages from TAL templates
 
     never raises a 404 but declines instead
@@ -79,23 +47,9 @@ def handler(request):
     The intent is for templates to take precedence, falling back on any static
     content gracefully.
     """
-    request_options = request.get_options()
-
-    # is this for us?
-    filename = os.path.abspath(request.filename)
-    doc_root = os.path.abspath(request_options.get("DocumentRoot") or
-                               request.document_root())
-    if not filename.startswith(doc_root):
-        return apache.DECLINED
-
-    # determine the template path
-    template_root = os.path.abspath(request_options["TemplateRoot"])
-    template_path = filename.replace(doc_root, template_root, 1)
-
     # create a list of path elements to walk
-    path = template_path
     tail = []
-    while path != template_root:
+    while path != root:
         path, next = os.path.split(path)
         tail.insert(0, next)
 
@@ -105,11 +59,12 @@ def handler(request):
     macros = {}
 
     # scripting environment
-    script_globals = ScriptGlobals(globals())
+    script_globals = _ScriptGlobals(globals())
+    from ophelia import oapi
     script_globals.update({
             "globals": lambda: script_globals,
             "apache": apache,
-            "spi": spi,
+            "oapi": oapi,
             "context": context,
             "request": request,
             })
@@ -121,7 +76,7 @@ def handler(request):
     while True:
         # some path house-keeping
         if not os.path.exists(path):
-            return apache.DECLINED
+            raise apache.SERVER_RETURN(apache.DECLINED)
         elif os.path.isdir(path):
             pypath = os.path.join(path, "py")
             ptpath = os.path.join(path, "pt")
@@ -140,7 +95,7 @@ def handler(request):
                 execfile(pypath, script_globals)
             except apache.SERVER_RETURN, e:
                 if e[0] is apache.HTTP_NOT_FOUND:
-                    return apache.DECLINED
+                    raise apache.SERVER_RETURN(apache.DECLINED)
                 else:
                     raise
             except StopTraversal, e:
@@ -205,15 +160,6 @@ def handler(request):
         else:
             slots.inner = out.getvalue()
 
-    # deliver the page
+    # return the content
     content = slots.inner.encode("utf-8")
-
-    request.content_type = "text/html; charset=utf-8"
-    request.set_content_length(len(content))
-
-    if request.header_only:
-        request.write("")
-    else:
-        request.write(content)
-
-    return apache.OK
+    return content

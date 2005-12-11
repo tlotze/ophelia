@@ -10,8 +10,8 @@ Prerequisites
 Installation
 ============
 
-- copy pthandler.py into the system Python path or configure mod_python's
-  Python path according to where you put pthandler.py
+- copy the ophelia package into the system Python path or configure
+  mod_python's Python path according to where you put the ophelia package
 
 - if you don't have the zope package installed system-wide, put it in
   mod_python's Python path as well
@@ -34,7 +34,7 @@ $SITE_PATH, add the following to your host's config:
            PythonOption TemplateRoot $SITE_PATH/TemplateRoot
            PythonOption SitePrefix http://my.address.tld/site-root
            AddHandler mod_python .html
-           PythonHandler pthandler |.html
+           PythonHandler ophelia.apache |.html
            PythonDebug On
 </Directory>
 
