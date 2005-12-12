@@ -39,13 +39,11 @@ class _ScriptGlobals(dict):
 # publisher
 
 def publish(path, root, request):
-    """generic request handler building pages from TAL templates
+    """Ophelia's publisher building web pages from TAL page templates
 
-    never raises a 404 but declines instead
-    may raise anything else
+    returns unicode, page content
 
-    The intent is for templates to take precedence, falling back on any static
-    content gracefully.
+    may raise anything
     """
     # create a list of path elements to walk
     tail = []
@@ -93,11 +91,6 @@ def publish(path, root, request):
             script_globals["trav_tail"] = tuple(tail)
             try:
                 execfile(pypath, script_globals)
-            except apache.SERVER_RETURN, e:
-                if e[0] is apache.HTTP_NOT_FOUND:
-                    raise apache.SERVER_RETURN(apache.DECLINED)
-                else:
-                    raise
             except StopTraversal, e:
                 if not e.use_template:
                     del template_levels[-1]

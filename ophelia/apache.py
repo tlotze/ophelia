@@ -10,7 +10,7 @@ from ophelia.publisher import publish
 
 # generic request handler
 def handler(request):
-    """generic request handler building pages from TAL templates
+    """generic Apache request handler serving pages from Ophelia's publisher
 
     never raises a 404 but declines instead
     may raise anything else
@@ -32,7 +32,13 @@ def handler(request):
     path = filename.replace(doc_root, root, 1)
 
     # get the content
-    content = publish(path, root, request)
+    try:
+        content = publish(path, root, request)
+    except apache.SERVER_RETURN, e:
+        if e[0] is apache.HTTP_NOT_FOUND:
+            raise apache.SERVER_RETURN(apache.DECLINED)
+        else:
+            raise
 
     # deliver the page
     request.content_type = "text/html; charset=utf-8"
