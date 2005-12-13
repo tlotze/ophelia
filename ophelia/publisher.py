@@ -54,26 +54,19 @@ def publish(path, root, request):
 
     # initialize the environment
     context = Namespace()
-    slots = Namespace()
-    macros = Namespace()
-    templates = []
-    innerslot = Namespace()
-    innerslot.value = ""
+    traversal = Namespace()
 
-    # scripting environment
     script_globals = _ScriptGlobals()
-    from ophelia import oapi
     script_globals.update({
             "globals": lambda: script_globals,
-            "__templates__": templates,
-            "__innerslot__": innerslot,
-            "apache": apache,
-            "oapi": oapi,
             "context": context,
             "request": request,
-            "slots": slots,
-            "macros": macros,
+            "traversal": traversal,
             })
+
+    traversal.tail = tail
+    traversal.stack = stack = []
+    traversal.macros = Namespace()
 
     # traverse the levels
     while True:
@@ -90,22 +83,25 @@ def publish(path, root, request):
             have_dir = False
 
         # get script and template
-        script = None
-        template = ""
         if file_path:
             script, template = scriptAndTemplate(file(file_path).read())
+        else:
+            script = None
+            template = None
 
         # manipulate the context
         if script:
-            script_globals["trav_path"] = path
-            script_globals["trav_tail"] = tuple(tail)
+            traversal.path = path
+            traversal.template = template
             try:
                 exec script in script_globals
             except StopTraversal, e:
+                if e.content is not None:
+                    traversal.innerslot = e.content
                 if not e.use_template:
-                    template = ""
-                innerslot.value = e.content
-                break
+                    traversal.template = None
+                del tail[:]
+            template = traversal.template
 
         # compile the template, collect the macros
         if template:
@@ -120,9 +116,9 @@ def publish(path, root, request):
                                   apache.APLOG_ERR)
                 raise
 
-            program, _macros = parser.getCode()
-            templates.append((program, file_path))
-            macros.__dict__.update(_macros)
+            program, macros = parser.getCode()
+            stack.append((program, file_path))
+            traversal.macros.__dict__.update(macros)
 
         # prepare the next traversal step, if any
         if tail:
@@ -135,19 +131,16 @@ def publish(path, root, request):
 
     # interpret the templates
     engine_ns = {
-        "apache": apache,
-        "request": request,
         "context": context,
-        "slots": slots,
         "macros": macros,
-        "innerslot": lambda: innerslot.value
+        "innerslot": lambda: traversal.innerslot,
         }
     engine_ns.update(TALESEngine.getBaseNames())
     engine_context = TALESEngine.getContext(engine_ns)
     out = StringIO(u"")
 
-    while templates:
-        program, file_path = templates.pop()
+    while stack:
+        program, file_path = stack.pop()
         out.truncate(0)
         try:
             TALInterpreter(program, macros, engine_context, out,
@@ -157,10 +150,10 @@ def publish(path, root, request):
                               apache.APLOG_ERR)
             raise
         else:
-            innerslot.value = out.getvalue()
+            traversal.innerslot = out.getvalue()
 
     # return the content
-    content = innerslot.value.encode("utf-8")
+    content = traversal.innerslot.encode("utf-8")
     return content
 
 

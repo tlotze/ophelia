@@ -61,58 +61,76 @@ Page template context
 The context of a page template, i.e. the set of variables that can be accessed
 by TALES expressions, contains:
 
-apache: the apache module from mod_python
+* context: application-level context variables, modified by any relevant
+           scripts, both more and less specific
 
-request: the request object passed by mod_python
+* macros: macros defined by any relevant templates and scripts, both more and
+          less specific
 
-context: application-level context variables, modified by any relevant
-         scripts, both more and less specific
+* innerslot: the "magic" slot filled by evaluating the next more specific
+             template. Example use: <div tal:content="structure innerslot">
 
-slots: output material filled into slots by more specific templates and
-       scripts.
-
-macros: macros defined by any relevant templates and scripts, both more and
-        less specific
-
-innerslot: the "magic" slot filled by evaluating the next more specific
-           template. Example use: <div tal:content="structure innerslot">
-
-           Making this slot magic avoids writing any boiler-plate code at
-           all in run-of-the-mill templates and pages.
+             Making this slot magic avoids writing any boiler-plate code at
+             all in run-of-the-mill templates and pages.
 
 Script context
 --------------
 
-apache, request, context: see above
+* context: see above
 
-oapi: Ophelia's application programmers' interface.
+* request: the request object passed by mod_python
 
-     StopTraversal: exception, see "controlling traversal" below
+* traversal: traversal context, a namespace carrying some variables internally
+             used by Ophelia's traversal mechanism:
 
-     Namespace: a class whose instances do nothing but carry attributes
+             path: str, path traversed so far
 
-                Not using dictionaries here makes for more aesthetic code if
-                nothing else.
+             tail: list of str, path segments yet to traverse from here
 
-     context: the application-level context as available in templates and scripts
+             stack: list of str pairs, compiled templates encountered so far,
+                                       together with their file paths
 
-     request: the request
+             macros: namespace of str, compiled macros encountered so far
 
-     slots: output material filled into slots by more specific templates and
-            scripts.
+             template: unicode, the decoded source of the current template
 
-     macros: macros defined by any relevant templates and scripts, both more
-             and less specific
+After running all scripts, the ophelia namespace will also hold the inner slot
+as it is built while interpreting the template stack. It will be a unicode
+string under the name "innerslot". This is so it may be accessed at
+interpretation time by functions put in the context.
 
-     trav_path: str, path traversed so far
 
-     trav_tail: tuple of str, path segments yet to traverse from here
-
-     discardOuterTemplates: see "controlling traversal" below
+Ophelia's application programmers' interface
+--------------------------------------------
 
 (This is a slight misnomer as you don't actually build applications with
 Ophelia. But "API" is a rather common term, let's use it to mean the end
 users' programming interface.)
+
+To use the interface in a script or Python module, do:
+
+from ophelia import oapi
+
+The interface contains the following members:
+
+* StopTraversal: exception, see "controlling traversal" below
+
+* Namespace: class whose instances do nothing but carry attributes
+
+             Not using dictionaries here makes for more aesthetic code if
+             nothing else.
+
+* getScriptGlobals: function returning the global namespace in which Ophelia
+                    executes all Python scripts of the current request
+
+* getContext: function returning the application-level context as available in
+              templates and scripts
+
+* getRequest: function returning the request
+
+* getTraversal: function returning the traversal context as available in
+                templates and scripts
+
 
 How Ophelia behaves
 +++++++++++++++++++
@@ -167,7 +185,7 @@ script, and executed. Trailing whitespace on the ending line is dropped; there
 may, however, be no leading whitespace.
 
 Each script is passed some information about the request and allowed to modify
-the template context, macros, and slots. Scripts may also import modules and
+the template context and macros. Scripts may also import modules and
 define functions and arbitrary variables. Those will be available to all
 scripts executed later.
 
@@ -183,10 +201,8 @@ There is an exception class defined by Ophelia and made available to scripts
 as oapi.StopTraversal (oapi being the namespace for Ophelia's programmers'
 interface). Raising oapi.StopTraversal in a script prevents more specific
 scripts from being executed and the current as well as more specific templates
-from being evaluated. The exception accepts a parameter which is used to fill
-the inner slot, possibly using the rest of the URL as input.
+from being evaluated. The exception accepts two optional parameters:
 
-Calling oapi.discardOuterTemplates() causes more general templates to be
-ignored, making the current template responsible for providing the outer
-HTML structure. This allows for switching the layout completely in the middle
-of traversal while using the context manipulations made so far.
+* content: str, used to fill the inner slot
+
+* use_template: bool, whether to use the current template, defaults to False

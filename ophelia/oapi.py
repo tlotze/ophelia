@@ -31,19 +31,5 @@ def getContext():
 def getRequest():
     return getScriptGlobals()["request"]
 
-def getSlots():
-    return getScriptGlobals()["slots"]
-
-def getMacros():
-    return getScriptGlobals()["macros"]
-
-def getTravPath():
-    return getScriptGlobals()["trav_path"]
-
-def getTravTail():
-    return getScriptGlobals()["trav_tail"]
-
-
-def discardOuterTemplates():
-    templates = getScriptGlobals["__templates__"]
-    del templates[:-1]
+def getTraversal():
+    return getScriptGlobals()["traversal"]
