@@ -54,19 +54,20 @@ def publish(path, root, request):
 
     # initialize the environment
     context = Namespace()
+    macros = Namespace()
     traversal = Namespace()
 
     script_globals = _ScriptGlobals()
     script_globals.update({
             "globals": lambda: script_globals,
             "context": context,
+            "macros": macros,
             "request": request,
             "traversal": traversal,
             })
 
     traversal.tail = tail
     traversal.stack = stack = []
-    traversal.macros = Namespace()
 
     # traverse the levels
     while True:
@@ -116,9 +117,9 @@ def publish(path, root, request):
                                   apache.APLOG_ERR)
                 raise
 
-            program, macros = parser.getCode()
+            program, macros_ = parser.getCode()
             stack.append((program, file_path))
-            traversal.macros.__dict__.update(macros)
+            macros.__dict__.update(macros_)
 
         # prepare the next traversal step, if any
         if tail:

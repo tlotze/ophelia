@@ -28,6 +28,9 @@ def getScriptGlobals():
 def getContext():
     return getScriptGlobals()["context"]
 
+def getMacros():
+    return getScriptGlobals()["macros"]
+
 def getRequest():
     return getScriptGlobals()["request"]
 

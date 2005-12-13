@@ -78,6 +78,8 @@ Script context
 
 * context: see above
 
+* macros: namespace of str, compiled macros encountered so far
+
 * request: the request object passed by mod_python
 
 * traversal: traversal context, a namespace carrying some variables internally
@@ -89,8 +91,6 @@ Script context
 
              stack: list of str pairs, compiled templates encountered so far,
                                        together with their file paths
-
-             macros: namespace of str, compiled macros encountered so far
 
              template: unicode, the decoded source of the current template
 
@@ -125,6 +125,9 @@ The interface contains the following members:
 
 * getContext: function returning the application-level context as available in
               templates and scripts
+
+* getMacros: function returning the template macros as available in templates
+             and scripts
 
 * getRequest: function returning the request
 
@@ -184,10 +187,10 @@ case, the region between the starting and ending lines is taken to be a Python
 script, and executed. Trailing whitespace on the ending line is dropped; there
 may, however, be no leading whitespace.
 
-Each script is passed some information about the request and allowed to modify
-the template context and macros. Scripts may also import modules and
-define functions and arbitrary variables. Those will be available to all
-scripts executed later.
+Each script is passed some information about the request and traversal
+internals and allowed to modify the template context and macros. Scripts may
+also import modules and define functions and arbitrary variables. Those will
+be available to all scripts executed later.
 
 On the way back from the page to the root, templates can use the values stored
 in the context through TALES expressions.
