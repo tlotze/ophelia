@@ -71,14 +71,14 @@ context: application-level context variables, modified by any relevant
 slots: output material filled into slots by more specific templates and
        scripts.
 
-       inner: the "magic" slot filled by evaluating the next more specific
-              template. Example use: <div tal:content="structure slots/inner">
-
-              Making this slot magic avoids writing any boiler-plate code at
-              all in run-of-the-mill templates and pages.
-
 macros: macros defined by any relevant templates and scripts, both more and
         less specific
+
+innerslot: the "magic" slot filled by evaluating the next more specific
+           template. Example use: <div tal:content="structure innerslot">
+
+           Making this slot magic avoids writing any boiler-plate code at
+           all in run-of-the-mill templates and pages.
 
 Script context
 --------------
@@ -98,9 +98,15 @@ oapi: Ophelia's application programmers' interface.
 
      request: the request
 
-     path: str, path traversed so far
+     slots: output material filled into slots by more specific templates and
+            scripts.
 
-     tail: tuple of str, path segments yet to traverse from here
+     macros: macros defined by any relevant templates and scripts, both more
+             and less specific
+
+     trav_path: str, path traversed so far
+
+     trav_tail: tuple of str, path segments yet to traverse from here
 
      discardOuterTemplates: see "controlling traversal" below
 
@@ -126,36 +132,44 @@ Caveat: For some reason, PHP files are not parsed correctly after Apache got
 How Ophelia works
 +++++++++++++++++
 
-Static templates
-----------------
+Template files
+--------------
 
-For each request, Ophelia looks for a number of templates. It takes one
-template named "pt" from each directory on the path from the site root to the
-page, and a final one for the page itself. The request is served if that final
-template is found, otherwise control is given back to Apache.
+For each request, Ophelia looks for a number of template files. It takes one
+file named "__init__" from each directory on the path from the site root to
+the page, and a final one for the page itself. The request is served if that
+final template is found, otherwise control is given back to Apache.
 
-The page is built by first putting the content of the page's template into a
-slot called "inner". Then each template on the way back from the page to the
-root is evaluated in turn, making the inner slot availably in the evaluation
-context and replacing it with the result after each step.
+The page is built by first putting the content of the page's template into the
+inner slot. Then each template on the way back from the page to the root is
+evaluated in turn, making the inner slot available in the evaluation context
+and replacing it with the result after each step.
 
 The result of processing the root template is served as the page.
 
-Dynamic templates
------------------
-
-The description of static templates was a bit simplistic in that even the most
-specific template, corresponding to the page itself, is evaluated as a
-template. The inner slot is empty in the beginning, but there may be other
+In general, the inner slot is empty in the beginning, but there may be other
 evaluation context already. Some is initialized by Ophelia itself. The rest
-can be set by Python scripts put in the template directory tree.
+can be set by Python scripts included in the template files.
 
-On the way forward from the site root to the page, Ophelia tries to execute
-a Python script named "py" in each directory, and finally one for the page.
-Each is passed some information about the request and allowed to modify the
-template context. Each script may also import modules, define functions and set
-values other than the context. They will be available to all scripts executed
-later.
+Character encoding and Python scripts
+-------------------------------------
+
+If a template file starts with the marker "<?ophelia", the following line or
+lines are examined. If the first line contains a Python-style encoding
+declaration, the encoding is assumed for both the script and the template in
+that file. Anything else on that line is ignored and the encoding defaults to
+iso-8859-15 (a.k.a. latin-9) if none is given.
+
+The region ends with the marker "?>" which may either end the first line of
+the file or start an otherwise empty line farther down the file. In the latter
+case, the region between the starting and ending lines is taken to be a Python
+script, and executed. Trailing whitespace on the ending line is dropped; there
+may, however, be no leading whitespace.
+
+Each script is passed some information about the request and allowed to modify
+the template context, macros, and slots. Scripts may also import modules and
+define functions and arbitrary variables. Those will be available to all
+scripts executed later.
 
 On the way back from the page to the root, templates can use the values stored
 in the context through TALES expressions.

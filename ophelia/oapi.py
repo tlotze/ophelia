@@ -31,6 +31,12 @@ def getContext():
 def getRequest():
     return getScriptGlobals()["request"]
 
+def getSlots():
+    return getScriptGlobals()["slots"]
+
+def getMacros():
+    return getScriptGlobals()["macros"]
+
 def getTravPath():
     return getScriptGlobals()["trav_path"]
 

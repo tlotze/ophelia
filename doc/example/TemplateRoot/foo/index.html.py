@@ -1,1 +1,0 @@
-context.title = "index page"
