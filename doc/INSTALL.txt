@@ -32,7 +32,6 @@ $SITE_PATH, add the following to your host's config:
            PythonPath "['$SITE_PATH/python'] + sys.path"
            PythonOption DocumentRoot $SITE_PATH/DocumentRoot
            PythonOption TemplateRoot $SITE_PATH/TemplateRoot
-           PythonOption SitePrefix http://my.address.tld/site-root
            AddHandler mod_python .html
            PythonHandler ophelia.apache |.html
            PythonDebug On

@@ -108,7 +108,7 @@ def publish(path, root, request):
                 break
 
         # compile the template, collect the macros
-        if template.strip():
+        if template:
             generator = TALGenerator(TALESEngine, xml=False,
                                      source_file=file_path)
             parser = HTMLTALParser(generator)

@@ -1,3 +1,9 @@
+<?ophelia
+
+request_options = request.get_options()
+context.site_prefix = request_options.get("SitePrefix", "")
+
+?>
 <!DOCTYPE html 
           PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
           "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
@@ -15,7 +21,7 @@
 
   <h1 tal:content="context/title" />
 
-  <div tal:replace="structure slots/inner" />
+  <div tal:replace="structure innerslot" />
 
 </body>
 
