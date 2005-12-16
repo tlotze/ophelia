@@ -37,3 +37,6 @@ def getRequest():
 
 def getTraversal():
     return getScriptGlobals()["traversal"]
+
+def getTalesNames():
+    return getScriptGlobals()["tales_names"]

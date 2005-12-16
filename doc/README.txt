@@ -94,6 +94,13 @@ Script context
 
              template: unicode, the decoded source of the current template
 
+* tales_names: basis for the namespace available to TALES expressions in
+               templates:
+
+               context: see above
+
+               macros: see above
+
 After running all scripts, the ophelia namespace will also hold the inner slot
 as it is built while interpreting the template stack. It will be a unicode
 string under the name "innerslot". This is so it may be accessed at
@@ -136,6 +143,9 @@ The interface contains the following members:
 
 * getTraversal: function returning the traversal context as available in
                 templates and scripts
+
+* getTalesNames: function returning the namespace that will be available to
+                 TALES expressions in templates
 
 
 How Ophelia behaves

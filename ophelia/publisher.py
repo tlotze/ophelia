@@ -58,6 +58,7 @@ def publish(path, root, request, log_error):
     context = Namespace()
     macros = Namespace()
     traversal = Namespace()
+    tales_names = Namespace()
 
     script_globals = _ScriptGlobals()
     script_globals.update({
@@ -66,10 +67,15 @@ def publish(path, root, request, log_error):
             "macros": macros,
             "request": request,
             "traversal": traversal,
+            "tales_names": tales_names,
             })
 
+    traversal.root = root
     traversal.tail = tail
     traversal.stack = stack = []
+
+    tales_names.context = context
+    tales_names.macros = macros
 
     # traverse the levels
     while True:
@@ -132,11 +138,8 @@ def publish(path, root, request, log_error):
         path = os.path.join(path, next)
 
     # interpret the templates
-    engine_ns = {
-        "context": context,
-        "macros": macros,
-        "innerslot": lambda: traversal.innerslot,
-        }
+    engine_ns = tales_names.__dict__
+    engine_ns["innerslot"] = lambda: traversal.innerslot
     engine_ns.update(TALESEngine.getBaseNames())
     engine_context = TALESEngine.getContext(engine_ns)
     out = StringIO(u"")
