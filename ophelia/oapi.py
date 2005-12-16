@@ -9,6 +9,7 @@ from ophelia import publisher
 # exceptions and classes
 
 StopTraversal = publisher.StopTraversal
+NotFound = publisher.NotFound
 
 Namespace = publisher.Namespace
 

@@ -9,9 +9,6 @@ from zope.tal.htmltalparser import HTMLTALParser
 from zope.tal.talgenerator import TALGenerator
 from zope.tal.talinterpreter import TALInterpreter
 
-# mod_python
-from mod_python import apache
-
 
 ########################
 # exceptions and classes
@@ -24,6 +21,11 @@ class StopTraversal(Exception):
     def __init__(self, content=None, use_template=False):
         self.content = content
         self.use_template = use_template
+
+
+class NotFound(Exception):
+    """Signals that Ophelia can't find all files needed by the request."""
+    pass
 
 
 class Namespace(object):
@@ -39,7 +41,7 @@ class _ScriptGlobals(dict):
 ###########
 # publisher
 
-def publish(path, root, request):
+def publish(path, root, request, log_error):
     """Ophelia's publisher building web pages from TAL page templates
 
     returns unicode, page content
@@ -73,7 +75,7 @@ def publish(path, root, request):
     while True:
         # some path house-keeping
         if not os.path.exists(path):
-            raise apache.SERVER_RETURN(apache.DECLINED)
+            raise NotFound
         elif os.path.isdir(path):
             file_path = os.path.join(path, "__init__")
             if not os.path.exists(file_path):
@@ -113,8 +115,7 @@ def publish(path, root, request):
             try:
                 parser.parseString(template)
             except:
-                request.log_error("Can't compile template at " + file_path,
-                                  apache.APLOG_ERR)
+                log_error("Can't compile template at " + file_path)
                 raise
 
             program, macros_ = parser.getCode()
@@ -147,8 +148,7 @@ def publish(path, root, request):
             TALInterpreter(program, macros, engine_context, out,
                            strictinsert=False)()
         except:
-            request.log_error("Can't interpret template at " + file_path,
-                              apache.APLOG_ERR)
+            log_error("Can't interpret template at " + file_path)
             raise
         else:
             traversal.innerslot = out.getvalue()

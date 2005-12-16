@@ -115,6 +115,9 @@ The interface contains the following members:
 
 * StopTraversal: exception, see "controlling traversal" below
 
+* NotFound: exception signalling that some file needed to respond to the
+            request was not found
+
 * Namespace: class whose instances do nothing but carry attributes
 
              Not using dictionaries here makes for more aesthetic code if

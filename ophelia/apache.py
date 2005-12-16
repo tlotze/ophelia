@@ -5,7 +5,7 @@ import os.path
 from mod_python import apache
 
 # project
-from ophelia.publisher import publish
+from ophelia.publisher import publish, NotFound
 
 
 # generic request handler
@@ -32,13 +32,13 @@ def handler(request):
     path = filename.replace(doc_root, root, 1)
 
     # get the content
+    def log_error(msg):
+        request.log_error(msg, apache.APLOG_ERR)
+
     try:
-        content = publish(path, root, request)
-    except apache.SERVER_RETURN, e:
-        if e[0] is apache.HTTP_NOT_FOUND:
-            raise apache.SERVER_RETURN(apache.DECLINED)
-        else:
-            raise
+        content = publish(path, root, request, log_error)
+    except NotFound:
+        return apache.DECLINED
 
     # deliver the page
     request.content_type = "text/html; charset=utf-8"
