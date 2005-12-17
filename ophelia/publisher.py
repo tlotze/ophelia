@@ -44,15 +44,24 @@ class _ScriptGlobals(dict):
 def publish(path, root, request, log_error):
     """Ophelia's publisher building web pages from TAL page templates
 
+    path: str, path to traverse from the template root, must start with '/',
+               end with '/' if directory, elements are separated by '/'
+    root: str, absolute file system path to the template root,
+               mustn't end with '/'
+    request: the request object
+    log_error: callable taking an error message as an argument
+
     returns unicode, page content
 
     may raise anything
     """
-    # create a list of path elements to walk
-    tail = []
-    while path != root:
-        path, next = os.path.split(path)
-        tail.insert(0, next)
+    # initialize file path parts and sanity check
+    path = os.path.abspath(path)
+    root = os.path.abspath(root)
+    current = ""
+    tail = path.split('/')
+    if tail[0]:
+        raise ValueError("Path must start with '/', got " + path)
 
     # initialize the environment
     context = Namespace()
@@ -70,6 +79,7 @@ def publish(path, root, request, log_error):
             "tales_names": tales_names,
             })
 
+    traversal.path = path
     traversal.root = root
     traversal.tail = tail
     traversal.stack = stack = []
@@ -78,29 +88,31 @@ def publish(path, root, request, log_error):
     tales_names.macros = macros
 
     # traverse the levels
-    while True:
-        # some path house-keeping
-        if not os.path.exists(path):
+    while tail:
+        # determine the next traversal step
+        next = tail.pop(0)
+        if not (next or tail):
+            next = "index.html"
+        current = os.path.join(current, next)
+
+        # try to find a file to read
+        file_path = os.path.join(root, current)
+        if not os.path.exists(file_path):
             raise NotFound
-        elif os.path.isdir(path):
-            file_path = os.path.join(path, "__init__")
+
+        isdir = os.path.isdir(file_path)
+        if isdir:
+            file_path = os.path.join(file_path, "__init__")
             if not os.path.exists(file_path):
-                file_path = None
-            have_dir = True
-        else:
-            file_path = path
-            have_dir = False
+                continue
 
         # get script and template
-        if file_path:
-            script, template = scriptAndTemplate(file(file_path).read())
-        else:
-            script = None
-            template = None
+        script, template = scriptAndTemplate(file(file_path).read())
 
         # manipulate the context
         if script:
-            traversal.path = path
+            traversal.isdir = isdir
+            traversal.current = current
             traversal.template = template
             try:
                 exec script in script_globals
@@ -128,22 +140,14 @@ def publish(path, root, request, log_error):
             stack.append((program, file_path))
             macros.__dict__.update(macros_)
 
-        # prepare the next traversal step, if any
-        if tail:
-            next = tail.pop(0)
-        elif have_dir:
-            next = "index.html"
-        else:
-            break
-        path = os.path.join(path, next)
-
-    # interpret the templates
+    # initialize the template environment
     engine_ns = tales_names.__dict__
     engine_ns["innerslot"] = lambda: traversal.innerslot
     engine_ns.update(TALESEngine.getBaseNames())
     engine_context = TALESEngine.getContext(engine_ns)
     out = StringIO(u"")
 
+    # interpret the templates
     while stack:
         program, file_path = stack.pop()
         out.truncate(0)

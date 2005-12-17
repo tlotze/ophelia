@@ -1,3 +1,5 @@
+from urlparse import urljoin
+
 from ophelia import oapi
 
 
@@ -7,27 +9,27 @@ class Navigation(oapi.Namespace):
     Registers with the TALES names as "nav".
     """
 
-    def __init__(self, site_prefix, here):
+    def __init__(self, site_prefix):
         oapi.getScriptGlobals()["__nav__"] = self
         oapi.getTalesNames().nav = self
 
         self.site_prefix = site_prefix
-        self.here = here
-        self.absolute_uri = site_prefix + here
+        self.uri = self.uriFromSite(oapi.getTraversal().path)
+        self.home = self.uriFromSite("/")
 
         self.breadcrumbs = []
         self.menu = {}
 
     def addBreadcrumb(self, title):
-        uri = self.getUri()
-        self.breadcrumbs.append((uri, title))
+        self.breadcrumbs.append((self.uriFromCurrent(), title))
 
-    def addMenu(self, entries):
-        uri = self.getUri()
-        self.menu[uri] = entries
+    def addMenu(self, entries, root_title=None):
+        self.menu[self.uriFromCurrent()] = (
+            [(self.uriFromCurrent(href), title) for href, title in entries],
+            root_title)
 
     def conditionalLink(self, href, title):
-        if href == self.here:
+        if href == self.uri:
             return title
         else:
             return '<a href="%s">%s</a>' % (href, title)
@@ -37,32 +39,49 @@ class Navigation(oapi.Namespace):
               for href, title in self.breadcrumbs]
         return sep.join(bc)
 
-    def displayMenu(self, uri=None, depth=3, root=None):
+    def displayMenu(self, depth=3, uri=None):
         lines = ["<dl>"]
-        if root:
-            lines.append("<dt>%s</dt>" % self.conditionalLink(uri, root))
-        if uri.endswith('/'):
-            uri = uri[:-1]
+        if uri is None:
+            uri = self.home
+        root_title = self.menu[uri][1]
+        if root_title:
+            lines.append("<dt>%s</dt>" % self.conditionalLink(
+                    self.uriFromPage(uri), root_title))
 
         def display(uri, deeper):
-            for href, title in self.menu[uri]:
+            for href, title in self.menu[uri][0]:
                 lines.append("<dt>%s</dt>" %
                              self.conditionalLink(href, title))
                 if deeper and href in self.menu:
                     lines.append("<dd><dl>")
                     display(href, deeper-1)
                     lines.append("</dl></dd>")
-        display(uri or nav.site_prefix, depth-1)
+        display(uri, depth-1)
 
         lines.append("</dl>")
         return '\n'.join(lines)
 
-    def getUri(self):
+    def uriFromCurrent(self, path=None):
         traversal = oapi.getTraversal()
-        path = traversal.path
-        root = traversal.root
-        return path.replace(root, self.site_prefix, 1)
+        uri = urljoin(self.site_prefix, traversal.current)
+        if path is not None:
+            uri = urljoin(uri, path)
+        elif traversal.isdir:
+            uri += "/"
+        return canonicalize(uri)
+
+    def uriFromSite(self, path):
+        return canonicalize(urljoin(self.site_prefix, path))
+
+    def uriFromPage(self, path):
+        return canonicalize(urljoin(self.uri, path))
 
 
 def getNav():
     return oapi.getScriptGlobals()["__nav__"]
+
+
+def canonicalize(uri):
+    if uri.endswith("/index.html"):
+        uri = uri[:-10]
+    return uri

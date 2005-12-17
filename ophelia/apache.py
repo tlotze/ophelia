@@ -27,9 +27,9 @@ def handler(request):
     if not filename.startswith(doc_root):
         return apache.DECLINED
 
-    # determine the template path
+    # determine the template root and path
     root = os.path.abspath(request_options["TemplateRoot"])
-    path = filename.replace(doc_root, root, 1)
+    path = filename[len(doc_root):]
 
     # get the content
     def log_error(msg):
