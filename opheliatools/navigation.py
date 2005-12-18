@@ -20,6 +20,9 @@ class Navigation(oapi.Namespace):
         self.breadcrumbs = []
         self.menu = {}
 
+    def clearBreadcrumbs(self):
+        del self.breadcrumbs[:]
+
     def addBreadcrumb(self, title):
         self.breadcrumbs.append((self.uriFromCurrent(), title))
 
@@ -64,10 +67,10 @@ class Navigation(oapi.Namespace):
     def uriFromCurrent(self, path=None):
         traversal = oapi.getTraversal()
         uri = urljoin(self.site_prefix, traversal.current)
+        if traversal.isdir:
+            uri += "/"
         if path is not None:
             uri = urljoin(uri, path)
-        elif traversal.isdir:
-            uri += "/"
         return canonicalize(uri)
 
     def uriFromSite(self, path):
