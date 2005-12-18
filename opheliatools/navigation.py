@@ -76,6 +76,9 @@ class Navigation(oapi.Namespace):
     def uriFromSite(self, path):
         return canonicalize(urljoin(self.site_prefix, path))
 
+    def uriFromHome(self, path):
+        return canonicalize(urljoin(self.home, path))
+
     def uriFromPage(self, path):
         return canonicalize(urljoin(self.uri, path))
 
