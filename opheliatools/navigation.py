@@ -9,13 +9,16 @@ class Navigation(oapi.Namespace):
     Registers with the TALES names as "nav".
     """
 
-    def __init__(self, site_prefix):
+    def __init__(self, site_prefix, home=None):
         oapi.getScriptGlobals()["__nav__"] = self
         oapi.getTalesNames().nav = self
 
         self.site_prefix = site_prefix
         self.uri = self.uriFromSite(oapi.getTraversal().path)
-        self.home = self.uriFromSite("/")
+        if home is None:
+            self.home = self.uriFromSite("/")
+        else:
+            self.home = home
 
         self.breadcrumbs = []
         self.menu = {}
