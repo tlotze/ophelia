@@ -29,8 +29,8 @@ class Navigation(oapi.Namespace):
     def addBreadcrumb(self, title):
         self.breadcrumbs.append((self.uriFromCurrent(), title))
 
-    def addMenu(self, entries, root_title=None):
-        self.menu[self.uriFromCurrent()] = (
+    def addMenu(self, entries, root_title=None, root=None):
+        self.menu[self.uriFromCurrent(root)] = (
             [(self.uriFromCurrent(href), title) for href, title in entries],
             root_title)
 
