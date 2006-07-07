@@ -94,6 +94,9 @@ Script context
 
              template: unicode, the decoded source of the current template
 
+             script_encoding, template_encoding: str, act as default encodings
+                              for any source files to be read yet
+
 * tales_names: basis for the namespace available to TALES expressions in
                templates:
 
@@ -188,17 +191,26 @@ can be set by Python scripts included in the template files.
 Character encoding and Python scripts
 -------------------------------------
 
-If a template file starts with the marker "<?ophelia", the following line or
-lines are examined. If the first line contains a Python-style encoding
-declaration, the encoding is assumed for both the script and the template in
-that file. Anything else on that line is ignored and the encoding defaults to
-iso-8859-15 (a.k.a. latin-9) if none is given.
+A template file may start with a Python script. In that case, the script is
+separated from the template by the first occurrence of an "<?xml?>" tag on a
+line of its own (except for whitespace left or right). If the template file
+contains only a Python script but not actually a template, put "<?xml?>" in
+its last line.
 
-The region ends with the marker "?>" which may either end the first line of
-the file or start an otherwise empty line farther down the file. In the latter
-case, the region between the starting and ending lines is taken to be a Python
-script, and executed. Trailing whitespace on the ending line is dropped; there
-may, however, be no leading whitespace.
+You can declare a character encoding both for the Python script and the
+template, and the two encodings may differ. To specify the Python encoding,
+just start the script with a Python style encoding declaration like this:
+# -*- coding: utf-8 -*-
+The template's encoding is determined by looking at the "<?xml?>" tag:
+<?xml coding="utf-8" ?>
+specifies UTF-8 encoding for the template. The tag itself will be stripped
+from the template and will not appear in the rendered page.
+
+You may also specify a default encoding for any scripts and templates to be
+read later during traversal. In a Python script, just do something like
+traversal.script_encoding = "utf-8"
+traversal.template_encoding = "utf-8"
+Failing such settings, the default encoding will be 7-bit ASCII.
 
 Each script is passed some information about the request and traversal
 internals and allowed to modify the template context and macros. Scripts may

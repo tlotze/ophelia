@@ -1,13 +1,15 @@
 # Python
 import os.path
 from StringIO import StringIO
-import re
 
 # Zope
 from zope.tales.engine import Engine as TALESEngine
 from zope.tal.htmltalparser import HTMLTALParser
 from zope.tal.talgenerator import TALGenerator
 from zope.tal.talinterpreter import TALInterpreter
+
+# Ophelia
+import ophelia, ophelia.template
 
 
 ########################
@@ -107,7 +109,8 @@ def publish(path, root, request, log_error):
                 continue
 
         # get script and template
-        script, template = scriptAndTemplate(file(file_path).read())
+        script, template = ophelia.template.split(file(file_path).read(),
+                                                  traversal)
 
         # manipulate the context
         if script:
@@ -163,42 +166,3 @@ def publish(path, root, request, log_error):
     # return the content
     content = traversal.innerslot.encode("utf-8")
     return content
-
-
-CODING_PATTERN = re.compile("coding[=:]\s*([-\w.]+)")
-
-def scriptAndTemplate(content):
-    """split file content into Python script and template
-
-    content: str
-
-    returns (unicode, unicode): Python script and template
-
-    may raise UnicodeDecodeError
-    may raise IndexError if <?ophelia ... ?> is not closed
-    """
-
-    coding = "iso-8859-15"
-    script = ""
-    template = content
-
-    if content.startswith("<?ophelia"):
-        lines = content.splitlines(True)
-
-        coding_declaration = lines.pop(0)
-        if not coding_declaration.rstrip().endswith("?>"):
-            script_lines = []
-            next = lines.pop(0)
-            while next.rstrip() != "?>":
-                script_lines.append(next)
-                next = lines.pop(0)
-            script = "".join(script_lines)
-        template = "".join(lines)
-
-        coding_match = CODING_PATTERN.search(coding_declaration)
-        if coding_match:
-            coding = coding_match.group(1)
-            if type(coding) == tuple:
-                coding = coding[0]
-
-    return script.decode(coding), template.decode(coding)

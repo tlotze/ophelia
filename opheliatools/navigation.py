@@ -3,15 +3,14 @@ from urlparse import urljoin
 from ophelia import oapi
 
 
-class Navigation(oapi.Namespace):
-    """Namespace for navigation info with methods for building menus.
+class Navigation(object):
+    """Stores navigation info, builds hierarchical and breadcrumb menus.
 
-    Registers with the TALES names as "nav".
+    Registers with the TALES names.
     """
 
-    def __init__(self, site_prefix, home=None):
-        oapi.getScriptGlobals()["__nav__"] = self
-        oapi.getTalesNames().nav = self
+    def __init__(self, site_prefix, tales_name="nav", home=None):
+        setattr(oapi.getTalesNames(), tales_name, self)
 
         self.site_prefix = site_prefix
         self.uri = self.uriFromSite(oapi.getTraversal().path)
@@ -84,10 +83,6 @@ class Navigation(oapi.Namespace):
 
     def uriFromPage(self, path):
         return canonicalize(urljoin(self.uri, path))
-
-
-def getNav():
-    return oapi.getScriptGlobals()["__nav__"]
 
 
 def canonicalize(uri):
