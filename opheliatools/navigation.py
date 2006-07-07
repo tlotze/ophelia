@@ -9,7 +9,7 @@ class Navigation(object):
     Registers with the TALES names.
     """
 
-    def __init__(self, site_prefix, tales_name="nav", home=None):
+    def __init__(self, site_prefix, home=None, tales_name="nav"):
         setattr(oapi.getTalesNames(), tales_name, self)
 
         self.site_prefix = site_prefix
