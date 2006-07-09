@@ -37,7 +37,8 @@ class Navigation(object):
         if href == self.uri:
             return title
         else:
-            return '<a href="%s">%s</a>' % (href, title)
+            return '<a href="%s" title="Nav: %s">%s</a>' % \
+                   (href, title, title)
 
     def displayBreadcrumbs(self, sep):
         bc = [self.conditionalLink(href, title)
