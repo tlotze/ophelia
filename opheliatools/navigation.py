@@ -22,6 +22,8 @@ class Navigation(object):
         self.breadcrumbs = []
         self.menu = {}
 
+        self.alt_langs = {}
+
     def clearBreadcrumbs(self):
         del self.breadcrumbs[:]
 
@@ -84,6 +86,11 @@ class Navigation(object):
 
     def uriFromPage(self, path):
         return canonicalize(urljoin(self.uri, path))
+
+    def altLangs(self, **kwargs):
+        for lang, path_seg in kwargs.iteritems():
+            self.alt_langs[lang] = canonicalize(urljoin(
+                    self.alt_langs.get(lang, "/"), path_seg))
 
 
 def canonicalize(uri):
