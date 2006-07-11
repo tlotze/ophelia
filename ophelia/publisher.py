@@ -70,6 +70,7 @@ def publish(path, root, request, log_error):
     macros = Namespace()
     traversal = Namespace()
     tales_names = Namespace()
+    request_headers = {}
 
     script_globals = _ScriptGlobals()
     script_globals.update({
@@ -79,6 +80,7 @@ def publish(path, root, request, log_error):
             "request": request,
             "traversal": traversal,
             "tales_names": tales_names,
+            "request_headers": request_headers,
             })
 
     traversal.path = path
@@ -163,6 +165,21 @@ def publish(path, root, request, log_error):
         else:
             traversal.innerslot = out.getvalue()
 
+    # set the request headers
+    for name, expression in request_headers.iteritems():
+        try:
+            compiled = TALESEngine.compile(expression)
+        except:
+            log_error("Can't compile header expression at " + file_path)
+            raise
+        try:
+            value = str(compiled(engine_context))
+        except:
+            log_error("Can't interpret header expression at " + file_path)
+            raise
+        request.headers_out[name] = value
+
     # return the content
-    content = traversal.innerslot.encode("utf-8")
+    content = """<?xml version="1.1" encoding="utf-8" ?>\n""" + \
+              traversal.innerslot.encode("utf-8")
     return content
