@@ -12,28 +12,40 @@ class Navigation(object):
     def __init__(self, site_prefix, home=None, tales_name="nav"):
         setattr(oapi.getTalesNames(), tales_name, self)
 
+        traversal = oapi.getTraversal()
+
         self.site_prefix = site_prefix
-        self.uri = self.uriFromSite(oapi.getTraversal().path)
+        self.uri = self.uriFromSite(traversal.path)
         if home is None:
             self.home = self.uriFromSite("/")
         else:
             self.home = home
 
-        self.breadcrumbs = []
+        self.history = traversal.history
+
+        self.breadcrumbs = {}
         self.menu = {}
 
         self.alt_langs = {}
-
-    def clearBreadcrumbs(self):
-        del self.breadcrumbs[:]
-
-    def addBreadcrumb(self, title):
-        self.breadcrumbs.append((self.uriFromCurrent(), title))
 
     def addMenu(self, entries, root_title=None, root=None):
         self.menu[self.uriFromCurrent(root)] = (
             [(self.uriFromCurrent(href), title) for href, title in entries],
             root_title)
+
+    def setBreadcrumb(self, title):
+        self.breadcrumbs[self.uriFromCurrent()] = title
+
+    def iterBreadcrumbs(self):
+        menu = {}
+        for path in self.history:
+            uri = self.uriFromSite(path)
+            title = self.breadcrumbs.get(uri) or menu.get(uri)
+            if title:
+                yield (uri, title)
+            menu = self.menu.get(uri, {})
+            if menu:
+                menu = dict(menu[0])
 
     def conditionalLink(self, href, title):
         if href == self.uri:
@@ -44,7 +56,7 @@ class Navigation(object):
 
     def displayBreadcrumbs(self, sep):
         bc = [self.conditionalLink(href, title)
-              for href, title in self.breadcrumbs]
+              for href, title in self.iterBreadcrumbs()]
         return sep.join(bc)
 
     def displayMenu(self, depth=3, uri=None):

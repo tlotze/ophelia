@@ -87,6 +87,7 @@ def publish(path, root, request, log_error):
     traversal.root = root
     traversal.tail = tail
     traversal.stack = stack = []
+    traversal.history = history = []
 
     tales_names.context = context
     tales_names.macros = macros
@@ -105,6 +106,8 @@ def publish(path, root, request, log_error):
             raise NotFound
 
         isdir = os.path.isdir(file_path)
+        history.append(current + (isdir and "/" or ""))
+
         if isdir:
             file_path = os.path.join(file_path, "__init__")
             if not os.path.exists(file_path):
