@@ -75,6 +75,7 @@ def publish(path, root, request, log_error):
     script_globals = _ScriptGlobals()
     script_globals.update({
             "globals": lambda: script_globals,
+            "log_error": log_error,
             "context": context,
             "macros": macros,
             "request": request,
@@ -119,6 +120,7 @@ def publish(path, root, request, log_error):
 
         # manipulate the context
         if script:
+            traversal.file_path = file_path
             traversal.isdir = isdir
             traversal.current = current
             traversal.template = template
