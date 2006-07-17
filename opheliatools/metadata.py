@@ -19,9 +19,7 @@ class MetaData(object):
     def __init__(self, tales_name="meta"):
         setattr(oapi.getTalesNames(), tales_name, self)
 
-        self.context = oapi.getContext()
-        if not hasattr(self.context, "innerslot"):
-            self.context.innerslot = u""
+        self.traversal = oapi.getContext()
 
         self._date = datetime.datetime.min
 
@@ -60,5 +58,5 @@ class MetaData(object):
         returns str
         """
         obj = md5.new()
-        obj.update(self.context.innerslot)
+        obj.update(getattr(self.traversal, "innerslot", u""))
         return HEX_ENCODER(obj.digest())[0]
