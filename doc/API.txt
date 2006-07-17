@@ -1,0 +1,126 @@
+Ophelia API and predefined script and template variables
+========================================================
+
+
+Page template context
+---------------------
+
+The context of a page template, i.e. the set of variables that can be accessed
+by TALES expressions, contains:
+
+* context: application-level context variables, modified by any relevant
+           scripts, both more and less specific
+
+* macros: macros defined by any relevant templates and loaded by scripts, both
+          more and less specific
+
+* innerslot: the "magic" slot filled by evaluating the next more specific
+             template. Example use: <div tal:content="structure innerslot">
+
+             Making this slot magic avoids writing any boilerplate code at
+             all in run-of-the-mill templates and pages.
+
+Script context
+--------------
+
+* context: see above
+
+* macros: namespace of str, compiled macros encountered so far
+
+* request: the request object passed by mod_python
+
+* traversal: traversal context, a namespace carrying some variables internally
+             used by Ophelia's traversal mechanism:
+
+             path: str, complete path to traverse from the template root
+
+             root: str, absolute file system path to template root
+
+             tail: list of str, path segments yet to traverse from here
+
+             stack: list of str pairs, compiled templates encountered so far,
+                                       together with their file paths
+
+             history: list of str, partial paths traversed (including the
+                      source file of the script being run) from template root,
+                      paths referring to directories have a trailing slash
+
+             file_path: str, absolute file system path to the source file of
+                        the script being run
+
+             isdir: bool, whether the current partial path refers to a
+                    directory
+
+             current: str, current partial path without trailing slash
+
+             template: unicode, the decoded source of the current template
+
+             script_encoding, template_encoding: str, act as default encodings
+                              for any source files to be read yet
+
+* tales_names: basis for the namespace available to TALES expressions in
+               templates:
+
+               context: see above
+
+               macros: see above
+
+* request_headers: dictionary mapping header names to TALES expressions that
+                   are executed in the template context after interpreting the
+                   templates
+
+* log_error: the error logging function used by the publisher, takes a str as
+             the only argument
+
+After running all scripts, the traversal namespace will also hold the inner
+slot as it is built while interpreting the template stack. It will be a
+unicode string under the name "innerslot". This is so it may be accessed at
+interpretation time by functions put in the context.
+
+
+Ophelia's application programmers' interface
+--------------------------------------------
+
+(This is a slight misnomer as you don't actually build applications with
+Ophelia. But "API" is a rather common term, let's use it to mean the end
+users' programming interface.)
+
+To use the interface in a script or Python module, do:
+
+from ophelia import oapi
+
+The interface contains the following members:
+
+* StopTraversal: exception, see "controlling traversal" below
+
+* NotFound: exception signalling that some file needed to respond to the
+            request was not found
+
+* Namespace: class whose instances do nothing but carry attributes
+
+             Not using dictionaries here makes for more aesthetic code if
+             nothing else.
+
+* getScriptGlobals: function returning the global namespace in which Ophelia
+                    executes all Python scripts of the current request
+
+* getLogError: function returning the error logging function used by the
+               publisher
+
+* getContext: function returning the application-level context as available in
+              templates and scripts
+
+* getMacros: function returning the template macros as available in templates
+             and scripts
+
+* getRequest: function returning the request
+
+* getTraversal: function returning the traversal context as available in
+                templates and scripts
+
+* getTalesNames: function returning the namespace that will be available to
+                 TALES expressions in templates
+
+* loadMacros: function loading METAL macros from the files passed as arguments
+              (file names relative to current file path) into the scripts' and
+              templates' "macros" namespace

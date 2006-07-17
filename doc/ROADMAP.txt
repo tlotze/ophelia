@@ -1,0 +1,55 @@
+Roadmap
+=======
+
+This document is to outline the defining features of Ophelia releases. It is
+not about schedules; Ophelia will be released whenever it is ready.
+
+At any time, bug fixes and features needed for particular web sites will go in
+whichever x.y.z releases require them, as well as maintainance releases of any
+later x.y releases.
+
+Except for the 0.x series, API backwards compatibility within each major
+release series will be given.
+
+
+0.1
+---
+
+The state in which Ophelia is able to host www.thomas-lotze.de for the first
+time, whatever the feature set and code quality.
+
+0.2
+---
+
+Internal usage of WSGI.
+
+0.3
+---
+
+A JPEG handler that builds pages from JPEG files which display the image along
+with comments and some EXIF data.
+
+1.0
+---
+
+The state in which the wishlist has been implemented completely for the first
+time and code and documentation are of satisfactory quality.
+
+The wishlist:
+
+- zero-boilerplate creation of web sites inlcuding
+  * hand-written XHTML pages
+  * pages generated from JPEG, PNG and PDF files
+  * overviews such as photo albums
+
+- flexible, little-overhead navigation infrastructure
+
+- straight-forward form submission infrastructure
+
+- internals following the WSGI standard, connecting to
+  * Apache/mod_python
+  * Twisted Web
+  * CGI
+  * CLI-based converter to static files
+
+- cataloging, local search infrastructure

@@ -1,7 +1,7 @@
 Ophelia
 =======
 
-Ophelia creates HTML pages from templates written in TAL, the Zope Template
+Ophelia creates XHTML pages from templates written in TAL, the Zope Template
 Attribute Language. It contains a request handler for the Apache2 web server.
 
 See INSTALL.txt for installation and configuration issues.
@@ -55,100 +55,7 @@ For Zope page templates, see
 For the mod_python API parts of which are accessible from templates and
 scripts, see <http://www.modpython.org/live/current/doc-html/>.
 
-Page template context
----------------------
-
-The context of a page template, i.e. the set of variables that can be accessed
-by TALES expressions, contains:
-
-* context: application-level context variables, modified by any relevant
-           scripts, both more and less specific
-
-* macros: macros defined by any relevant templates and scripts, both more and
-          less specific
-
-* innerslot: the "magic" slot filled by evaluating the next more specific
-             template. Example use: <div tal:content="structure innerslot">
-
-             Making this slot magic avoids writing any boiler-plate code at
-             all in run-of-the-mill templates and pages.
-
-Script context
---------------
-
-* context: see above
-
-* macros: namespace of str, compiled macros encountered so far
-
-* request: the request object passed by mod_python
-
-* traversal: traversal context, a namespace carrying some variables internally
-             used by Ophelia's traversal mechanism:
-
-             path: str, path traversed so far
-
-             tail: list of str, path segments yet to traverse from here
-
-             stack: list of str pairs, compiled templates encountered so far,
-                                       together with their file paths
-
-             template: unicode, the decoded source of the current template
-
-             script_encoding, template_encoding: str, act as default encodings
-                              for any source files to be read yet
-
-* tales_names: basis for the namespace available to TALES expressions in
-               templates:
-
-               context: see above
-
-               macros: see above
-
-After running all scripts, the ophelia namespace will also hold the inner slot
-as it is built while interpreting the template stack. It will be a unicode
-string under the name "innerslot". This is so it may be accessed at
-interpretation time by functions put in the context.
-
-
-Ophelia's application programmers' interface
---------------------------------------------
-
-(This is a slight misnomer as you don't actually build applications with
-Ophelia. But "API" is a rather common term, let's use it to mean the end
-users' programming interface.)
-
-To use the interface in a script or Python module, do:
-
-from ophelia import oapi
-
-The interface contains the following members:
-
-* StopTraversal: exception, see "controlling traversal" below
-
-* NotFound: exception signalling that some file needed to respond to the
-            request was not found
-
-* Namespace: class whose instances do nothing but carry attributes
-
-             Not using dictionaries here makes for more aesthetic code if
-             nothing else.
-
-* getScriptGlobals: function returning the global namespace in which Ophelia
-                    executes all Python scripts of the current request
-
-* getContext: function returning the application-level context as available in
-              templates and scripts
-
-* getMacros: function returning the template macros as available in templates
-             and scripts
-
-* getRequest: function returning the request
-
-* getTraversal: function returning the traversal context as available in
-                templates and scripts
-
-* getTalesNames: function returning the namespace that will be available to
-                 TALES expressions in templates
+For the Ophelia API and predefined script and template variables, see API.txt.
 
 
 How Ophelia behaves
