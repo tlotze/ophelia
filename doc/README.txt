@@ -2,7 +2,9 @@ Ophelia
 =======
 
 Ophelia creates XHTML pages from templates written in TAL, the Zope Template
-Attribute Language. It contains a request handler for the Apache2 web server.
+Attribute Language. It is designed to reduce code repetition to zero.
+
+At present, Ophelia contains a request handler for the Apache2 web server.
 
 See INSTALL.txt for installation and configuration issues.
 
@@ -17,35 +19,37 @@ Consider Ophelia as SSI on drugs. It's not fundamentally different, just a
 lot friendlier and more capable.
 
 Use Ophelia for sites where you basically write your HTML yourself, except
-that you can leave out the repetitive stuff. Leaving all of it out comes at a
-price: your site must follow a pattern for Ophelia to combine your templates
-the right way.
+that you need write the recurring stuff only once. Reducing repetition to zero
+comes at a price: your site must follow a pattern for Ophelia to combine your
+templates the right way.
 
 Consider your site's layout to be hierarchical: there's a common look to all
 your pages, sections have certain characteristics, and each page has unique
 content. It's crucial to Ophelia that this hierarchy reflects in the file
-system organization of your documents.
+system organization of your documents; how templates are nested is deduced
+from their places in the hierarchy of directories.
 
 Dynamic content
 ---------------
 
 Ophelia makes the Python language available for including dynamic content.
+Each template file may include a Python script. Python scripts and templates
+contributing to a page share a common set of variables to modify and use.
 
-Ophelia's content model works best if for each content object you publish,
-there is exactly one view: the page it is represented on. If you get content
+Ophelia's content model is very simple and works best if each content object
+you publish is its own view: the page it is represented on. If you get content
 from external resources anyway (e.g. a database or a version control
-repository), it's still OK to use Ophelia if there are multiple views per
-content object as long as the views of an object don't depend on the type of
-the object or even the object itself.
+repository), it's still OK to use Ophelia even with multiple views per content
+object as long as an object's views doesn't depend on the object's type or
+even the object itself.
 
-Trying to use Ophelia on a more complex site leads to applications that
-might just as well be written in PHP (except that Python is still the more
-beautiful language). Don't use Ophelia for sites that are actually web
+Trying to use Ophelia on a more complex site will lead to an ugly entanglement
+of logic and presentation. Don't use Ophelia for sites that are actually web
 interfaces to applications, content management systems and the like.
 
 
-How to write templates and scripts
-++++++++++++++++++++++++++++++++++
+Languages and APIs used in templates and scripts
+++++++++++++++++++++++++++++++++++++++++++++++++
 
 For the Python language, see <http://docs.python.org/>.
 
