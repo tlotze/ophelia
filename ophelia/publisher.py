@@ -90,6 +90,7 @@ def publish(path, root, request, log_error):
             "request_headers": request_headers,
             })
 
+    traversal.splitter = ophelia.template.Splitter(request)
     traversal.path = path
     traversal.root = root
     traversal.tail = tail
@@ -121,8 +122,7 @@ def publish(path, root, request, log_error):
                 continue
 
         # get script and template
-        script, template = ophelia.template.split(file(file_path).read(),
-                                                  traversal)
+        script, template = traversal.splitter(file(file_path).read())
 
         # manipulate the context
         if script:

@@ -63,7 +63,7 @@ def loadMacros(*args):
             log_error("Can't read macro file at " + file_path)
             raise
 
-        script, template_ = template.split(content, traversal)
+        script, template_ = traversal.splitter(content)
         if script:
             log_error("Macro file contains a script at " + file_path)
             raise ValueError("Macro file contains a script at " + file_path)
