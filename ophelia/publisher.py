@@ -30,9 +30,15 @@ class NotFound(Exception):
     pass
 
 
-class Namespace(object):
-    """Objects which exist only to carry attributes"""
-    pass
+class Namespace(dict):
+    """Objects which exist only to carry attributes.
+
+    Attributes are also accessible as mapping items.
+    """
+
+    def __init__(self, *args, **kwargs):
+        self.__dict__ = self
+        super(Namespace, self).__init__(*args, **kwargs)
 
 
 class _ScriptGlobals(dict):
@@ -148,11 +154,11 @@ def publish(path, root, request, log_error):
 
             program, macros_ = parser.getCode()
             stack.append((program, file_path))
-            macros.__dict__.update(macros_)
+            macros.update(macros_)
 
     # initialize the template environment
-    engine_ns = tales_names.__dict__
-    engine_ns["innerslot"] = lambda: traversal.innerslot
+    engine_ns = Namespace(tales_names)
+    engine_ns.innerslot = lambda: traversal.innerslot
     engine_ns.update(TALESEngine.getBaseNames())
     engine_context = TALESEngine.getContext(engine_ns)
     out = StringIO(u"")

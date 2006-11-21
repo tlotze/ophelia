@@ -79,4 +79,4 @@ def loadMacros(*args):
             raise
 
         program, macros_ = parser.getCode()
-        macros.__dict__.update(macros_)
+        macros.update(macros_)
