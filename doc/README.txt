@@ -119,9 +119,17 @@ from the template and will not appear in the rendered page.
 
 You may also specify a default encoding for any scripts and templates to be
 read later during traversal. In a Python script, just do something like
-traversal.script_encoding = "utf-8"
-traversal.template_encoding = "utf-8"
-Failing such settings, the default encoding will be 7-bit ASCII.
+traversal.splitter.script_encoding = "utf-8"
+traversal.splitter.template_encoding = "utf-8"
+
+A site-wide default may be set by adding Python options to the Apache
+configuration:
+
+    PythonOption ScriptEncoding "utf-8"
+    PythonOption TemplateEncoding "utf-8"
+
+Failing any of these settings for scripts or templates, the respective default
+encoding will be 7-bit ASCII.
 
 Each script is passed some information about the request and traversal
 internals and allowed to modify the template context and macros. Scripts may

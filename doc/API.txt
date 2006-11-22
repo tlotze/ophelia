@@ -55,8 +55,14 @@ Script context
 
              template: unicode, the decoded source of the current template
 
-             script_encoding, template_encoding: str, act as default encodings
-                              for any source files to be read yet
+             splitter: an object responsible for splitting an input file into
+                       script and template
+
+                       Attributes:
+
+                       script_encoding,
+                       template_encoding: str, act as default encodings for
+                                          any source files to be read yet
 
 * tales_names: basis for the namespace available to TALES expressions in
                templates:
@@ -98,8 +104,8 @@ The interface contains the following members:
 
 * Namespace: class whose instances do nothing but carry attributes
 
-             Not using dictionaries here makes for more aesthetic code if
-             nothing else.
+             Not using pure dictionaries here makes for more aesthetic code if
+             nothing else. Namespaces can still be accessed as dictionaries.
 
 * getScriptGlobals: function returning the global namespace in which Ophelia
                     executes all Python scripts of the current request
