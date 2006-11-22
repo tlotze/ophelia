@@ -71,9 +71,9 @@ Script context
 
                macros: see above
 
-* request_headers: dictionary mapping header names to TALES expressions that
-                   are executed in the template context after interpreting the
-                   templates
+* response_headers: dictionary mapping header names to TALES expressions that
+                    are executed in the template context after interpreting
+                    the templates
 
 * log_error: the error logging function used by the publisher, takes a str as
              the only argument

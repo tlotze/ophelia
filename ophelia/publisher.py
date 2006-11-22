@@ -76,18 +76,16 @@ def publish(path, root, request, log_error):
     macros = Namespace()
     traversal = Namespace()
     tales_names = Namespace()
-    request_headers = {}
+    response_headers = {}
 
-    script_globals = _ScriptGlobals()
-    script_globals.update({
-            "globals": lambda: script_globals,
+    script_globals = _ScriptGlobals({
             "log_error": log_error,
             "context": context,
             "macros": macros,
             "request": request,
             "traversal": traversal,
             "tales_names": tales_names,
-            "request_headers": request_headers,
+            "response_headers": response_headers,
             })
 
     traversal.splitter = ophelia.template.Splitter(request)
@@ -177,7 +175,7 @@ def publish(path, root, request, log_error):
             traversal.innerslot = out.getvalue()
 
     # set the request headers
-    for name, expression in request_headers.iteritems():
+    for name, expression in response_headers.iteritems():
         try:
             compiled = TALESEngine.compile(expression)
         except:
