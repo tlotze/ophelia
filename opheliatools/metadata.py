@@ -18,6 +18,7 @@ class MetaData(object):
 
     def __init__(self, tales_name="meta"):
         setattr(oapi.getTalesNames(), tales_name, self)
+        self.traversal = oapi.getTraversal()
         self._date = datetime.datetime.min
 
     def bumpDate(self, *args):
@@ -55,5 +56,5 @@ class MetaData(object):
         returns str
         """
         obj = md5.new()
-        obj.update(oapi.getTraversal().innerslot)
+        obj.update(self.traversal.innerslot)
         return HEX_ENCODER(obj.digest())[0]
