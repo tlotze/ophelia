@@ -1,5 +1,6 @@
 # Python
 import os.path
+import inspect
 from StringIO import StringIO
 
 # Zope
@@ -41,10 +42,6 @@ class Namespace(dict):
         super(Namespace, self).__init__(*args, **kwargs)
 
 
-class _ScriptGlobals(dict):
-    """Global variable dict for script calls."""
-    pass
-
 
 ###########
 # publisher
@@ -82,7 +79,8 @@ class Publisher(object):
         tales_names = Namespace()
         response_headers = {}
 
-        script_globals = _ScriptGlobals({
+        script_globals = {
+            "__publisher__": self,
                 "log_error": log_error,
                 "context": context,
                 "macros": macros,
@@ -90,7 +88,7 @@ class Publisher(object):
                 "traversal": traversal,
                 "tales_names": tales_names,
                 "response_headers": response_headers,
-                })
+                }
 
         traversal.splitter = ophelia.template.Splitter(request)
         traversal.path = path
@@ -196,3 +194,20 @@ class Publisher(object):
         content = """<?xml version="1.1" encoding="utf-8" ?>\n""" + \
                   traversal.innerslot.encode("utf-8")
         return content
+
+
+
+###########
+# functions
+
+def get_script_globals():
+    for frame_record in inspect.stack():
+        candidate = frame_record[0].f_globals
+        if "__publisher__" in candidate:
+            return candidate
+    else:
+        raise LookupError("Could not find script globals.")
+
+
+def get_publisher():
+    return get_script_globals()["__publisher__"]

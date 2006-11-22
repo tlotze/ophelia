@@ -1,6 +1,5 @@
 # Python
 import os
-import inspect
 
 # Zope
 from zope.tales.engine import Engine as TALESEngine
@@ -23,14 +22,7 @@ Namespace = publisher.Namespace
 ###########
 # functions
 
-def getScriptGlobals():
-    for frame_record in inspect.stack():
-        candidate = frame_record[0].f_globals
-        if type(candidate) == publisher._ScriptGlobals:
-            return candidate
-    else:
-        raise LookupError("Could not find script globals.")
-
+getScriptGlobals = publisher.get_script_globals
 
 def getLogError():
     return getScriptGlobals()["log_error"]
