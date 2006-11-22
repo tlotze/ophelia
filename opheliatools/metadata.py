@@ -56,5 +56,5 @@ class MetaData(object):
         returns str
         """
         obj = md5.new()
-        obj.update(self.traversal.innerslot)
+        obj.update(self.traversal.innerslot.encode("utf-8"))
         return HEX_ENCODER(obj.digest())[0]
