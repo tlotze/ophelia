@@ -5,7 +5,7 @@ import os.path
 from mod_python import apache
 
 # project
-from ophelia.publisher import publish, NotFound
+from ophelia.publisher import Publisher, NotFound
 
 
 # generic request handler
@@ -36,7 +36,7 @@ def handler(request):
         request.log_error(msg, apache.APLOG_ERR)
 
     try:
-        content = publish(path, root, request, log_error)
+        content = Publisher()(path, root, request, log_error)
     except NotFound:
         return apache.DECLINED
 
