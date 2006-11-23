@@ -1,5 +1,6 @@
 from urlparse import urljoin
 
+import ophelia.publisher
 from ophelia import oapi
 
 
@@ -12,16 +13,16 @@ class Navigation(object):
     def __init__(self, site_prefix, home=None, tales_name="nav"):
         setattr(oapi.getTalesNames(), tales_name, self)
 
-        traversal = oapi.getTraversal()
+        self.publisher = ophelia.publisher.get_publisher()
 
         self.site_prefix = site_prefix
-        self.uri = self.uriFromSite(traversal.path)
+        self.uri = self.uriFromSite(self.publisher.path)
         if home is None:
             self.home = self.uriFromSite("/")
         else:
             self.home = home
 
-        self.history = traversal.history
+        self.history = self.publisher.history
 
         self.breadcrumbs = {}
         self.menu = {}
@@ -82,9 +83,8 @@ class Navigation(object):
         return '\n'.join(lines)
 
     def uriFromCurrent(self, path=None):
-        traversal = oapi.getTraversal()
-        uri = urljoin(self.site_prefix, traversal.current)
-        if traversal.isdir:
+        uri = urljoin(self.site_prefix, self.publisher.current)
+        if self.publisher.isdir:
             uri += "/"
         if path is not None:
             uri = urljoin(uri, path)

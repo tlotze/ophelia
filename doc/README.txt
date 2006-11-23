@@ -119,8 +119,9 @@ from the template and will not appear in the rendered page.
 
 You may also specify a default encoding for any scripts and templates to be
 read later during traversal. In a Python script, just do something like
-traversal.splitter.script_encoding = "utf-8"
-traversal.splitter.template_encoding = "utf-8"
+
+    __publisher__.splitter.script_encoding = "utf-8"
+    __publisher__.splitter.template_encoding = "utf-8"
 
 A site-wide default may be set by adding Python options to the Apache
 configuration:

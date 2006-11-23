@@ -75,7 +75,6 @@ class Publisher(object):
         # initialize the environment
         context = Namespace()
         macros = Namespace()
-        traversal = Namespace()
         tales_names = Namespace()
         response_headers = {}
 
@@ -85,17 +84,16 @@ class Publisher(object):
                 "context": context,
                 "macros": macros,
                 "request": request,
-                "traversal": traversal,
                 "tales_names": tales_names,
                 "response_headers": response_headers,
                 }
 
-        traversal.splitter = ophelia.template.Splitter(request)
-        traversal.path = path
-        traversal.root = root
-        traversal.tail = tail
-        traversal.stack = stack = []
-        traversal.history = history = []
+        self.splitter = ophelia.template.Splitter(request)
+        self.path = path
+        self.root = root
+        self.tail = tail
+        self.stack = stack = []
+        self.history = history = []
 
         tales_names.context = context
         tales_names.macros = macros
@@ -122,23 +120,23 @@ class Publisher(object):
                     continue
 
             # get script and template
-            script, template = traversal.splitter(file(file_path).read())
+            script, template = self.splitter(file(file_path).read())
 
             # manipulate the context
             if script:
-                traversal.file_path = file_path
-                traversal.isdir = isdir
-                traversal.current = current
-                traversal.template = template
+                self.file_path = file_path
+                self.isdir = isdir
+                self.current = current
+                self.template = template
                 try:
                     exec script in script_globals
                 except StopTraversal, e:
                     if e.content is not None:
-                        traversal.innerslot = e.content
+                        self.innerslot = e.content
                     if not e.use_template:
-                        traversal.template = None
+                        self.template = None
                     del tail[:]
-                template = traversal.template
+                template = self.template
 
             # compile the template, collect the macros
             if template:
@@ -158,7 +156,7 @@ class Publisher(object):
 
         # initialize the template environment
         engine_ns = Namespace(tales_names)
-        engine_ns.innerslot = lambda: traversal.innerslot
+        engine_ns.innerslot = lambda: self.innerslot
         engine_ns.update(TALESEngine.getBaseNames())
         engine_context = TALESEngine.getContext(engine_ns)
         out = StringIO(u"")
@@ -174,7 +172,7 @@ class Publisher(object):
                 log_error("Can't interpret template at " + file_path)
                 raise
             else:
-                traversal.innerslot = out.getvalue()
+                self.innerslot = out.getvalue()
 
         # set the request headers
         for name, expression in response_headers.iteritems():
@@ -192,7 +190,7 @@ class Publisher(object):
 
         # return the content
         content = """<?xml version="1.1" encoding="utf-8" ?>\n""" + \
-                  traversal.innerslot.encode("utf-8")
+                  self.innerslot.encode("utf-8")
         return content
 
 

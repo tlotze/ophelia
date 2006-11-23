@@ -29,8 +29,8 @@ Script context
 
 * request: the request object passed by mod_python
 
-* traversal: traversal context, a namespace carrying some variables internally
-             used by Ophelia's traversal mechanism:
+* __publisher__: currently running Publisher instance, carrying some variables
+             internally used by Ophelia's traversal mechanism:
 
              path: str, complete path to traverse from the template root
 
@@ -78,10 +78,9 @@ Script context
 * log_error: the error logging function used by the publisher, takes a str as
              the only argument
 
-After running all scripts, the traversal namespace will also hold the inner
-slot as it is built while interpreting the template stack. It will be a
-unicode string under the name "innerslot". This is so it may be accessed at
-interpretation time by functions put in the context.
+After running all scripts, the publisher's "innerslot" attribute will hold the
+inner slot as it is built while interpreting the template stack. It will be a
+unicode string.
 
 
 The Ophelia publisher

@@ -7,13 +7,13 @@ from zope.tal.htmltalparser import HTMLTALParser
 from zope.tal.talgenerator import TALGenerator
 
 # project
-from ophelia import publisher, template
+import ophelia.publisher, ophelia.template
 
 
 ###########
 # functions
 
-getScriptGlobals = publisher.get_script_globals
+getScriptGlobals = ophelia.publisher.get_script_globals
 
 def getLogError():
     return getScriptGlobals()["log_error"]
@@ -27,26 +27,23 @@ def getMacros():
 def getRequest():
     return getScriptGlobals()["request"]
 
-def getTraversal():
-    return getScriptGlobals()["traversal"]
-
 def getTalesNames():
     return getScriptGlobals()["tales_names"]
 
 
 def loadMacros(*args):
-    traversal = getTraversal()
+    publisher = ophelia.publisher.get_publisher()
     macros = getMacros()
     log_error = getLogError()
     for name in args:
-        file_path = os.path.join(os.path.dirname(traversal.file_path), name)
+        file_path = os.path.join(os.path.dirname(publisher.file_path), name)
         try:
             content = file(file_path).read()
         except:
             log_error("Can't read macro file at " + file_path)
             raise
 
-        script, template_ = traversal.splitter(content)
+        script, template_ = publisher.splitter(content)
         if script:
             log_error("Macro file contains a script at " + file_path)
             raise ValueError("Macro file contains a script at " + file_path)
