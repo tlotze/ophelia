@@ -84,18 +84,14 @@ unicode string under the name "innerslot". This is so it may be accessed at
 interpretation time by functions put in the context.
 
 
-Ophelia's application programmers' interface
---------------------------------------------
+The Ophelia publisher
+---------------------
 
-(This is a slight misnomer as you don't actually build applications with
-Ophelia. But "API" is a rather common term, let's use it to mean the end
-users' programming interface.)
+To use the publisher or related functionality in a script or Python module:
 
-To use the interface in a script or Python module, do:
+import ophelia.publisher
 
-from ophelia import oapi
-
-The interface contains the following members:
+The module defines the following items:
 
 * StopTraversal: exception, see "controlling traversal" below
 
@@ -107,26 +103,11 @@ The interface contains the following members:
              Not using pure dictionaries here makes for more aesthetic code if
              nothing else. Namespaces can still be accessed as dictionaries.
 
-* getScriptGlobals: function returning the global namespace in which Ophelia
-                    executes all Python scripts of the current request
+* Publisher: an instance of this class is currently directing the execution of
+             scripts and assembly of the HTTP response.
 
-* getLogError: function returning the error logging function used by the
-               publisher
+* get_script_globals: function returning the global namespace in which Ophelia
+                      executes all Python scripts of the current request
 
-* getContext: function returning the application-level context as available in
-              templates and scripts
+* get_publisher: function returning the currently running Publisher instance
 
-* getMacros: function returning the template macros as available in templates
-             and scripts
-
-* getRequest: function returning the request
-
-* getTraversal: function returning the traversal context as available in
-                templates and scripts
-
-* getTalesNames: function returning the namespace that will be available to
-                 TALES expressions in templates
-
-* loadMacros: function loading METAL macros from the files passed as arguments
-              (file names relative to current file path) into the scripts' and
-              templates' "macros" namespace

@@ -10,15 +10,6 @@ from zope.tal.talgenerator import TALGenerator
 from ophelia import publisher, template
 
 
-########################
-# exceptions and classes
-
-StopTraversal = publisher.StopTraversal
-NotFound = publisher.NotFound
-
-Namespace = publisher.Namespace
-
-
 ###########
 # functions
 
