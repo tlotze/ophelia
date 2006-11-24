@@ -76,13 +76,12 @@ class Publisher(object):
         context = Namespace()
         self.macros = Namespace()
         tales_names = Namespace()
-        response_headers = {}
+        self.response_headers = {}
 
         script_globals = {
             "__publisher__": self,
                 "context": context,
                 "tales_names": tales_names,
-                "response_headers": response_headers,
                 }
 
         self.request = request
@@ -174,7 +173,7 @@ class Publisher(object):
                 self.innerslot = out.getvalue()
 
         # set the request headers
-        for name, expression in response_headers.iteritems():
+        for name, expression in self.response_headers.iteritems():
             try:
                 compiled = TALESEngine.compile(expression)
             except:
