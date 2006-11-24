@@ -145,11 +145,9 @@ Controlling traversal
 
 This is at the edge of Ophelia's scope.
 
-There is an exception class defined by Ophelia and made available to scripts
-as oapi.StopTraversal (oapi being the namespace for Ophelia's programmers'
-interface). Raising oapi.StopTraversal in a script prevents more specific
-scripts from being executed and the current as well as more specific templates
-from being evaluated. The exception accepts two optional parameters:
+Raising publisher.StopTraversal in a script prevents more specific scripts
+from being executed and the current as well as more specific templates from
+being evaluated. The exception accepts two optional parameters:
 
 * content: str, used to fill the inner slot
 
