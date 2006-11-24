@@ -97,6 +97,9 @@ class Navigation(object):
     def uriFromPage(self, path):
         return canonicalize(urljoin(self.uri, path))
 
+    def uriFromUri(self, uri, path):
+        return canonicalize(urljoin(uri, path))
+
     def altLangs(self, **kwargs):
         for lang, path_seg in kwargs.iteritems():
             self.alt_langs[lang] = canonicalize(
