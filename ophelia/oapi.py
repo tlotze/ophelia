@@ -24,9 +24,6 @@ def getContext():
 def getMacros():
     return getScriptGlobals()["macros"]
 
-def getRequest():
-    return getScriptGlobals()["request"]
-
 def getTalesNames():
     return getScriptGlobals()["tales_names"]
 

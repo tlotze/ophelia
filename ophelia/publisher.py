@@ -83,11 +83,11 @@ class Publisher(object):
                 "log_error": log_error,
                 "context": context,
                 "macros": macros,
-                "request": request,
                 "tales_names": tales_names,
                 "response_headers": response_headers,
                 }
 
+        self.request = request
         self.splitter = ophelia.template.Splitter(request)
         self.path = path
         self.root = root
