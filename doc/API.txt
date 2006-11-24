@@ -2,89 +2,97 @@ Ophelia API and predefined script and template variables
 ========================================================
 
 
+Script context
+--------------
+
+Scripts are successively run in a namespace freshly initialized by Ophelia
+with a single variable:
+
+* __publisher__: the currently running Publisher instance
+
+The publisher carries some variables internally used by Ophelia's traversal
+mechanism:
+
+* macros: namespace of str, compiled macros encountered so far
+
+* response_headers: dictionary mapping header names to TALES expressions that
+                    are executed in the template context after interpreting
+                    the templates
+
+* request: the request object passed by mod_python
+
+* log_error: the error logging function used  by the publisher, takes a str as
+             the only argument
+
+* splitter: splits an input file into script and template
+
+            Attributes:
+
+            script_encoding,
+            template_encoding: str, act as default encodings for any source
+                               files to be read yet
+
+* path: str, complete path to traverse from the template root
+
+* root: str, absolute file system path to template root
+
+* tail: list of str, path segments yet to traverse from here
+
+* stack: list of str pairs, compiled templates encountered so far, together
+         with their file paths
+
+* history: list of str, partial paths traversed (including the source file of
+           the script being run) from template root, paths referring to
+           directories have a trailing slash
+
+* file_path: str, absolute file system path to the source file of the script
+             being run
+
+* isdir: bool, whether the current partial path refers to a directory
+
+* current: str, current partial path without trailing slash
+
+* template: unicode, the decoded source of the current template
+
+
 Page template context
 ---------------------
 
 The context of a page template, i.e. the set of variables that can be accessed
 by TALES expressions, contains:
 
-* context: application-level context variables, modified by any relevant
-           scripts, both more and less specific
+* variables from the ZPT engine:
 
-* macros: macros defined by any relevant templates and loaded by scripts, both
-          more and less specific
+  - CONTEXTS
+  - nothing
+  - default
+  - repeat
+  - modules
+  - loop
 
-* innerslot: the "magic" slot filled by evaluating the next more specific
-             template. Example use: <div tal:content="structure innerslot">
+  For documentation, see
+  <http://www.zope.org/Documentation/Books/ZopeBook/2_6Edition/AppendixC.stx>.
 
-             Making this slot magic avoids writing any boilerplate code at
-             all in run-of-the-mill templates and pages.
+* variables added by Ophelia:
 
-Script context
---------------
+  - macros: Namespace of macros defined by any relevant templates and loaded
+            by scripts, both more and less specific
 
-* context: see above
+  - innerslot: unicode, the "magic" slot filled by evaluating the next more
+               specific template. Example use:
+               <div tal:content="structure innerslot">
 
-* __publisher__: currently running Publisher instance, carrying some variables
-             internally used by Ophelia's traversal mechanism:
+               Making this slot magic avoids writing any boilerplate code at
+               all in run-of-the-mill templates and pages.
 
-             request: the request object passed by mod_python
+* all variables in the script context
 
-             log_error: the error logging function used by the publisher,
-                        takes a str as the only argument
-
-             path: str, complete path to traverse from the template root
-
-             root: str, absolute file system path to template root
-
-             tail: list of str, path segments yet to traverse from here
-
-             stack: list of str pairs, compiled templates encountered so far,
-                                       together with their file paths
-
-             history: list of str, partial paths traversed (including the
-                      source file of the script being run) from template root,
-                      paths referring to directories have a trailing slash
-
-             file_path: str, absolute file system path to the source file of
-                        the script being run
-
-             isdir: bool, whether the current partial path refers to a
-                    directory
-
-             current: str, current partial path without trailing slash
-
-             template: unicode, the decoded source of the current template
-
-             splitter: an object responsible for splitting an input file into
-                       script and template
-
-                       Attributes:
-
-                       script_encoding,
-                       template_encoding: str, act as default encodings for
-                                          any source files to be read yet
-
-             macros: namespace of str, compiled macros encountered so far
-
-* tales_names: basis for the namespace available to TALES expressions in
-               templates:
-
-               context: see above
-
-               macros: see above
-
-* response_headers: dictionary mapping header names to TALES expressions that
-                    are executed in the template context after interpreting
-                    the templates
-
-After running all scripts, the publisher's "innerslot" attribute will hold the
-inner slot as it is built while interpreting the template stack. It will be a
-unicode string.
+Script variables using the same name as a variable defined by ZPT or Ophelia
+will override that variable.
 
 
-The Ophelia publisher
----------------------
+The publisher module
+--------------------
 
 To use the publisher or related functionality in a script or Python module:
 
@@ -105,8 +113,21 @@ The module defines the following items:
 * Publisher: an instance of this class is currently directing the execution of
              scripts and assembly of the HTTP response.
 
-* get_script_globals: function returning the global namespace in which Ophelia
-                      executes all Python scripts of the current request
+* get_context: function returning the global namespace in which Ophelia
+               executes all Python scripts of the current request
 
 * get_publisher: function returning the currently running Publisher instance
 
+
+Controlling traversal
+---------------------
+
+This is at the edge of Ophelia's scope.
+
+Raising publisher.StopTraversal in a script prevents more specific scripts
+from being executed and the current as well as more specific templates from
+being evaluated. The exception accepts two optional parameters:
+
+* content: str, used to fill the inner slot
+
+* use_template: bool, whether to use the current template, defaults to False

@@ -11,7 +11,6 @@ class Navigation(object):
 
     def __init__(self, site_prefix, home=None, tales_name="nav"):
         self.publisher = ophelia.publisher.get_publisher()
-        self.publisher.tales_names[tales_name] = self
 
         self.site_prefix = site_prefix
         self.uri = self.uriFromSite(self.publisher.path)

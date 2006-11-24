@@ -73,19 +73,8 @@ class Publisher(object):
             raise ValueError("Path must start with '/', got " + path)
 
         # initialize the environment
-        context = Namespace()
         self.macros = Namespace()
-        self.tales_names = Namespace(
-            context = context,
-            macros = self.macros,
-            )
         self.response_headers = {}
-
-        script_globals = {
-            "__publisher__": self,
-                "context": context,
-                }
-
         self.request = request
         self.log_error = log_error
         self.splitter = ophelia.template.Splitter(request)
@@ -94,6 +83,11 @@ class Publisher(object):
         self.tail = tail
         self.stack = stack = []
         self.history = history = []
+
+        context = Namespace(
+            __publisher__=self,
+            )
+        context.context = context
 
         # traverse the levels
         while tail:
@@ -126,7 +120,7 @@ class Publisher(object):
                 self.current = current
                 self.template = template
                 try:
-                    exec script in script_globals
+                    exec script in context
                 except StopTraversal, e:
                     if e.content is not None:
                         self.innerslot = e.content
@@ -152,9 +146,12 @@ class Publisher(object):
                 self.macros.update(macros)
 
         # initialize the template environment
-        engine_ns = Namespace(self.tales_names)
-        engine_ns.innerslot = lambda: self.innerslot
+        engine_ns = Namespace(
+            innerslot=lambda: self.innerslot,
+            macros=self.macros,
+            )
         engine_ns.update(TALESEngine.getBaseNames())
+        engine_ns.update(context)
         engine_context = TALESEngine.getContext(engine_ns)
         out = StringIO(u"")
 
@@ -222,14 +219,14 @@ class Publisher(object):
 ###########
 # functions
 
-def get_script_globals():
+def get_context():
     for frame_record in inspect.stack():
         candidate = frame_record[0].f_globals
         if "__publisher__" in candidate:
             return candidate
     else:
-        raise LookupError("Could not find script globals.")
+        raise LookupError("Could not find context namespace.")
 
 
 def get_publisher():
-    return get_script_globals()["__publisher__"]
+    return get_context()["__publisher__"]

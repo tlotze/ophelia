@@ -25,9 +25,9 @@ templates the right way.
 
 Consider your site's layout to be hierarchical: there's a common look to all
 your pages, sections have certain characteristics, and each page has unique
-content. It's crucial to Ophelia that this hierarchy reflects in the file
-system organization of your documents; how templates are nested is deduced
-from their places in the hierarchy of directories.
+content. It's crucial to Ophelia that this hierarchy reflect in the file
+system organization of your documents; how templates combine is deduced from
+their places in the hierarchy of directories.
 
 Dynamic content
 ---------------
@@ -40,8 +40,8 @@ Ophelia's content model is very simple and works best if each content object
 you publish is its own view: the page it is represented on. If you get content
 from external resources anyway (e.g. a database or a version control
 repository), it's still OK to use Ophelia even with multiple views per content
-object as long as an object's views doesn't depend on the object's type or
-even the object itself.
+object as long as an object's views don't depend on the object's type or even
+the object itself.
 
 Trying to use Ophelia on a more complex site will lead to an ugly entanglement
 of logic and presentation. Don't use Ophelia for sites that are actually web
@@ -88,25 +88,36 @@ file named "__init__" from each directory on the path from the site root to
 the page, and a final one for the page itself. The request is served if that
 final template is found, otherwise control is given back to Apache.
 
-The page is built by first putting the content of the page's template into the
-inner slot. Then each template on the way back from the page to the root is
-evaluated in turn, making the inner slot available in the evaluation context
-and replacing it with the result after each step.
+When building the page, the page's template is evaluated and its content
+stored in what is called the inner slot. Then each template on the way back
+from the page to the root is evaluated in turn and may include the current
+content of the inner slot. The result is stored in the inner slot after each
+step.
 
 The result of processing the root template is served as the page.
 
-In general, the inner slot is empty in the beginning, but there may be other
-evaluation context already. Some is initialized by Ophelia itself. The rest
-can be set by Python scripts included in the template files.
+Python scripts
+--------------
 
-Character encoding and Python scripts
--------------------------------------
-
-A template file may start with a Python script. In that case, the script is
+Each template file may start with a Python script. In that case, the script is
 separated from the template by the first occurrence of an "<?xml?>" tag on a
 line of its own (except for whitespace left or right). If the template file
 contains only a Python script but not actually a template, put "<?xml?>" in
 its last line.
+
+Python scripts are executed in order while traversing from the site root to
+the page. They are run in the same namespace of variables that is later used
+as the evaluation context of the templates. Variables that are set by a Python
+script may be used and modified by any scripts run later, as well as TALES
+expressions used in the templates.
+
+The namespace is initialized by Ophelia with a single variable, __publisher__,
+that references the publisher object. Thus, scripts have access to request
+details and traversal internals. In addition to setting variables, scripts may
+also import modules and define functions.
+
+Character encoding
+------------------
 
 You can declare a character encoding both for the Python script and the
 template, and the two encodings may differ. To specify the Python encoding,
@@ -123,7 +134,7 @@ read later during traversal. In a Python script, just do something like
     __publisher__.splitter.script_encoding = "utf-8"
     __publisher__.splitter.template_encoding = "utf-8"
 
-A site-wide default may be set by adding Python options to the Apache
+A site-wide default can be set by adding Python options to the Apache
 configuration:
 
     PythonOption ScriptEncoding "utf-8"
@@ -131,24 +142,3 @@ configuration:
 
 Failing any of these settings for scripts or templates, the respective default
 encoding will be 7-bit ASCII.
-
-Each script is passed some information about the request and traversal
-internals and allowed to modify the template context and macros. Scripts may
-also import modules and define functions and arbitrary variables. Those will
-be available to all scripts executed later.
-
-On the way back from the page to the root, templates can use the values stored
-in the context through TALES expressions.
-
-Controlling traversal
----------------------
-
-This is at the edge of Ophelia's scope.
-
-Raising publisher.StopTraversal in a script prevents more specific scripts
-from being executed and the current as well as more specific templates from
-being evaluated. The exception accepts two optional parameters:
-
-* content: str, used to fill the inner slot
-
-* use_template: bool, whether to use the current template, defaults to False

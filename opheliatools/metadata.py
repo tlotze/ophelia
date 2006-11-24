@@ -18,7 +18,6 @@ class MetaData(object):
 
     def __init__(self, tales_name="meta"):
         self.publisher = ophelia.publisher.get_publisher()
-        self.publisher.tales_names[tales_name] = self
         self._date = datetime.datetime.min
 
     def bumpDate(self, *args):
