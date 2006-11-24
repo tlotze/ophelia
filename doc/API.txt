@@ -25,12 +25,13 @@ Script context
 
 * context: see above
 
-* macros: namespace of str, compiled macros encountered so far
-
 * __publisher__: currently running Publisher instance, carrying some variables
              internally used by Ophelia's traversal mechanism:
 
              request: the request object passed by mod_python
+
+             log_error: the error logging function used by the publisher,
+                        takes a str as the only argument
 
              path: str, complete path to traverse from the template root
 
@@ -64,6 +65,8 @@ Script context
                        template_encoding: str, act as default encodings for
                                           any source files to be read yet
 
+             macros: namespace of str, compiled macros encountered so far
+
 * tales_names: basis for the namespace available to TALES expressions in
                templates:
 
@@ -74,9 +77,6 @@ Script context
 * response_headers: dictionary mapping header names to TALES expressions that
                     are executed in the template context after interpreting
                     the templates
-
-* log_error: the error logging function used by the publisher, takes a str as
-             the only argument
 
 After running all scripts, the publisher's "innerslot" attribute will hold the
 inner slot as it is built while interpreting the template stack. It will be a

@@ -10,7 +10,7 @@ from zope.tal.talgenerator import TALGenerator
 from zope.tal.talinterpreter import TALInterpreter
 
 # Ophelia
-import ophelia, ophelia.template
+import ophelia.template
 
 
 ########################
@@ -74,20 +74,19 @@ class Publisher(object):
 
         # initialize the environment
         context = Namespace()
-        macros = Namespace()
+        self.macros = Namespace()
         tales_names = Namespace()
         response_headers = {}
 
         script_globals = {
             "__publisher__": self,
-                "log_error": log_error,
                 "context": context,
-                "macros": macros,
                 "tales_names": tales_names,
                 "response_headers": response_headers,
                 }
 
         self.request = request
+        self.log_error = log_error
         self.splitter = ophelia.template.Splitter(request)
         self.path = path
         self.root = root
@@ -96,7 +95,7 @@ class Publisher(object):
         self.history = history = []
 
         tales_names.context = context
-        tales_names.macros = macros
+        tales_names.macros = self.macros
 
         # traverse the levels
         while tail:
@@ -150,9 +149,9 @@ class Publisher(object):
                     log_error("Can't compile template at " + file_path)
                     raise
 
-                program, macros_ = parser.getCode()
+                program, macros = parser.getCode()
                 stack.append((program, file_path))
-                macros.update(macros_)
+                self.macros.update(macros)
 
         # initialize the template environment
         engine_ns = Namespace(tales_names)
@@ -166,7 +165,7 @@ class Publisher(object):
             program, file_path = stack.pop()
             out.truncate(0)
             try:
-                TALInterpreter(program, macros, engine_context, out,
+                TALInterpreter(program, self.macros, engine_context, out,
                                strictinsert=False)()
             except:
                 log_error("Can't interpret template at " + file_path)
@@ -193,6 +192,33 @@ class Publisher(object):
                   self.innerslot.encode("utf-8")
         return content
 
+    def load_macros(self, *args):
+        for name in args:
+            file_path = os.path.join(os.path.dirname(self.file_path), name)
+            try:
+                content = file(file_path).read()
+            except:
+                self.log_error("Can't read macro file at " + file_path)
+                raise
+
+            script, template = self.splitter(content)
+            if script:
+                self.log_error("Macro file contains a script at " + file_path)
+                raise ValueError(
+                    "Macro file contains a script at " + file_path)
+
+            generator = TALGenerator(TALESEngine, xml=False,
+                                     source_file=file_path)
+            parser = HTMLTALParser(generator)
+
+            try:
+                parser.parseString(template)
+            except:
+                self.log_error("Can't compile template at " + file_path)
+                raise
+
+            program, macros = parser.getCode()
+            self.macros.update(macros)
 
 
 ###########
