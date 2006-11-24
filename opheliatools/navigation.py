@@ -1,7 +1,6 @@
 from urlparse import urljoin
 
 import ophelia.publisher
-from ophelia import oapi
 
 
 class Navigation(object):
@@ -11,9 +10,8 @@ class Navigation(object):
     """
 
     def __init__(self, site_prefix, home=None, tales_name="nav"):
-        setattr(oapi.getTalesNames(), tales_name, self)
-
         self.publisher = ophelia.publisher.get_publisher()
+        self.publisher.tales_names[tales_name] = self
 
         self.site_prefix = site_prefix
         self.uri = self.uriFromSite(self.publisher.path)

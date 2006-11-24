@@ -75,13 +75,15 @@ class Publisher(object):
         # initialize the environment
         context = Namespace()
         self.macros = Namespace()
-        tales_names = Namespace()
+        self.tales_names = Namespace(
+            context = context,
+            macros = self.macros,
+            )
         self.response_headers = {}
 
         script_globals = {
             "__publisher__": self,
                 "context": context,
-                "tales_names": tales_names,
                 }
 
         self.request = request
@@ -92,9 +94,6 @@ class Publisher(object):
         self.tail = tail
         self.stack = stack = []
         self.history = history = []
-
-        tales_names.context = context
-        tales_names.macros = self.macros
 
         # traverse the levels
         while tail:
@@ -153,7 +152,7 @@ class Publisher(object):
                 self.macros.update(macros)
 
         # initialize the template environment
-        engine_ns = Namespace(tales_names)
+        engine_ns = Namespace(self.tales_names)
         engine_ns.innerslot = lambda: self.innerslot
         engine_ns.update(TALESEngine.getBaseNames())
         engine_context = TALESEngine.getContext(engine_ns)

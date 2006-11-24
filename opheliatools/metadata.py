@@ -3,7 +3,6 @@ import md5
 import codecs
 
 import ophelia.publisher
-from ophelia import oapi
 
 
 RFC2822_FORMAT = "%a, %d %b %Y %H:%M:%S GMT"
@@ -18,8 +17,8 @@ class MetaData(object):
     """
 
     def __init__(self, tales_name="meta"):
-        setattr(oapi.getTalesNames(), tales_name, self)
         self.publisher = ophelia.publisher.get_publisher()
+        self.publisher.tales_names[tales_name] = self
         self._date = datetime.datetime.min
 
     def bumpDate(self, *args):
