@@ -27,10 +27,10 @@ Script context
 
 * macros: namespace of str, compiled macros encountered so far
 
-* request: the request object passed by mod_python
-
 * __publisher__: currently running Publisher instance, carrying some variables
              internally used by Ophelia's traversal mechanism:
+
+             request: the request object passed by mod_python
 
              path: str, complete path to traverse from the template root
 
