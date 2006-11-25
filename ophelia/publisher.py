@@ -50,8 +50,13 @@ class Publisher(object):
     """Ophelia's publisher building web pages from TAL page templates
     """
 
-    def __call__(self, path, root, request, log_error):
-        """Publish the resource at path.
+    innerslot = None
+    tales_context = None
+    content = None
+    compiled_headers = None
+
+    def __init__(self, path, root, request, log_error):
+        """Set up the publisher for traversing path.
 
         path: str, path to traverse from the template root, starts with '/',
                    ends '/' if directory, elements are separated by '/'
@@ -60,36 +65,48 @@ class Publisher(object):
         request: the request object
         log_error: callable taking an error message as an argument
 
-        returns unicode, page content
-
-        may raise anything
+        may raise ValueError
         """
         # initialize file path parts and sanity check
-        path = os.path.abspath(path)
-        root = os.path.abspath(root)
-        current = ""
-        tail = path.split('/')
-        if tail[0]:
+        if not path.startswith('/'):
             raise ValueError("Path must start with '/', got " + path)
 
-        # initialize the environment
+        self.path = os.path.abspath(path)
+        self.root = os.path.abspath(root)
+        self.tail = self.path.split('/')
+
+        # initialize self
+        self.context = Namespace(
+            __publisher__=self,
+            )
         self.macros = Namespace()
         self.response_headers = {}
         self.request = request
         self.log_error = log_error
         self.splitter = ophelia.template.Splitter(request)
-        self.path = path
-        self.root = root
-        self.tail = tail
-        self.stack = stack = []
-        self.history = history = []
+        self.stack = []
+        self.history = []
 
-        context = Namespace(
-            __publisher__=self,
-            )
-        context.context = context
+    def __call__(self):
+        """Publish the resource at path.
 
-        # traverse the levels
+        returns (dict, unicode), response headers and page content
+
+        may raise anything
+        """
+        self.traverse()
+        self.set_tales_context()
+
+        self.interpret_templates()
+        self.build_content()
+
+        self.build_headers()
+
+        return self.compiled_headers, self.content
+
+    def traverse(self):
+        tail = self.tail
+        current = ""
         while tail:
             # determine the next traversal step
             next = tail.pop(0)
@@ -98,12 +115,12 @@ class Publisher(object):
             current = os.path.join(current, next)
 
             # try to find a file to read
-            file_path = os.path.join(root, current)
+            file_path = os.path.join(self.root, current)
             if not os.path.exists(file_path):
                 raise NotFound
 
             isdir = os.path.isdir(file_path)
-            history.append(current + (isdir and "/" or ""))
+            self.history.append(current + (isdir and "/" or ""))
 
             if isdir:
                 file_path = os.path.join(file_path, "__init__")
@@ -120,7 +137,7 @@ class Publisher(object):
                 self.current = current
                 self.template = template
                 try:
-                    exec script in context
+                    exec script in self.context
                 except StopTraversal, e:
                     if e.content is not None:
                         self.innerslot = e.content
@@ -138,54 +155,57 @@ class Publisher(object):
                 try:
                     parser.parseString(template)
                 except:
-                    log_error("Can't compile template at " + file_path)
+                    self.log_error("Can't compile template at " + file_path)
                     raise
 
                 program, macros = parser.getCode()
-                stack.append((program, file_path))
+                self.stack.append((program, file_path))
                 self.macros.update(macros)
 
-        # initialize the template environment
-        engine_ns = Namespace(
+    def set_tales_context(self):
+        tales_ns = Namespace(
             innerslot=lambda: self.innerslot,
             macros=self.macros,
             )
-        engine_ns.update(TALESEngine.getBaseNames())
-        engine_ns.update(context)
-        engine_context = TALESEngine.getContext(engine_ns)
+        tales_ns.update(TALESEngine.getBaseNames())
+        tales_ns.update(self.context)
+        self.tales_context = TALESEngine.getContext(tales_ns)
+
+    def interpret_templates(self):
         out = StringIO(u"")
 
-        # interpret the templates
-        while stack:
-            program, file_path = stack.pop()
+        while self.stack:
+            program, file_path = self.stack.pop()
             out.truncate(0)
             try:
-                TALInterpreter(program, self.macros, engine_context, out,
+                TALInterpreter(program, self.macros, self.tales_context, out,
                                strictinsert=False)()
             except:
-                log_error("Can't interpret template at " + file_path)
+                self.log_error("Can't interpret template at " + file_path)
                 raise
             else:
                 self.innerslot = out.getvalue()
 
-        # set the request headers
+    def build_headers(self):
+        self.compiled_headers = {}
+
         for name, expression in self.response_headers.iteritems():
             try:
                 compiled = TALESEngine.compile(expression)
             except:
-                log_error("Can't compile header expression at " + file_path)
+                self.log_error("Can't compile header expression at " +
+                               file_path)
                 raise
             try:
-                value = str(compiled(engine_context))
+                value = str(compiled(self.tales_context))
             except:
                 log_error("Can't interpret header expression at " + file_path)
                 raise
-            request.headers_out[name] = value
+            self.compiled_headers[name] = value
 
-        # return the content
-        content = """<?xml version="1.1" encoding="utf-8" ?>\n""" + \
-                  self.innerslot.encode("utf-8")
-        return content
+    def build_content(self):
+        self.content = """<?xml version="1.1" encoding="utf-8" ?>\n""" + \
+                       self.innerslot.encode("utf-8")
 
     def load_macros(self, *args):
         for name in args:

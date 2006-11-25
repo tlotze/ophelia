@@ -35,14 +35,16 @@ def handler(request):
     def log_error(msg):
         request.log_error(msg, apache.APLOG_ERR)
 
+    publisher = Publisher(path, root, request, log_error)
     try:
-        content = Publisher()(path, root, request, log_error)
+        response_headers, content = publisher()
     except NotFound:
         return apache.DECLINED
 
     # deliver the page
     request.content_type = "text/html; charset=utf-8"
     request.set_content_length(len(content))
+    request.headers_out.update(response_headers)
 
     if request.header_only:
         request.write("")

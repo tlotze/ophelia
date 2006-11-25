@@ -13,6 +13,8 @@ with a single variable:
 The publisher carries some variables internally used by Ophelia's traversal
 mechanism:
 
+* context: namespace in which scripts are being executed
+
 * macros: namespace of str, compiled macros encountered so far
 
 * response_headers: dictionary mapping header names to TALES expressions that
@@ -75,8 +77,8 @@ by TALES expressions, contains:
 
 * variables added by Ophelia:
 
-  - macros: Namespace of macros defined by any relevant templates and loaded
-            by scripts, both more and less specific
+  - macros: namespace of compiled macros (see above), contains at this point
+            all macros relevant to the requested path
 
   - innerslot: unicode, the "magic" slot filled by evaluating the next more
                specific template. Example use:
