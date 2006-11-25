@@ -10,8 +10,11 @@ with a single variable:
 
 * __publisher__: the currently running Publisher instance
 
-The publisher carries some variables internally used by Ophelia's traversal
-mechanism:
+
+Publisher
+---------
+
+Attributes internally used by Ophelia's traversal mechanism:
 
 * context: namespace in which scripts are being executed
 
@@ -20,6 +23,11 @@ mechanism:
 * response_headers: dictionary mapping header names to TALES expressions that
                     are executed in the template context after interpreting
                     the templates
+
+* innerslot: None during traversal and script execution,
+             unicode after innermost template has been evaluated:
+                     always the current content of the inner slot,
+                     accessible by functions put in the context
 
 * request: the request object passed by mod_python
 
@@ -55,6 +63,12 @@ mechanism:
 * current: str, current partial path without trailing slash
 
 * template: unicode, the decoded source of the current template
+
+Methods meant for use in scripts:
+
+* load_macros(*args): load METAL macros from the files passed as arguments
+                      (file names relative to current file path) into the
+                      macros namespace
 
 
 Page template context
