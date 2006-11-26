@@ -54,6 +54,10 @@ class MetaData(object):
 
         returns str
         """
+        if self.publisher.content is None:
+            raise RuntimeError(
+                "Can't compute an Etag before content has been built.")
+        
         obj = md5.new()
-        obj.update(self.publisher.innerslot.encode("utf-8"))
+        obj.update(self.publisher.content)
         return HEX_ENCODER(obj.digest())[0]

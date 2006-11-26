@@ -86,6 +86,8 @@ class Publisher(object):
         self.splitter = ophelia.template.Splitter(request)
         self.stack = []
         self.history = []
+        self.response_encoding = request.get_options().get(
+            "ResponseEncoding", "utf-8")
 
     def __call__(self):
         """Publish the resource at path.
@@ -97,9 +99,7 @@ class Publisher(object):
         self.traverse()
         self.set_tales_context()
 
-        self.interpret_templates()
         self.build_content()
-
         self.build_headers()
 
         return self.compiled_headers, self.content
@@ -171,7 +171,7 @@ class Publisher(object):
         tales_ns.update(self.context)
         self.tales_context = TALESEngine.getContext(tales_ns)
 
-    def interpret_templates(self):
+    def build_content(self):
         out = StringIO(u"")
 
         while self.stack:
@@ -185,6 +185,10 @@ class Publisher(object):
                 raise
             else:
                 self.innerslot = out.getvalue()
+
+        self.content = """<?xml version="1.1" encoding="%s" ?>\n%s""" % (
+            self.response_encoding,
+            self.innerslot.encode(self.response_encoding))
 
     def build_headers(self):
         self.compiled_headers = {}
@@ -202,10 +206,6 @@ class Publisher(object):
                 log_error("Can't interpret header expression at " + file_path)
                 raise
             self.compiled_headers[name] = value
-
-    def build_content(self):
-        self.content = """<?xml version="1.1" encoding="utf-8" ?>\n""" + \
-                       self.innerslot.encode("utf-8")
 
     def load_macros(self, *args):
         for name in args:

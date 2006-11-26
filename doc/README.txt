@@ -116,8 +116,12 @@ that references the publisher object. Thus, scripts have access to request
 details and traversal internals. In addition to setting variables, scripts may
 also import modules and define functions.
 
+
 Character encoding
-------------------
+++++++++++++++++++
+
+Input encoding
+--------------
 
 You can declare a character encoding both for the Python script and the
 template, and the two encodings may differ. To specify the Python encoding,
@@ -142,3 +146,22 @@ configuration:
 
 Failing any of these settings for scripts or templates, the respective default
 encoding will be 7-bit ASCII.
+
+Response encoding
+-----------------
+
+Ophelia uses unicode internally, but an HTTP response consists of one-byte
+characters, so some encoding has to be applied in the end. This encoding is
+automatically declared this encoding in the XML declaration as well as the
+response headers.
+
+To set the response encoding to, say, latin-1 in a script, do
+
+    __publisher__.response_encoding = "latin-1"
+
+To set the response encoding site-wide, add
+
+    PythonOption ResponseEncoding "latin-1"
+
+to the Apache configuration. Failing any of these settings, the response
+encoding defaults to utf-8.

@@ -42,7 +42,8 @@ def handler(request):
         return apache.DECLINED
 
     # deliver the page
-    request.content_type = "text/html; charset=utf-8"
+    request.content_type = "text/html; charset=%s" % \
+                           publisher.response_encoding
     request.set_content_length(len(content))
     request.headers_out.update(response_headers)
 

@@ -29,6 +29,10 @@ Attributes internally used by Ophelia's traversal mechanism:
                      always the current content of the inner slot,
                      accessible by functions put in the context
 
+* content: None during traversal and template evaluation,
+           unicode after content is complete: equals innerslot, preceded by
+           XML declaration and encoded with response_encoding
+
 * request: the request object passed by mod_python
 
 * log_error: the error logging function used  by the publisher, takes a str as
@@ -41,6 +45,8 @@ Attributes internally used by Ophelia's traversal mechanism:
             script_encoding,
             template_encoding: str, act as default encodings for any source
                                files to be read yet
+
+* response_encoding: str, encoding of the HTTP response
 
 * path: str, complete path to traverse from the template root
 
