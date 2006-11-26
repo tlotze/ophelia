@@ -14,7 +14,7 @@ class MetaData(object):
     """Stores, calculates and formats metadata such as dates or digests.
     """
 
-    def __init__(self, tales_name="meta"):
+    def __init__(self):
         self.publisher = ophelia.publisher.get_publisher()
         self._date = datetime.datetime.min
 

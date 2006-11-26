@@ -7,17 +7,15 @@ class Navigation(object):
     """Stores navigation info, builds hierarchical and breadcrumb menus.
     """
 
-    def __init__(self, site_prefix, home=None, tales_name="nav"):
+    def __init__(self, home=None):
         self.publisher = ophelia.publisher.get_publisher()
+        self.site_prefix = publisher.request.get_options()["SitePrefix"]
 
-        self.site_prefix = site_prefix
         self.uri = self.uriFromSite(self.publisher.path)
         if home is None:
             self.home = self.uriFromSite("/")
         else:
             self.home = home
-
-        self.history = self.publisher.history
 
         self.breadcrumbs = {}
         self.menu = {}
@@ -34,7 +32,7 @@ class Navigation(object):
 
     def iterBreadcrumbs(self):
         menu = {}
-        for path in self.history:
+        for path in self.publisher.history:
             uri = self.uriFromSite(path)
             title = self.breadcrumbs.get(uri) or menu.get(uri)
             if title:
