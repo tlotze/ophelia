@@ -5,8 +5,6 @@ import ophelia.publisher
 
 class Navigation(object):
     """Stores navigation info, builds hierarchical and breadcrumb menus.
-
-    Registers with the TALES names.
     """
 
     def __init__(self, site_prefix, home=None, tales_name="nav"):

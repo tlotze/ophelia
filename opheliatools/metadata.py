@@ -12,8 +12,6 @@ HEX_ENCODER = codecs.getencoder("hex_codec")
 
 class MetaData(object):
     """Stores, calculates and formats metadata such as dates or digests.
-
-    Registers with the TALES names.
     """
 
     def __init__(self, tales_name="meta"):
