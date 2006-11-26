@@ -9,7 +9,7 @@ class Navigation(object):
 
     def __init__(self, home=None):
         self.publisher = ophelia.publisher.get_publisher()
-        self.site_prefix = publisher.request.get_options()["SitePrefix"]
+        self.site_prefix = self.publisher.request.get_options()["SitePrefix"]
 
         self.uri = self.uriFromSite(self.publisher.path)
         if home is None:
