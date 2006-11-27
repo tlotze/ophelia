@@ -107,22 +107,25 @@ class Publisher(object):
     def traverse(self):
         tail = self.tail
         current = ""
+        file_path = current_path = self.root
         while tail:
             # determine the next traversal step
             next = tail.pop(0)
             if not (next or tail):
                 next = "index.html"
-            current = os.path.join(current, next)
+
+            # add to traversal history
+            current += next
+            if tail:
+                current += '/'
+            self.history.append(current)
 
             # try to find a file to read
-            file_path = os.path.join(self.root, current)
-            if not os.path.exists(file_path):
+            file_path = current_path = os.path.join(current_path, next)
+            if not os.path.exists(current_path):
                 raise NotFound
 
-            isdir = os.path.isdir(file_path)
-            self.history.append(current + (isdir and "/" or ""))
-
-            if isdir:
+            if os.path.isdir(file_path):
                 file_path = os.path.join(file_path, "__init__")
                 if not os.path.exists(file_path):
                     continue
@@ -133,7 +136,6 @@ class Publisher(object):
             # manipulate the context
             if script:
                 self.file_path = file_path
-                self.isdir = isdir
                 self.current = current
                 self.template = template
                 try:

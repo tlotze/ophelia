@@ -64,8 +64,6 @@ Attributes internally used by Ophelia's traversal mechanism:
 * file_path: str, absolute file system path to the source file of the script
              being run
 
-* isdir: bool, whether the current partial path refers to a directory
-
 * current: str, current partial path without trailing slash
 
 * template: unicode, the decoded source of the current template

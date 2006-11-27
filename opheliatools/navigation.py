@@ -77,8 +77,6 @@ class Navigation(object):
 
     def uriFromCurrent(self, path=None):
         uri = urljoin(self.site_prefix, self.publisher.current)
-        if self.publisher.isdir:
-            uri += "/"
         if path is not None:
             uri = urljoin(uri, path)
         return canonicalize(uri)
