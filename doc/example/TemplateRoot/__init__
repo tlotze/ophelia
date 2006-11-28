@@ -1,5 +1,5 @@
 request_options = request.get_options()
-context.site_prefix = request_options.get("SitePrefix", "")
+site_prefix = request_options.get("SitePrefix", "")
 
 <?xml?>
 <!DOCTYPE html 
@@ -9,13 +9,13 @@ context.site_prefix = request_options.get("SitePrefix", "")
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
   <head>
     <link rel="stylesheet" type="text/css" href=""
-          tal:attributes="href string:${context/site_prefix}/example.css"/>
+          tal:attributes="href string:${site_prefix}/example.css"/>
 
-    <title tal:content="context/title" />
+    <title tal:content="title" />
   </head>
 
   <body>
-    <h1 tal:content="context/title" />
+    <h1 tal:content="title" />
 
     <div tal:replace="structure innerslot" />
   </body>
