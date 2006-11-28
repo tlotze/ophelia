@@ -9,7 +9,6 @@ class Navigation(object):
 
     def __init__(self, home=None):
         self.publisher = ophelia.publisher.get_publisher()
-        self.site_prefix = self.publisher.request.get_options()["SitePrefix"]
 
         self.uri = self.uriFromSite(self.publisher.path)
         if home is None:
@@ -76,13 +75,13 @@ class Navigation(object):
         return '\n'.join(lines)
 
     def uriFromCurrent(self, path=None):
-        uri = urljoin(self.site_prefix, self.publisher.current)
+        uri = urljoin(self.publisher.site, self.publisher.current)
         if path is not None:
             uri = urljoin(uri, path)
         return canonicalize(uri)
 
     def uriFromSite(self, path):
-        return canonicalize(urljoin(self.site_prefix, path))
+        return canonicalize(urljoin(self.publisher.site, path))
 
     def uriFromHome(self, path):
         return canonicalize(urljoin(self.home, path))

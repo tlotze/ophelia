@@ -52,6 +52,8 @@ Attributes internally used by Ophelia's traversal mechanism:
 
 * root: str, absolute file system path to template root
 
+* site: str, absolute URL to site root
+
 * tail: list of str, path segments yet to traverse from here
 
 * stack: list of str pairs, compiled templates encountered so far, together

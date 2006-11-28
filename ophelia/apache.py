@@ -24,18 +24,21 @@ def handler(request):
     filename = os.path.abspath(request.filename)
     doc_root = os.path.abspath(request_options.get("DocumentRoot") or
                                request.document_root())
-    if not filename.startswith(doc_root):
+    if doc_root.endswith('/'):
+        doc_root = doc_root[:-1]
+    if not filename.startswith(doc_root+'/'):
         return apache.DECLINED
 
-    # determine the template root and path
+    # determine the template root and path, and the site URL
     root = os.path.abspath(request_options["TemplateRoot"])
     path = filename[len(doc_root):]
+    site = request_options["Site"]
 
     # get the content
     def log_error(msg):
         request.log_error(msg, apache.APLOG_ERR)
 
-    publisher = Publisher(path, root, request, log_error)
+    publisher = Publisher(path, root, site, request, log_error)
     try:
         response_headers, content = publisher()
     except NotFound:

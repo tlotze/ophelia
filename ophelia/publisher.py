@@ -55,13 +55,13 @@ class Publisher(object):
     content = None
     compiled_headers = None
 
-    def __init__(self, path, root, request, log_error):
+    def __init__(self, path, root, site, request, log_error):
         """Set up the publisher for traversing path.
 
         path: str, path to traverse from the template root, starts with '/',
                    ends '/' if directory, elements are separated by '/'
-        root: str, absolute file system path to the template root,
-                   does not end with '/'
+        root: str, absolute file system path to the template root
+        site: str, absolute URL to site root
         request: the request object
         log_error: callable taking an error message as an argument
 
@@ -72,7 +72,15 @@ class Publisher(object):
             raise ValueError("Path must start with '/', got " + path)
 
         self.path = os.path.abspath(path)
+
+        if root.endswith('/'):
+            root = root[:-1]
         self.root = os.path.abspath(root)
+
+        if site.endswith('/'):
+            site = site[:-1]
+        self.site = site
+
         self.tail = self.path.split('/')
 
         # initialize self
