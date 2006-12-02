@@ -78,28 +78,21 @@ class Navigation(object):
         uri = urljoin(self.publisher.site, self.publisher.current)
         if path is not None:
             uri = urljoin(uri, path)
-        return canonicalize(uri)
+        return uri
 
     def uriFromSite(self, path):
-        return canonicalize(urljoin(self.publisher.site, path))
+        return urljoin(self.publisher.site, path)
 
     def uriFromHome(self, path):
-        return canonicalize(urljoin(self.home, path))
+        return urljoin(self.home, path)
 
     def uriFromPage(self, path):
-        return canonicalize(urljoin(self.uri, path))
+        return urljoin(self.uri, path)
 
     def uriFromUri(self, uri, path):
-        return canonicalize(urljoin(uri, path))
+        return urljoin(uri, path)
 
     def altLangs(self, **kwargs):
         for lang, path_seg in kwargs.iteritems():
-            self.alt_langs[lang] = canonicalize(
-                urljoin(self.alt_langs.get(lang, self.uriFromCurrent("")),
-                        path_seg))
-
-
-def canonicalize(uri):
-    if uri.endswith("/index.html"):
-        uri = uri[:-10]
-    return uri
+            self.alt_langs[lang] = urljoin(
+                self.alt_langs.get(lang, self.uriFromCurrent("")), path_seg)
