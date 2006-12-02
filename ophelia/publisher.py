@@ -207,13 +207,12 @@ class Publisher(object):
             try:
                 compiled = TALESEngine.compile(expression)
             except:
-                self.log_error("Can't compile header expression at " +
-                               file_path)
+                self.log_error("Can't compile expression for header " + name)
                 raise
             try:
                 value = str(compiled(self.tales_context))
             except:
-                log_error("Can't interpret header expression at " + file_path)
+                log_error("Can't interpret expression for header " + name)
                 raise
             self.compiled_headers[name] = value
 
