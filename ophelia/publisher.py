@@ -138,39 +138,40 @@ class Publisher(object):
                 if not os.path.exists(file_path):
                     continue
 
-            # get script and template
-            script, template = self.splitter(file(file_path).read())
+            self.current = current
+            self.process_file(file_path)
 
-            # manipulate the context
-            if script:
-                self.file_path = file_path
-                self.current = current
-                self.template = template
-                try:
-                    exec script in self.context
-                except StopTraversal, e:
-                    if e.content is not None:
-                        self.innerslot = e.content
-                    if not e.use_template:
-                        self.template = None
-                    del tail[:]
-                template = self.template
+    def process_file(self, file_path):
+        # get script and template
+        script, self.template = self.splitter(file(file_path).read())
 
-            # compile the template, collect the macros
-            if template:
-                generator = TALGenerator(TALESEngine, xml=False,
-                                         source_file=file_path)
-                parser = HTMLTALParser(generator)
+        # manipulate the context
+        if script:
+            self.file_path = file_path
+            try:
+                exec script in self.context
+            except StopTraversal, e:
+                if e.content is not None:
+                    self.innerslot = e.content
+                if not e.use_template:
+                    self.template = None
+                del self.tail[:]
 
-                try:
-                    parser.parseString(template)
-                except:
-                    self.log_error("Can't compile template at " + file_path)
-                    raise
+        # compile the template, collect the macros
+        if self.template:
+            generator = TALGenerator(TALESEngine, xml=False,
+                                     source_file=file_path)
+            parser = HTMLTALParser(generator)
 
-                program, macros = parser.getCode()
-                self.stack.append((program, file_path))
-                self.macros.update(macros)
+            try:
+                parser.parseString(self.template)
+            except:
+                self.log_error("Can't compile template at " + file_path)
+                raise
+
+            program, macros = parser.getCode()
+            self.stack.append((program, file_path))
+            self.macros.update(macros)
 
     def set_tales_context(self):
         tales_ns = Namespace(
