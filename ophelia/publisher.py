@@ -139,6 +139,7 @@ class Publisher(object):
                     continue
 
             self.current = current
+            self.current_path = current_path
             self.process_file(file_path)
 
     def process_file(self, file_path):
@@ -147,7 +148,7 @@ class Publisher(object):
 
         # manipulate the context
         if script:
-            self.file_path = file_path
+            self.context.__file__ = file_path
             try:
                 exec script in self.context
             except StopTraversal, e:
@@ -219,7 +220,7 @@ class Publisher(object):
 
     def load_macros(self, *args):
         for name in args:
-            file_path = os.path.join(os.path.dirname(self.file_path), name)
+            file_path = os.path.join(self.current_path, name)
             try:
                 content = file(file_path).read()
             except:

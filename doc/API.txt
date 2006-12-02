@@ -6,7 +6,9 @@ Script context
 --------------
 
 Scripts are successively run in a namespace freshly initialized by Ophelia
-with a single variable:
+with the following variable:
+
+* __file__: the absolute file system path of the input file
 
 * __publisher__: the currently running Publisher instance
 
@@ -63,8 +65,8 @@ Attributes internally used by Ophelia's traversal mechanism:
            the script being run) from template root, paths referring to
            directories have a trailing slash
 
-* file_path: str, absolute file system path to the source file of the script
-             being run
+* current_path: str, absolute file system path to the directory containing the
+                source file of the script being run
 
 * current: str, current partial path without trailing slash
 
