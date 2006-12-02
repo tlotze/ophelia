@@ -7,6 +7,9 @@ class Navigation(object):
     """Stores navigation info, builds hierarchical and breadcrumb menus.
     """
 
+    chapter = None
+    chapter_title = None
+
     def __init__(self, home=None):
         self.publisher = ophelia.publisher.get_publisher()
 
@@ -20,6 +23,10 @@ class Navigation(object):
         self.menu = {}
 
         self.alt_langs = {}
+
+    def set_chapter(self, title):
+        self.chapter = self.uriFromCurrent()
+        self.chapter_title = title
 
     def addMenu(self, entries, root_title=None, root=None):
         self.menu[self.uriFromCurrent(root)] = (
