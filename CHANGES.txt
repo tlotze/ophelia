@@ -41,6 +41,8 @@ Organization:
 
   - moved roadmap from docs to distribution root, added README.txt to root
 
+  - started using setuptools and distributing Ophelia as a Python egg
+
 
 0.1
 ---
