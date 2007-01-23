@@ -26,12 +26,14 @@ Example Apache 2 configuration
 ------------------------------
 
 Assuming you put everything belonging to your site under a common directory,
-$SITE_PATH, add the following to your host's config:
+$SITE_PATH, and the root of your site is published at $SITE_URL, add the
+following to your host's config:
 
 <Directory $SITE_PATH/DocumentRoot>
            PythonPath "['$SITE_PATH/python'] + sys.path"
            PythonOption DocumentRoot $SITE_PATH/DocumentRoot
            PythonOption TemplateRoot $SITE_PATH/TemplateRoot
+           PythonOption Site $SITE_URL
            AddHandler mod_python .html
            PythonHandler ophelia.apache |.html
            PythonDebug On
