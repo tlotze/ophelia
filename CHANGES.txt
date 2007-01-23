@@ -1,0 +1,48 @@
+Changes between versions
+========================
+
+
+trunk
+-----
+
+User-visible:
+  - made template and script encodings configurable from Apache config
+
+  - renamed SitePrefix config variable to "Site"
+
+  - cleaned up pre-defined script variables,
+    introduced __publisher__ and __file__
+
+  - made script variables directly usable in templates
+
+  - updated and improved documentation
+
+Bug fixes:
+  - correctly compute ETags from unicode content
+
+  - fixed a typo in the example's CSS
+
+API:
+  - made ophelia.publisher.Namespace subclass dict
+
+  - turned publisher and file splitter into objects accessible from scripts
+
+  - removed thus obsolete ophelia.oapi module
+
+  - added uriFromUri() and set_chapter() to navigation tool
+
+Code:
+  - modularized publishing logic
+
+  - straightened out handling of URL and file paths
+
+Organization:
+  - added change log
+
+  - moved roadmap from docs to distribution root, added README.txt to root
+
+
+0.1
+---
+
+initial "works for me" release
