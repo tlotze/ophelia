@@ -13,6 +13,7 @@ At present, Ophelia contains a request handler for the Apache2 web server.
 """
 
 import os, os.path
+import glob
 from setuptools import setup, find_packages
 
 
@@ -26,18 +27,7 @@ def include_tree(dest, source):
 
 desc, longdesc = __doc__.split("\n\n", 1)
 
-data_files = [
-    ("share/doc/Ophelia", [
-        "LICENSE.txt",
-        "COPYRIGHT.txt",
-        "README.txt",
-        "ROADMAP.txt",
-        "CHANGES.txt",
-        "doc/INSTALL.txt",
-        "doc/OVERVIEW.txt",
-        "doc/API.txt",
-        ]),
-    ] + list(include_tree("share/doc/Ophelia", "doc"))
+data_files = [("", glob.glob("*.txt"))] + list(include_tree("doc", "doc"))
 
 provides = [
     "ophelia",
