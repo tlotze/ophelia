@@ -5,7 +5,7 @@ import os.path
 from mod_python import apache
 
 # project
-from ophelia.publisher import Publisher, NotFound
+from ophelia.publisher import Publisher, NotFound, Redirect
 
 
 # generic request handler
@@ -43,6 +43,9 @@ def handler(request):
         response_headers, content = publisher()
     except NotFound:
         return apache.DECLINED
+    except Redirect, e:
+        request.headers_out["Location"] = e.uri
+        return apache.HTTP_MOVED_PERMANENTLY
 
     # deliver the page
     request.content_type = "text/html; charset=%s" % \

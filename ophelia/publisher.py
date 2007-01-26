@@ -31,6 +31,13 @@ class NotFound(Exception):
     pass
 
 
+class Redirect(Exception):
+    """Signals that the server should redirect the client to another URI."""
+
+    def __init__(self, uri):
+        self.uri = uri
+
+
 class Namespace(dict):
     """Objects which exist only to carry attributes.
 
@@ -141,6 +148,12 @@ class Publisher(object):
             self.current = current
             self.current_path = current_path
             self.process_file(file_path)
+
+    def redirect(self, path=None):
+        parts = list(urlparse.urlparse(self.request.unparsed_uri))
+        if path is not None:
+            parts[2] = path
+        raise Redirect(urlparse.urlunparse(parts))
 
     def process_file(self, file_path):
         # get script and template

@@ -31,6 +31,8 @@ API:
 
   - added uriFromUri() and set_chapter() to navigation tool
 
+  - added Redirect exception
+
 Code:
   - modularized publishing logic
 
