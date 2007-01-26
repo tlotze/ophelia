@@ -38,6 +38,8 @@ Code:
 
   - straightened out handling of URL and file paths
 
+  - replaced file() calls by open() calls
+
 Organization:
   - added change log
 

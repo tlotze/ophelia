@@ -157,7 +157,7 @@ class Publisher(object):
 
     def process_file(self, file_path):
         # get script and template
-        script, self.template = self.splitter(file(file_path).read())
+        script, self.template = self.splitter(open(file_path).read())
 
         # manipulate the context
         if script:
@@ -235,7 +235,7 @@ class Publisher(object):
         for name in args:
             file_path = os.path.join(self.current_path, name)
             try:
-                content = file(file_path).read()
+                content = open(file_path).read()
             except:
                 self.log_error("Can't read macro file at " + file_path)
                 raise
