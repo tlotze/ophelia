@@ -83,8 +83,8 @@ class Publisher(object):
 
         self.root = os.path.abspath(root)
 
-        if site.endswith('/'):
-            site = site[:-1]
+        if not site.endswith('/'):
+            site += '/'
         self.site = site
 
         self.context = Namespace(
