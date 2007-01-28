@@ -68,18 +68,18 @@ class Publisher(object):
 
         path: str, path to traverse from the template root, starts with '/',
                    ends '/' if directory, elements are separated by '/'
-        root: str, absolute file system path to the template root
+        root: str, file system path to the template root
         site: str, absolute URL to site root
         request: the request object
         log_error: callable taking an error message as an argument
 
         may raise ValueError
         """
-        # initialize file path parts and sanity check
         if not path.startswith('/'):
             raise ValueError("Path must start with '/', got " + path)
 
-        self.path = os.path.abspath(path)
+        self.path = path
+        self.tail = path.split('/')
 
         if root.endswith('/'):
             root = root[:-1]
@@ -89,9 +89,6 @@ class Publisher(object):
             site = site[:-1]
         self.site = site
 
-        self.tail = self.path.split('/')
-
-        # initialize self
         self.context = Namespace(
             __publisher__=self,
             )
@@ -109,8 +106,6 @@ class Publisher(object):
         """Publish the resource at path.
 
         returns (dict, unicode), response headers and page content
-
-        may raise anything
         """
         self.traverse()
         self.set_tales_context()
