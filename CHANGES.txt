@@ -15,7 +15,7 @@ User-visible:
 
   - made script variables directly usable in templates
 
-  - updated and improved documentation
+  - updated and improved documentation and example site
 
 Bug fixes:
   - correctly compute ETags from unicode content

@@ -16,8 +16,9 @@ Installation
 - if you don't have the zope package installed system-wide, put it in
   mod_python's Python path as well
 
-- choose a DocumentRoot, TemplateRoot, and maybe python path for your site's
-  files, and configure Apache accordingly (see below)
+- choose places in the files system to put your site's Ophelia pages and
+  static (non-Ophelia) documents, resp., and configure Apache accordingly (see
+  below)
 
 - cause Apache to reload its configuration
 
@@ -25,15 +26,24 @@ Installation
 Example Apache 2 configuration
 ------------------------------
 
-Assuming you put everything belonging to your site under a common directory,
-$SITE_PATH, and the root of your site is published at $SITE_URL, add the
-following to your host's config:
+Assume that the root of your site is published at
+<http://www.example.com/foo/bar/>.
 
-<Directory $SITE_PATH/DocumentRoot>
-           PythonPath "['$SITE_PATH/python'] + sys.path"
-           PythonOption DocumentRoot $SITE_PATH/DocumentRoot
-           PythonOption TemplateRoot $SITE_PATH/TemplateRoot
-           PythonOption Site $SITE_URL
+Assume further that your site uses the following file system locations on a
+Unix system:
+
+/var/example/templates/  for the tree of Ophelia templates
+/var/example/python/     for the Python packages
+/var/example/static/     for the static stuff
+
+To publish this site, add the following to your host's config:
+
+Alias /foo/bar /var/example/static
+<Directory /var/example/static>
+           PythonPath "['/var/example/python'] + sys.path"
+           PythonOption DocumentRoot /var/example/static
+           PythonOption TemplateRoot /var/example/ophelia_pages
+           PythonOption Site http://www.example.com/foo/bar
            AddHandler mod_python .html
            PythonHandler ophelia.apache |.html
            PythonDebug On

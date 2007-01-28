@@ -4,7 +4,9 @@ title = "Ophelia example site"
 <p>
   This is the index page of the
   <a href="http://www.thomas-lotze.de/software/ophelia/">Ophelia</a>
-  example site.
+  example site located at
+  <a href="http://www.thomas-lotze.de/software/ophelia/example/">
+    http://www.thomas-lotze.de/software/ophelia/example/</a>.
 </p>
 
 <p>
@@ -13,14 +15,16 @@ title = "Ophelia example site"
 </p>
 
 <p>
-  This is the relevant part of the Apache2 configuration:
+  This hypothetical Apache2 configuration would publish the example site at
+  its proper URL, ».../Ophelia/« being the file system path to a copy of the
+  Ophelia source:
 </p>
 
 <pre>
 &lt;Directory /home/thomas/www.thomas-lotze.de/DocumentRoot/software/ophelia/example&gt;
     AddHandler mod_python .html
-    PythonOption DocumentRoot /home/thomas/www.thomas-lotze.de/DocumentRoot/software/ophelia/example
-    PythonOption TemplateRoot /home/thomas/www.thomas-lotze.de/TemplateRoot/software/ophelia/example
+    PythonOption DocumentRoot .../Ophelia/doc/example/static
+    PythonOption TemplateRoot .../Ophelia/doc/example/ophelia_pages
     PythonOption Site http://www.thomas-lotze.de/software/ophelia/example
     PythonHandler ophelia.apache |.html
 &lt;/Directory&gt;
