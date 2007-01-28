@@ -21,11 +21,12 @@ title = "Ophelia example site"
 </p>
 
 <pre>
-&lt;Directory /home/thomas/www.thomas-lotze.de/DocumentRoot/software/ophelia/example&gt;
-    AddHandler mod_python .html
-    PythonOption DocumentRoot .../Ophelia/doc/example/static
+Alias /software/ophelia/example .../Ophelia/doc/example/static
+&lt;Location "/software/ophelia/example"&gt;
+    SetHandler mod_python
+    PythonPath "['.../Ophelia'] + sys.path"
     PythonOption TemplateRoot .../Ophelia/doc/example/ophelia_pages
     PythonOption Site http://www.thomas-lotze.de/software/ophelia/example
-    PythonHandler ophelia.apache |.html
-&lt;/Directory&gt;
+    PythonHandler ophelia.apache
+&lt;/Location&gt;
 </pre>

@@ -1,5 +1,6 @@
 # Python
 import os.path
+import urlparse
 
 # mod_python
 from mod_python import apache
@@ -20,23 +21,20 @@ def handler(request):
     """
     request_options = request.get_options()
 
-    # is this for us?
-    filename = os.path.abspath(request.filename)
-    doc_root = os.path.abspath(request_options.get("DocumentRoot") or
-                               request.document_root())
-    if doc_root.endswith('/'):
-        doc_root = doc_root[:-1]
-    if not filename.startswith(doc_root+'/'):
-        return apache.DECLINED
-
-    # determine the template root and path, and the site URL
     root = os.path.abspath(request_options["TemplateRoot"])
-    path = filename[len(doc_root):]
 
     # The site URL should be something we can safely urljoin path parts to.
     site = request_options["Site"]
     if not site.endswith('/'):
         site += '/'
+
+    # Determine the path to traverse by the requested URL to the site root
+    # URL. We want to catch requests to the site root specified without a
+    # trailing slash.
+    site_path = urlparse.urlparse(site)[2][:-1]
+    if not request.uri.startswith(site_path):
+        return apache.DECLINED
+    path = request.uri[len(site_path):]
 
     # get the content
     def log_error(msg):

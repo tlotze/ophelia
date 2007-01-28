@@ -77,8 +77,20 @@ particular resource. Apache falls back to serving static content from disk in
 that case. Ophelia can thus be installed on top of a static site to handle
 just those requests for which templates exist in the template directory.
 
-Caveat: For some reason, PHP files are not parsed correctly after Apache got
-        control back from Ophelia.
+Caveat: Since it is not possible in in mod_python 3.2 to set an Apache-level
+        handler during an earlier phase of the same request, some things do
+        not yet work as smoothly as will be possible from mod_python 3.3 on.
+        This includes PHP files not being parsed and directory indexes not
+        being built after Apache got control back from Ophelia.
+
+        For the time being, exclude directories that contain only static stuff
+        (e.g. Webalizer output) from being handled by Ophelia in the Apache
+        configuration.
+
+If Ophelia encounters a URL that corresponds to a directory it behaves similar
+to Apache in its default configuration: If the URL doesn't end with a slash,
+it will redirect the browser to add the slash. If the slash is there, it will
+try to find a template named index.html and build the "index" page from that.
 
 
 How Ophelia works

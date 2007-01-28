@@ -68,18 +68,16 @@ class Publisher(object):
     def __init__(self, path, root, site, request, log_error):
         """Set up the publisher for traversing path.
 
-        path: str, path to traverse from the template root, starts with '/',
-                   ends '/' if directory, elements are separated by '/'
+        path: str, path to traverse from the template root,
+                   empty or starts with '/', elements are separated by '/'
         root: str, file system path to the template root
-        site: str, absolute URL to site root
+        site: str, absolute URL to site root, ends with '/'
         request: the request object
         log_error: callable taking an error message as an argument
-
-        may raise ValueError
         """
-        if not path.startswith('/'):
-            raise ValueError("Path must start with '/', got " + path)
-
+        # Don't look at the path at this point. How to respond to an empty
+        # path or one that doesn't start with '/' is traversal logic which I'd
+        # rather keep out of __init__.
         self.path = path
         self.tail = path.split('/')
 
@@ -121,7 +119,8 @@ class Publisher(object):
         self.file_path = file_path = self.root
 
         # traverse the template root
-        del tail[0]
+        if tail.pop(0) or not os.path.isdir(file_path):
+            raise NotFound
         self.process_dir(file_path)
 
         while tail:
@@ -154,6 +153,8 @@ class Publisher(object):
         raise Redirect(urlparse.urlunparse(parts))
 
     def process_dir(self, dir_path):
+        if not self.tail:
+            self.redirect(path=self.request.uri + '/')
         file_path = os.path.join(dir_path, "__init__")
         if os.path.isfile(file_path):
             self.process_file(file_path)

@@ -39,33 +39,22 @@ Unix system:
 To publish this site, add the following to your host's config:
 
 Alias /foo/bar /var/example/static
-<Directory /var/example/static>
-           PythonPath "['/var/example/python'] + sys.path"
-           PythonOption DocumentRoot /var/example/static
-           PythonOption TemplateRoot /var/example/ophelia_pages
-           PythonOption Site http://www.example.com/foo/bar
-           AddHandler mod_python .html
-           PythonHandler ophelia.apache |.html
-           PythonDebug On
-</Directory>
+<Location "/foo/bar">
+    SetHandler mod_python
+    PythonPath "['/var/example/python'] + sys.path"
+    PythonOption TemplateRoot /var/example/templates
+    PythonOption Site http://www.example.com/foo/bar
+    PythonHandler ophelia.apache
+</Location>
 
 This instructs Apache to let Ophelia handle any URI under /foo/bar. Ophelia
 will build pages from templates where they exist, and Apache will serve files
 from your static content otherwise. (Mind the caveat described in
 doc/OVERVIEW.txt.)
 
-The PythonOption DocumentRoot is optional; it defaults to Apache's
-DocumentRoot setting.
+It is possible to set the Ophelia handler only for directories or HTML
+documents by applying some path name heuristics and matching the location
+against a regular expression.
 
 See doc/OVERVIEW.txt for other Python options Ophelia recognizes, and for
 details on how Ophelia behaves.
-
-
-Issues
-======
-
-Directory indexes
------------------
-
-* index page: touch index.html so the handler is fired on the file name
-* automatic index: touch all files to be listed that are built by templating

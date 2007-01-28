@@ -17,6 +17,9 @@ User-visible:
 
   - updated and improved documentation and example site
 
+  - switched configuration to using Location directives to get rid of dummy
+    static directories and index.html files
+
 Bug fixes:
   - correctly compute ETags from unicode content
 
