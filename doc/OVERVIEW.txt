@@ -90,7 +90,22 @@ Caveat: Since it is not possible in in mod_python 3.2 to set an Apache-level
 If Ophelia encounters a URL that corresponds to a directory it behaves similar
 to Apache in its default configuration: If the URL doesn't end with a slash,
 it will redirect the browser to add the slash. If the slash is there, it will
-try to find a template named index.html and build the "index" page from that.
+try to find a template named index.html by default, and build the "index" page
+from that.
+
+There are two configuration options associated with the index template. To
+change the name of the index template Ophelia looks for from index.html to,
+say, foobar.html, add the following to your Apache configuration:
+
+    PythonOption "IndexName" "foobar.html"
+
+Additionally, Ophelia can be told to canonicalize URLs and redirect the
+browser if the path portion of the URL ends with the default index page's
+name. Provided the index name is the default index.html, a request to
+<http://www.example.com/index.html> would be redirected to
+<http://www.example.com/>. To achieve this, say in your Apache configuration:
+
+    PythonOption "RedirectIndex" On
 
 
 How Ophelia works

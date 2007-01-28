@@ -6,7 +6,8 @@ trunk
 -----
 
 User-visible:
-  - made template and script encodings configurable from Apache config
+  - made template and script encodings and the index template name
+    configurable from Apache config
 
   - renamed SitePrefix config variable to "Site"
 
@@ -19,6 +20,8 @@ User-visible:
 
   - switched configuration to using Location directives to get rid of dummy
     static directories and index.html files
+
+  - added optional redirection of URLs ending with index page to directories
 
 Bug fixes:
   - correctly compute ETags from unicode content

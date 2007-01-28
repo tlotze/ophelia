@@ -64,6 +64,8 @@ class Publisher(object):
     compiled_headers = None
     history = None
     file_path = None
+    index_name = None
+    redirect_index = None
 
     def __init__(self, path, root, site, request, log_error):
         """Set up the publisher for traversing path.
@@ -96,8 +98,12 @@ class Publisher(object):
         self.log_error = log_error
         self.splitter = ophelia.template.Splitter(request)
         self.stack = []
-        self.response_encoding = request.get_options().get(
+        request_options = request.get_options()
+        self.response_encoding = request_options.get(
             "ResponseEncoding", "utf-8")
+        self.index_name = request_options.get("IndexName", "index.html")
+        self.redirect_index = (
+            request_options.get("RedirectIndex", "").lower() == "on")
 
     def __call__(self):
         """Publish the resource at path.
@@ -126,8 +132,11 @@ class Publisher(object):
         while tail:
             # determine the next traversal step
             next = tail.pop(0)
-            if not (next or tail):
-                next = "index.html"
+            if not tail:
+                if self.redirect_index and next == self.index_name:
+                    self.redirect(path=self.request.uri[:-len(next)])
+                if not next:
+                    next = self.index_name
 
             # add to traversal history
             current += next
