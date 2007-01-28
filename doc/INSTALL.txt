@@ -10,17 +10,17 @@ Prerequisites
 Installation
 ============
 
-- copy the ophelia package into the system Python path or configure
-  mod_python's Python path according to where you put the ophelia package
+- Copy the ophelia package into the system Python path or configure
+  mod_python's Python path according to where you put the ophelia package.
 
-- if you don't have the zope package installed system-wide, put it in
-  mod_python's Python path as well
+- If you don't have the zope package installed system-wide, put it in
+  mod_python's Python path as well.
 
-- choose places in the files system to put your site's Ophelia pages and
+- Choose places in the files system to put your site's Ophelia pages and
   static (non-Ophelia) documents, resp., and configure Apache accordingly (see
-  below)
+  below).
 
-- cause Apache to reload its configuration
+- Cause Apache to reload its configuration.
 
 
 Example Apache 2 configuration
