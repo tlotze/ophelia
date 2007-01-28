@@ -32,7 +32,11 @@ def handler(request):
     # determine the template root and path, and the site URL
     root = os.path.abspath(request_options["TemplateRoot"])
     path = filename[len(doc_root):]
+
+    # The site URL should be something we can safely urljoin path parts to.
     site = request_options["Site"]
+    if not site.endswith('/'):
+        site += '/'
 
     # get the content
     def log_error(msg):
