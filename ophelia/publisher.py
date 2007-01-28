@@ -2,6 +2,7 @@
 import os.path
 import inspect
 from StringIO import StringIO
+import urlparse
 
 # Zope
 from zope.tales.engine import Engine as TALESEngine
