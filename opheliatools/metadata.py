@@ -18,7 +18,7 @@ class MetaData(object):
         self.publisher = ophelia.publisher.get_publisher()
         self._date = datetime.datetime.min
 
-    def bumpDate(self, *args):
+    def bump_date(self, *args):
         """Store the maximum of the given date and that stored before.
 
         *args: datetime.datetime arguments

@@ -42,6 +42,8 @@ API:
 
   - added Redirect exception
 
+  - renamed methods to get rid of camel case and comply with current PEP 8
+
 Code:
   - modularized publishing logic
 
