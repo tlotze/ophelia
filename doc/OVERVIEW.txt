@@ -68,10 +68,11 @@ How Ophelia behaves
 In Apache2, a request is handled in phases, each of which can be handled by
 one or more modules. Ophelia provides a handler for the content generation
 phase, passing control back to Apache and other modules if it finds it can't
-build a particular resource. Ophelia never causes a File Not Found HTTP
-error. This means that Ophelia can be installed on top of a static site,
-handling just some of the requests to HTML pages and letting Apache serve
-static files for all others.
+build a particular resource. Ophelia never causes a File Not Found HTTP error.
+This means that Apache falls back to serving static content from the document
+root if Ophelia can't serve a request. Ophelia can thus be installed on top of
+a static site to handle just those requests for which templates exist in the
+template root.
 
 Caveat: For some reason, PHP files are not parsed correctly after Apache got
         control back from Ophelia.

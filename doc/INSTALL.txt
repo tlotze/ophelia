@@ -49,8 +49,16 @@ Alias /foo/bar /var/example/static
            PythonDebug On
 </Directory>
 
+This instructs Apache to let Ophelia handle any URI under /foo/bar. Ophelia
+will build pages from templates where they exist, and Apache will serve files
+from your static content otherwise. (Mind the caveat described in
+doc/OVERVIEW.txt.)
+
 The PythonOption DocumentRoot is optional; it defaults to Apache's
 DocumentRoot setting.
+
+See doc/OVERVIEW.txt for other Python options Ophelia recognizes, and for
+details on how Ophelia behaves.
 
 
 Issues
