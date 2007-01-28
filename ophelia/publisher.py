@@ -62,6 +62,7 @@ class Publisher(object):
     tales_context = None
     content = None
     compiled_headers = None
+    history = None
     file_path = None
 
     def __init__(self, path, root, site, request, log_error):
@@ -97,7 +98,6 @@ class Publisher(object):
         self.log_error = log_error
         self.splitter = ophelia.template.Splitter(request)
         self.stack = []
-        self.history = []
         self.response_encoding = request.get_options().get(
             "ResponseEncoding", "utf-8")
 
@@ -116,8 +116,13 @@ class Publisher(object):
 
     def traverse(self):
         tail = self.tail
-        current = ""
-        file_path = self.root
+        self.current = current = ""
+        self.history = [""]
+        self.file_path = file_path = self.root
+
+        # traverse the template root
+        del tail[0]
+        self.process_dir(file_path)
 
         while tail:
             # determine the next traversal step

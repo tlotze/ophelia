@@ -22,6 +22,9 @@ Bug fixes:
 
   - fixed a typo in the example's CSS
 
+  - fixed a missing trailing slash in the site variable and spurious leading
+    slashes in the traversal history entries which broke URL synthesis
+
 API:
   - made ophelia.publisher.Namespace subclass dict
 
