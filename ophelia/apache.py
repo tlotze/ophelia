@@ -3,7 +3,7 @@ import os.path
 import urlparse
 
 # mod_python
-from mod_python import apache
+from mod_python import apache, util
 
 # project
 from ophelia.publisher import Publisher, NotFound, Redirect
@@ -46,8 +46,7 @@ def handler(request):
     except NotFound:
         return apache.DECLINED
     except Redirect, e:
-        request.headers_out["Location"] = e.uri
-        return apache.HTTP_MOVED_PERMANENTLY
+        util.redirect(request, e.uri, permanent=True)
 
     # deliver the page
     request.content_type = "text/html; charset=%s" % \
