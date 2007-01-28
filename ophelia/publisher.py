@@ -81,8 +81,6 @@ class Publisher(object):
         self.path = path
         self.tail = path.split('/')
 
-        if root.endswith('/'):
-            root = root[:-1]
         self.root = os.path.abspath(root)
 
         if site.endswith('/'):
