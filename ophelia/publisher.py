@@ -62,6 +62,7 @@ class Publisher(object):
     tales_context = None
     content = None
     compiled_headers = None
+    file_path = None
 
     def __init__(self, path, root, site, request, log_error):
         """Set up the publisher for traversing path.
@@ -116,7 +117,8 @@ class Publisher(object):
     def traverse(self):
         tail = self.tail
         current = ""
-        file_path = current_path = self.root
+        file_path = self.root
+
         while tail:
             # determine the next traversal step
             next = tail.pop(0)
@@ -127,27 +129,29 @@ class Publisher(object):
             current += next
             if tail:
                 current += '/'
+            self.current = current
             self.history.append(current)
 
             # try to find a file to read
-            file_path = current_path = os.path.join(current_path, next)
-            if not os.path.exists(current_path):
-                raise NotFound
+            self.file_path = file_path = os.path.join(file_path, next)
 
             if os.path.isdir(file_path):
-                file_path = os.path.join(file_path, "__init__")
-                if not os.path.exists(file_path):
-                    continue
-
-            self.current = current
-            self.current_path = current_path
-            self.process_file(file_path)
+                self.process_dir(file_path)
+            elif os.path.isfile(file_path):
+                self.process_file(file_path)
+            else:
+                raise NotFound
 
     def redirect(self, path=None):
         parts = list(urlparse.urlparse(self.request.unparsed_uri))
         if path is not None:
             parts[2] = path
         raise Redirect(urlparse.urlunparse(parts))
+
+    def process_dir(self, dir_path):
+        file_path = os.path.join(dir_path, "__init__")
+        if os.path.isfile(file_path):
+            process_file(path)
 
     def process_file(self, file_path):
         # get script and template
@@ -227,7 +231,7 @@ class Publisher(object):
 
     def load_macros(self, *args):
         for name in args:
-            file_path = os.path.join(self.current_path, name)
+            file_path = os.path.join(self.file_path, name)
             try:
                 content = open(file_path).read()
             except:
