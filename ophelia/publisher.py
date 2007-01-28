@@ -156,7 +156,7 @@ class Publisher(object):
     def process_dir(self, dir_path):
         file_path = os.path.join(dir_path, "__init__")
         if os.path.isfile(file_path):
-            process_file(path)
+            self.process_file(file_path)
 
     def process_file(self, file_path):
         # get script and template
