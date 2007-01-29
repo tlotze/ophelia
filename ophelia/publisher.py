@@ -245,8 +245,11 @@ class Publisher(object):
             self.compiled_headers[name] = value
 
     def load_macros(self, *args):
+        base = self.file_path
+        if os.path.isfile(base):
+            base = os.path.dirname(base)
         for name in args:
-            file_path = os.path.join(self.file_path, name)
+            file_path = os.path.join(base, name)
             try:
                 content = open(file_path).read()
             except:
