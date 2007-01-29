@@ -22,7 +22,7 @@ class Navigation(object):
         self.breadcrumbs = {}
         self.menu = {}
 
-        self.alt_langs = {}
+        self.alt_lang_uris = {}
 
     def set_chapter(self, title):
         self.chapter = self.uri_from_current()
@@ -101,5 +101,6 @@ class Navigation(object):
 
     def alt_langs(self, **kwargs):
         for lang, path_seg in kwargs.iteritems():
-            self.alt_langs[lang] = urljoin(
-                self.alt_langs.get(lang, self.uri_from_current("")), path_seg)
+            self.alt_lang_uris[lang] = urljoin(
+                self.alt_lang_uris.get(lang, self.uri_from_current("")),
+                path_seg)
