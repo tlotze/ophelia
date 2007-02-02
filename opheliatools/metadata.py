@@ -3,6 +3,7 @@ import md5
 import codecs
 
 import ophelia.publisher
+import ophelia.util
 
 
 RFC2822_FORMAT = "%a, %d %b %Y %H:%M:%S GMT"
@@ -35,7 +36,7 @@ class MetaData(object):
 
         returns str
         """
-        return self._date.strftime(format)
+        return ophelia.util.strftime(format, self._date)
 
     def expires(self, *args):
         """Calulate a date relative to now, format by RFC 2822.
