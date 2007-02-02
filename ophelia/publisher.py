@@ -63,9 +63,8 @@ class Publisher(object):
     content = None
     compiled_headers = None
     history = None
+    stack = None
     file_path = None
-    index_name = None
-    redirect_index = None
 
     def __init__(self, path, root, site, request, log_error):
         """Set up the publisher for traversing path.
@@ -98,7 +97,6 @@ class Publisher(object):
         self.options = options = request.get_options()
         self.log_error = log_error
         self.splitter = ophelia.template.Splitter(options)
-        self.stack = []
         self.response_encoding = options.get("ResponseEncoding", "utf-8")
         self.index_name = options.get("IndexName", "index.html")
         self.redirect_index = (
@@ -122,6 +120,7 @@ class Publisher(object):
         self.current = current = ""
         self.history = [""]
         self.file_path = file_path = self.root
+        self.stack = []
 
         # traverse the template root
         if tail.pop(0) or not os.path.isdir(file_path):
