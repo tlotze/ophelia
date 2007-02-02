@@ -95,15 +95,14 @@ class Publisher(object):
         self.macros = Namespace()
         self.response_headers = {}
         self.request = request
+        self.options = options = request.get_options()
         self.log_error = log_error
-        self.splitter = ophelia.template.Splitter(request)
+        self.splitter = ophelia.template.Splitter(options)
         self.stack = []
-        request_options = request.get_options()
-        self.response_encoding = request_options.get(
-            "ResponseEncoding", "utf-8")
-        self.index_name = request_options.get("IndexName", "index.html")
+        self.response_encoding = options.get("ResponseEncoding", "utf-8")
+        self.index_name = options.get("IndexName", "index.html")
         self.redirect_index = (
-            request_options.get("RedirectIndex", "").lower() == "on")
+            options.get("RedirectIndex", "").lower() == "on")
 
     def __call__(self):
         """Publish the resource at path.
