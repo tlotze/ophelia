@@ -167,6 +167,9 @@ class Publisher(object):
             self.process_file(file_path)
 
     def process_file(self, file_path):
+        # make publisher accessible from scripts
+        __publisher__ = self
+
         # get script and template
         script, self.template = self.splitter(open(file_path).read())
 
@@ -208,6 +211,9 @@ class Publisher(object):
         self.tales_context = TALESEngine.getContext(tales_ns)
 
     def build_content(self):
+        # make publisher accessible from TALES expressions
+        __publisher__ = self
+
         out = StringIO(u"")
 
         while self.stack:
@@ -227,6 +233,9 @@ class Publisher(object):
             self.innerslot.encode(self.response_encoding))
 
     def build_headers(self):
+        # make publisher accessible from TALES expressions
+        __publisher__ = self
+
         self.compiled_headers = {}
 
         for name, expression in self.response_headers.iteritems():
@@ -277,14 +286,10 @@ class Publisher(object):
 ###########
 # functions
 
-def get_context():
+def get_publisher():
     for frame_record in inspect.stack():
-        candidate = frame_record[0].f_globals
-        if "__publisher__" in candidate:
+        candidate = frame_record[0].f_locals.get("__publisher__")
+        if isinstance(candidate, Publisher):
             return candidate
     else:
-        raise LookupError("Could not find context namespace.")
-
-
-def get_publisher():
-    return get_context()["__publisher__"]
+        raise LookupError("Could not find publisher.")

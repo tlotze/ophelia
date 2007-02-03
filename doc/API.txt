@@ -137,9 +137,6 @@ The module defines the following items:
 * Publisher: an instance of this class is currently directing the execution of
              scripts and assembly of the HTTP response.
 
-* get_context: function returning the global namespace in which Ophelia
-               executes all Python scripts of the current request
-
 * get_publisher: function returning the currently running Publisher instance
 
 
