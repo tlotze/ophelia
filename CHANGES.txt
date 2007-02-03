@@ -34,7 +34,7 @@ Bug fixes:
   - made localized dates with non-ASCII chars in month names usable with
     templates by adding ophelia.util.strftime
 
-  - made the publisher available to functions calles from inside templates
+  - made the publisher available to functions called from inside templates
 
 API:
   - made ophelia.publisher.Namespace subclass dict
