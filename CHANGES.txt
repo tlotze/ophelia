@@ -23,6 +23,9 @@ User-visible:
 
   - added optional redirection of URLs ending with index page to directories
 
+  - added opheliatools.feed, providing a download function using the Universal
+    feedparser package, and a feed loader for using the feeds downloaded
+
 Bug fixes:
   - correctly compute ETags from unicode content
 
