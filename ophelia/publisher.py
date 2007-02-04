@@ -70,15 +70,12 @@ class Publisher(object):
         """Set up the publisher for traversing path.
 
         path: str, path to traverse from the template root,
-                   empty or starts with '/', elements are separated by '/'
+                   elements are separated by '/'
         root: str, file system path to the template root
         site: str, absolute URL to site root, ends with '/'
         request: the request object
         log_error: callable taking an error message as an argument
         """
-        # Don't look at the path at this point. How to respond to an empty
-        # path or one that doesn't start with '/' is traversal logic which I'd
-        # rather keep out of __init__.
         self.path = path
         self.tail = path.split('/')
 
@@ -123,7 +120,7 @@ class Publisher(object):
         self.stack = []
 
         # traverse the template root
-        if tail.pop(0) or not os.path.isdir(file_path):
+        if not os.path.isdir(file_path):
             raise NotFound
         self.process_dir(file_path)
 

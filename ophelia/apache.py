@@ -31,8 +31,9 @@ def handler(request):
     # Determine the path to traverse by the requested URL to the site root
     # URL. We want to catch requests to the site root specified without a
     # trailing slash.
-    site_path = urlparse.urlparse(site)[2][:-1]
-    if not request.uri.startswith(site_path):
+    site_path = urlparse.urlparse(site)[2]
+    if not (request.uri == site_path[:-1] or
+            request.uri.startswith(site_path)):
         return apache.DECLINED
     path = request.uri[len(site_path):]
 
