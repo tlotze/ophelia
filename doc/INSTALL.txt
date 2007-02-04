@@ -2,9 +2,9 @@ Prerequisites
 =============
 
 - Apache2
-- Python 2.3 or better
+- Python 2.4 or better
 - mod_python 3.1 or better
-- the zope package from Zope3
+- the zope.tal package from Zope3 and anything it depends upon
 
 
 Installation
@@ -43,11 +43,11 @@ Alias /foo/bar /var/example/static
     SetHandler mod_python
     PythonPath "['/var/example/python'] + sys.path"
     PythonOption TemplateRoot /var/example/templates
-    PythonOption Site http://www.example.com/foo/bar
+    PythonOption Site http://www.example.com/foo/bar/
     PythonHandler ophelia.apache
 </Location>
 
-This instructs Apache to let Ophelia handle any URI under /foo/bar. Ophelia
+This instructs Apache to let Ophelia handle any URI under /foo/bar/. Ophelia
 will build pages from templates where they exist, and Apache will serve files
 from your static content otherwise. (Mind the caveat described in
 doc/OVERVIEW.txt.)
