@@ -117,8 +117,8 @@ class Publisher(object):
 
     def traverse(self):
         tail = self.tail
-        self.current = current = ""
-        self.history = [""]
+        self.current = current = self.site
+        self.history = [current]
         self.file_path = file_path = self.root
         self.stack = []
 

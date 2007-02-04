@@ -38,8 +38,7 @@ class Navigation(object):
 
     def iter_breadcrumbs(self):
         menu = {}
-        for path in self.publisher.history:
-            uri = self.uri_from_site(path)
+        for uri in self.publisher.history:
             title = self.breadcrumbs.get(uri) or menu.get(uri)
             if title:
                 yield (uri, title)
@@ -82,7 +81,7 @@ class Navigation(object):
         return '\n'.join(lines)
 
     def uri_from_current(self, path=None):
-        uri = urljoin(self.publisher.site, self.publisher.current)
+        uri = self.publisher.current
         if path is not None:
             uri = urljoin(uri, path)
         return uri

@@ -61,14 +61,15 @@ Attributes internally used by Ophelia's traversal mechanism:
 * stack: list of str pairs, compiled templates encountered so far, together
          with their file paths
 
-* history: list of str, partial paths traversed (including the source file of
+* history: list of str, partial URIs traversed (including the source file of
            the script being run) from template root, paths referring to
            directories have a trailing slash
 
 * current_path: str, absolute file system path to the directory containing the
                 source file of the script being run
 
-* current: str, current partial path without trailing slash
+* current: str, current partial URI, includes a trailing slash if it
+           references a directory
 
 * template: unicode, the decoded source of the current template
 
