@@ -50,11 +50,11 @@ Attributes internally used by Ophelia's traversal mechanism:
 
 * response_encoding: str, encoding of the HTTP response
 
-* path: str, complete path to traverse from the template root
+* path: str, partial URI path to traverse from site root to requested URI
 
 * root: str, absolute file system path to template root
 
-* site: str, absolute URL to site root
+* site: str, absolute URI to site root
 
 * tail: list of str, path segments yet to traverse from here
 
