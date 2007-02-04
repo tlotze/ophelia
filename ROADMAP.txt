@@ -21,9 +21,17 @@ time, whatever the feature set and code quality.
 0.2
 ---
 
-Internal usage of WSGI.
+A much cleaned-up version of the 0.1 state, with a feed tool added. This
+hadn't been a planned release but there were so many changes while preparing
+for WSGI integration that releasing them as 0.2 first seemed like the obvious
+thing to do.
 
 0.3
+---
+
+Internal usage of WSGI, zc.buildout based distribution.
+
+0.4
 ---
 
 A JPEG handler that builds pages from JPEG files which display the image along
