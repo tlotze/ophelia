@@ -1,11 +1,11 @@
-# Python
+# Copyright (c) 2006-2007 Thomas Lotze
+# See also LICENSE.txt
+
 import os.path
 import urlparse
 
-# mod_python
 from mod_python import apache, util
 
-# project
 from ophelia.publisher import Publisher, NotFound, Redirect
 
 

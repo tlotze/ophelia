@@ -1,3 +1,6 @@
+# Copyright (c) 2007 Thomas Lotze
+# See also LICENSE.txt
+
 import os.path
 import sys
 import shutil

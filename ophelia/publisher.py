@@ -1,16 +1,16 @@
-# Python
+# Copyright (c) 2006-2007 Thomas Lotze
+# See also LICENSE.txt
+
 import os.path
 import inspect
 from StringIO import StringIO
 import urlparse
 
-# Zope
 from zope.tales.engine import Engine as TALESEngine
 from zope.tal.htmltalparser import HTMLTALParser
 from zope.tal.talgenerator import TALGenerator
 from zope.tal.talinterpreter import TALInterpreter
 
-# Ophelia
 import ophelia.template
 
 

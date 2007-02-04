@@ -1,3 +1,6 @@
+# Copyright (c) 2006-2007 Thomas Lotze
+# See also LICENSE.txt
+
 import datetime
 import md5
 import codecs

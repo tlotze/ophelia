@@ -1,3 +1,6 @@
+# Copyright (c) 2006-2007 Thomas Lotze
+# See also LICENSE.txt
+
 from urlparse import urljoin
 
 import ophelia.publisher
