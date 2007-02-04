@@ -46,7 +46,7 @@ API:
 
   - removed thus obsolete ophelia.oapi module
 
-  - added uriFromUri() and set_chapter() to navigation tool
+  - added set_chapter() to navigation tool, removed the zoo of URI builders
 
   - added Redirect exception
 

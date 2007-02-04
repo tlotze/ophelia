@@ -10,12 +10,17 @@ class Navigation(object):
     chapter = None
     chapter_title = None
 
+    @property
+    def current(self):
+        return self.publisher.current
+
     def __init__(self, home=None):
         self.publisher = ophelia.publisher.get_publisher()
 
-        self.uri = self.uri_from_site(self.publisher.path)
+        self.site = self.publisher.site
+        self.uri = self.site + self.publisher.path
         if home is None:
-            self.home = self.uri_from_site("/")
+            self.home = self.site
         else:
             self.home = home
 
@@ -25,16 +30,16 @@ class Navigation(object):
         self.alt_lang_uris = {}
 
     def set_chapter(self, title):
-        self.chapter = self.uri_from_current()
+        self.chapter = self.current
         self.chapter_title = title
 
     def add_menu(self, entries, root_title=None, root=None):
-        self.menu[self.uri_from_current(root)] = (
-            [(self.uri_from_current(href), title) for href, title in entries],
+        self.menu[urljoin(self.current, root)] = (
+            [(urljoin(self.current, href), title) for href, title in entries],
             root_title)
 
     def set_breadcrumb(self, title):
-        self.breadcrumbs[self.uri_from_current()] = title
+        self.breadcrumbs[self.current] = title
 
     def iter_breadcrumbs(self):
         menu = {}
@@ -65,7 +70,7 @@ class Navigation(object):
         root_title = self.menu[uri][1]
         if root_title:
             lines.append("<dt>%s</dt>" % self.conditional_link(
-                    self.uri_from_page(uri), root_title))
+                    urljoin(self.uri, uri), root_title))
 
         def display(uri, deeper):
             for href, title in self.menu[uri][0]:
@@ -80,26 +85,8 @@ class Navigation(object):
         lines.append("</dl>")
         return '\n'.join(lines)
 
-    def uri_from_current(self, path=None):
-        uri = self.publisher.current
-        if path is not None:
-            uri = urljoin(uri, path)
-        return uri
-
-    def uri_from_site(self, path):
-        return urljoin(self.publisher.site, path)
-
-    def uri_from_home(self, path):
-        return urljoin(self.home, path)
-
-    def uri_from_page(self, path):
-        return urljoin(self.uri, path)
-
-    def uri_from_uri(self, uri, path):
-        return urljoin(uri, path)
-
     def alt_langs(self, **kwargs):
         for lang, path_seg in kwargs.iteritems():
             self.alt_lang_uris[lang] = urljoin(
-                self.alt_lang_uris.get(lang, self.uri_from_current("")),
+                self.alt_lang_uris.get(lang, self.current),
                 path_seg)
