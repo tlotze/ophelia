@@ -23,7 +23,7 @@ User-visible:
 
   - added optional redirection of URLs ending with index page to directories
 
-  - added opheliatools.feed, providing a download function using the Universal
+  - added ophelia.tool.feed, providing a download function using the Universal
     feedparser package, and a feed loader for using the feeds downloaded
 
 Bug fixes:
@@ -67,6 +67,8 @@ Organization:
   - moved roadmap from docs to distribution root, added README.txt to root
 
   - started using setuptools and distributing Ophelia as a Python egg
+
+  - moved opheliatools package to ophelia.tool for minimal namespace impact
 
 
 0.1

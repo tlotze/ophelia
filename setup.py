@@ -31,7 +31,6 @@ data_files = [("", glob.glob("*.txt"))] + list(include_tree("doc", "doc"))
 
 provides = [
     "ophelia",
-    "opheliatools",
     ]
 
 setup(name="Ophelia",
