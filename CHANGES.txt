@@ -2,8 +2,8 @@ Changes between versions
 ========================
 
 
-trunk
------
+0.2
+---
 
 User-visible:
   - made template and script encodings and the index template name
