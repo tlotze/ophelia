@@ -38,7 +38,7 @@ classifiers = [
     "Topic :: Internet :: WWW/HTTP :: Dynamic Content",
     ]
 
-setup(name="Ophelia",
+setup(name="ophelia",
       version="trunk",
       description=__doc__.strip(),
       long_description=longdesc,

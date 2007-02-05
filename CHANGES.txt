@@ -2,6 +2,16 @@ Changes between versions
 ========================
 
 
+trunk
+-----
+
+
+Organization:
+  - made egg name lower case
+
+  - added svn:ignore property
+
+
 0.2
 ---
 
