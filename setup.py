@@ -20,14 +20,11 @@ def include_tree(dest, source):
         if ".svn" in dirnames:
             dirnames.remove(".svn")
 
+
 longdesc = open(os.path.join(os.path.dirname(__file__),
                              "doc", "OVERVIEW.txt")).read()
 
 data_files = [("", glob.glob("*.txt"))] + list(include_tree("doc", "doc"))
-
-exclude = [
-    "recipe",
-    ]
 
 provides = [
     "ophelia",
@@ -52,7 +49,7 @@ setup(name="ophelia",
       author_email="thomas@thomas-lotze.de",
       url="http://www.thomas-lotze.de/en/software/ophelia/",
       license="ZPL 2.1",
-      packages=find_packages(exclude=exclude),
+      packages=find_packages(),
       include_package_data=True,
       data_files=data_files,
       provides=provides,
