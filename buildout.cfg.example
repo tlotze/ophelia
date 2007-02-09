@@ -1,8 +1,10 @@
 [buildout]
 extends = base.cfg
 
+[apache]
+httpd-path = /usr/local/sbin/httpd
+module-dir = /usr/local/apache2/modules
+
 [apacheroot]
-progname = apache2
 port = 1080
-module-dir = /usr/lib/apache2/modules
 serveradmin = thomas@localhost
