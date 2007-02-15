@@ -29,7 +29,11 @@ thing to do.
 0.3
 ---
 
-Internal usage of WSGI, zc.buildout based distribution.
+- internal usage of WSGI
+- zc.buildout based distribution
+- testing framework including some unit and functional doc tests
+- documentation in the standard Python documentation style
+- more useful tracebacks for errors in scripts and templates
 
 0.4
 ---
@@ -59,5 +63,8 @@ The wishlist:
   * Twisted Web
   * CGI
   * CLI-based converter to static files
+  * Firefox extension to view a site locally, once FF has Python scripting
 
-- cataloging, local search infrastructure
+- cataloging, local search infrastructure (xapian)
+
+- flexible storage backend (use OS file system or Subversion repository)
