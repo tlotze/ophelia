@@ -77,7 +77,9 @@ particular resource. Apache falls back to serving static content from disk in
 that case. Ophelia can thus be installed on top of a static site to handle
 just those requests for which templates exist in the template directory.
 
-Caveat: Since it is not possible in in mod_python 3.2 to set an Apache-level
+.. admonition:: Caveat:
+
+        Since it is not possible in in mod_python 3.2 to set an Apache-level
         handler during an earlier phase of the same request, some things do
         not yet work as smoothly as will be possible from mod_python 3.3 on.
         This includes PHP files not being parsed and directory indexes not
@@ -95,7 +97,7 @@ from that.
 
 There are two configuration options associated with the index template. To
 change the name of the index template Ophelia looks for from index.html to,
-say, foobar.html, add the following to your Apache configuration:
+say, foobar.html, add the following to your Apache configuration::
 
     PythonOption "IndexName" "foobar.html"
 
@@ -103,7 +105,7 @@ Additionally, Ophelia can be told to canonicalize URLs and redirect the
 browser if the path portion of the URL ends with the default index page's
 name. Provided the index name is the default index.html, a request to
 <http://www.example.com/index.html> would be redirected to
-<http://www.example.com/>. To achieve this, say in your Apache configuration:
+<http://www.example.com/>. To achieve this, say in your Apache configuration::
 
     PythonOption "RedirectIndex" On
 
@@ -156,21 +158,27 @@ Input encoding
 
 You can declare a character encoding both for the Python script and the
 template, and the two encodings may differ. To specify the Python encoding,
-just start the script with a Python style encoding declaration like this:
+just start the script with a Python style encoding declaration like this::
+
 # -*- coding: utf-8 -*-
-The template's encoding is determined by looking at the "<?xml?>" tag:
+
+The template's encoding is determined by looking at the "<?xml?>" tag::
+
 <?xml coding="utf-8" ?>
+
 specifies UTF-8 encoding for the template. The tag itself will be stripped
 from the template and will not appear in the rendered page.
 
 You may also specify a default encoding for any scripts and templates to be
 read later during traversal. In a Python script, just do something like
 
+::
+
     __publisher__.splitter.script_encoding = "utf-8"
     __publisher__.splitter.template_encoding = "utf-8"
 
 A site-wide default can be set by adding Python options to the Apache
-configuration:
+configuration::
 
     PythonOption ScriptEncoding "utf-8"
     PythonOption TemplateEncoding "utf-8"
@@ -188,9 +196,13 @@ response headers.
 
 To set the response encoding to, say, latin-1 in a script, do
 
+::
+
     __publisher__.response_encoding = "latin-1"
 
 To set the response encoding site-wide, add
+
+::
 
     PythonOption ResponseEncoding "latin-1"
 
