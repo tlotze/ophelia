@@ -3,4 +3,3 @@ extends = base.cfg
 
 [apacheroot]
 port = 1080
-serveradmin = thomas@localhost
