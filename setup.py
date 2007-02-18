@@ -30,6 +30,14 @@ provides = [
     "ophelia",
     ]
 
+extras_require = {
+    "test": ["zope.testing"],
+    }
+
+setup_requires = [
+    "zope.testing",
+    ]
+
 classifiers = [
     "Development Status :: 3 - Alpha",
     "Environment :: Web Environment",
@@ -50,7 +58,10 @@ setup(name="ophelia",
       url="http://www.thomas-lotze.de/en/software/ophelia/",
       license="ZPL 2.1",
       packages=find_packages(),
+      extras_require=extras_require,
+      setup_requires=setup_requires,
       include_package_data=True,
       data_files=data_files,
       provides=provides,
+      test_suite="ophelia.tests.test_suite",
       )

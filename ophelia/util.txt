@@ -1,0 +1,11 @@
+Ophelia utilities
+=================
+
+
+    >>> import ophelia.util
+
+
+Unicode dates and times
++++++++++++++++++++++++
+
+Ophelia provides its own version of strftime which always returns unicode.
