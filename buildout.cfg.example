@@ -1,5 +1,15 @@
 [buildout]
 extends = base.cfg
 
+[ophelia-example]
+extra-config =
+    <Location />
+        SetHandler mod_python
+        PythonOption TemplateRoot ${buildout:directory}/doc/example/ophelia_pages
+        PythonOption Site http://localhost:1080
+        PythonHandler ophelia.apache
+    </Location>
+
 [apachesite]
-port = 1080
+listen = 127.0.0.1:1080
+servername = localhost:1080
