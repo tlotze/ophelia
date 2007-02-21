@@ -1,7 +1,7 @@
 # Copyright (c) 2006-2007 Thomas Lotze
 # See also LICENSE.txt
 
-import re, string
+import re
 
 XML_START = re.compile("^\s*<\?xml\s*", re.MULTILINE)
 XML_END = re.compile("\s*\?>\s*$", re.MULTILINE)
@@ -12,7 +12,7 @@ class Splitter(object):
     """Splitter decomposing a file into Python script and template.
     """
 
-    script_encoding  = None
+    script_encoding = None
     template_encoding = None
 
     def __init__(self, options):

@@ -49,7 +49,6 @@ class Namespace(dict):
         self.__dict__ = self
         super(Namespace, self).__init__(*args, **kwargs)
 
-
 
 ###########
 # publisher
