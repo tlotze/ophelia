@@ -3,12 +3,10 @@ extends = base.cfg
 
 [ophelia-example]
 extra-config =
-    <Location />
-        SetHandler mod_python
-        PythonOption TemplateRoot ${buildout:directory}/doc/example/ophelia_pages
-        PythonOption Site http://localhost:1080
-        PythonHandler ophelia.apache
-    </Location>
+    SetHandler mod_python
+    PythonOption TemplateRoot ${buildout:directory}/doc/example/ophelia_pages
+    PythonOption Site http://localhost:1080
+    PythonHandler ophelia.apache
 
 [apachesite]
 listen = 127.0.0.1:1080
