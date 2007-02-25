@@ -6,7 +6,7 @@ Installation
 Buildout-based
 ==============
 
-- In the distribution directory::
+- In the distribution directory, bootstrap the buildout::
 
       python bootstrap/bootstrap
 
@@ -21,7 +21,6 @@ Buildout-based
 
 Manual
 ======
-
 
 Prerequisites
 -------------

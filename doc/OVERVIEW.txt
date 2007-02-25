@@ -1,3 +1,4 @@
+=======
 Ophelia
 =======
 
@@ -10,7 +11,7 @@ See INSTALL.txt for installation instruction and an example configuration.
 
 
 What kind of sites is Ophelia good for?
-+++++++++++++++++++++++++++++++++++++++
+=======================================
 
 Static content
 --------------
@@ -49,7 +50,7 @@ interfaces to applications, content management systems and the like.
 
 
 Languages and APIs used in templates and scripts
-++++++++++++++++++++++++++++++++++++++++++++++++
+================================================
 
 For the Python language, see <http://docs.python.org/>.
 
@@ -63,7 +64,7 @@ For the Ophelia API and predefined script and template variables, see API.txt.
 
 
 How Ophelia behaves
-+++++++++++++++++++
+===================
 
 Apache2 processes a request in phases, each of which can be handled by modules
 such as mod_python. Ophelia provides a mod_python handler for the content
@@ -111,7 +112,7 @@ name. Provided the index name is the default index.html, a request to
 
 
 How Ophelia works
-+++++++++++++++++
+=================
 
 Template files
 --------------
@@ -151,7 +152,7 @@ also import modules and define functions.
 
 
 Character encoding
-++++++++++++++++++
+==================
 
 Input encoding
 --------------
