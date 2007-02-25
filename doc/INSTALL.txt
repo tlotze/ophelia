@@ -1,5 +1,30 @@
+============
+Installation
+============
+
+
+Buildout-based
+==============
+
+- In the distribution directory::
+
+      python bootstrap/bootstrap
+
+  where ``python`` is the Python executable you want to run the server with.
+  You may also customize the buildout configuration to build and use its own
+  Python.
+
+- Run the buildout script::
+
+      bin/buildout
+
+
+Manual
+======
+
+
 Prerequisites
-=============
+-------------
 
 - Apache2
 - Python 2.4 or better
@@ -7,8 +32,8 @@ Prerequisites
 - the zope.tal package from Zope3 and anything it depends upon
 
 
-Installation
-============
+Installation steps
+------------------
 
 - Copy the ophelia package into the system Python path or configure
   mod_python's Python path according to where you put the ophelia package.
@@ -27,26 +52,26 @@ Example Apache 2 configuration
 ------------------------------
 
 Assume that the root of your site is published at
-<http://www.example.com/foo/bar/>.
+``<http://www.example.com/foo/bar/>``.
 
 Assume further that your site uses the following file system locations on a
 Unix system:
 
-/var/example/templates/  for the tree of Ophelia templates
-/var/example/python/     for the Python packages
-/var/example/static/     for the static stuff
+:/var/example/templates/: for the tree of Ophelia templates
+:/var/example/python/:    for the Python packages
+:/var/example/static/:    for the static stuff
 
-To publish this site, add the following to your host's config:
+To publish this site, add the following to your host's config::
 
-Alias /foo/bar /var/example/static
-<Location "/foo/bar">
-    SetHandler mod_python
-    PythonPath "['/var/example/python'] + sys.path"
-    PythonOption TemplateRoot /var/example/templates
-    PythonOption Site http://www.example.com/foo/bar/
-    PythonHandler ophelia.apache
-</Location>
-
+    Alias /foo/bar /var/example/static
+    <Location "/foo/bar">
+        SetHandler mod_python
+        PythonPath "['/var/example/python'] + sys.path"
+        PythonOption TemplateRoot /var/example/templates
+        PythonOption Site http://www.example.com/foo/bar/
+        PythonHandler ophelia.apache
+    </Location>
+    
 This instructs Apache to let Ophelia handle any URI under /foo/bar/. Ophelia
 will build pages from templates where they exist, and Apache will serve files
 from your static content otherwise. (Mind the caveat described in

@@ -5,11 +5,18 @@ Changes between versions
 trunk
 -----
 
+User-visible:
+  - use restructured text format for documentation
+
 
 Organization:
   - made egg name lower case
 
   - added svn:ignore property
+
+  - set up a zc.buildout environment for a development installation
+
+  - added tests
 
 
 0.2

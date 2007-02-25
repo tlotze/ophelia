@@ -6,11 +6,11 @@ Script context
 --------------
 
 Scripts are successively run in a namespace freshly initialized by Ophelia
-with the following variable:
+with the following variables:
 
-* __file__: the absolute file system path of the input file
+:__file__: the absolute file system path of the input file
 
-* __publisher__: the currently running Publisher instance
+:__publisher__: the currently running Publisher instance
 
 
 Publisher
@@ -18,66 +18,69 @@ Publisher
 
 Attributes internally used by Ophelia's traversal mechanism:
 
-* context: namespace in which scripts are being executed
+:context: namespace in which scripts are being executed
 
-* macros: namespace of str, compiled macros encountered so far
+:macros: namespace of str, compiled macros encountered so far
 
-* response_headers: dictionary mapping header names to TALES expressions that
-                    are executed in the template context after interpreting
-                    the templates
+:response_headers: dictionary mapping header names to TALES expressions that
+    are executed in the template context after interpreting the templates
 
-* innerslot: None during traversal and script execution,
-             unicode after innermost template has been evaluated:
-                     always the current content of the inner slot,
-                     accessible by functions put in the context
+:innerslot:
+  - None during traversal and script execution,
+  - unicode after innermost template has been evaluated: always the current
+    content of the inner slot, accessible by functions put in the context
 
-* content: None during traversal and template evaluation,
-           unicode after content is complete: equals innerslot, preceded by
-           XML declaration and encoded with response_encoding
+:content:
+  - None during traversal and template evaluation,
+  - unicode after content is complete: equals innerslot, preceded by XML
+    declaration and encoded with response_encoding
 
-* request: the request object passed by mod_python
+:request: the request object passed by mod_python
 
-* log_error: the error logging function used  by the publisher, takes a str as
-             the only argument
+:log_error: the error logging function used  by the publisher, takes a str as
+    the only argument
 
-* splitter: splits an input file into script and template
+:splitter: splits an input file into script and template (see below)
 
-            Attributes:
+:response_encoding: str, encoding of the HTTP response
 
-            script_encoding,
-            template_encoding: str, act as default encodings for any source
-                               files to be read yet
+:path: str, partial URI path to traverse from site root to requested URI
 
-* response_encoding: str, encoding of the HTTP response
+:root: str, absolute file system path to template root
 
-* path: str, partial URI path to traverse from site root to requested URI
+:site: str, absolute URI to site root
 
-* root: str, absolute file system path to template root
+:tail: list of str, path segments yet to traverse from here
 
-* site: str, absolute URI to site root
+:stack: list of str pairs, compiled templates encountered so far, together
+    with their file paths
 
-* tail: list of str, path segments yet to traverse from here
+:history: list of str, partial URIs traversed (including the source file of
+    the script being run) from template root, paths referring to directories
+    have a trailing slash
 
-* stack: list of str pairs, compiled templates encountered so far, together
-         with their file paths
+:file_path: str, absolute file system path to the directory containing the
+    source file of the script being run
 
-* history: list of str, partial URIs traversed (including the source file of
-           the script being run) from template root, paths referring to
-           directories have a trailing slash
+:current: str, current partial URI, includes a trailing slash if it
+    references a directory
 
-* file_path: str, absolute file system path to the directory containing the
-             source file of the script being run
-
-* current: str, current partial URI, includes a trailing slash if it
-           references a directory
-
-* template: unicode, the decoded source of the current template
+:template: unicode, the decoded source of the current template
 
 Methods meant for use in scripts:
 
-* load_macros(*args): load METAL macros from the files passed as arguments
-                      (file names relative to current file path) into the
-                      macros namespace
+:load_macros(\*args): load METAL macros from the files passed as arguments
+    (file names relative to current file path) into the macros namespace
+
+
+Splitter
+--------
+
+Attributes of the splitter which extracts Python scripts and TAL templates
+from input files:
+
+:script_encoding, template_encoding: str, act as default encodings for any
+    source files to be read yet
 
 
 Page template context
@@ -86,8 +89,7 @@ Page template context
 The context of a page template, i.e. the set of variables that can be accessed
 by TALES expressions, contains:
 
-* variables from the ZPT engine:
-
+* variables from the ZPT engine
   - CONTEXTS
   - nothing
   - default
@@ -98,17 +100,18 @@ by TALES expressions, contains:
   For documentation, see
   <http://www.zope.org/Documentation/Books/ZopeBook/2_6Edition/AppendixC.stx>.
 
-* variables added by Ophelia:
+* variables added by Ophelia
 
-  - macros: namespace of compiled macros (see above), contains at this point
-            all macros relevant to the requested path
+  :macros: namespace of compiled macros (see above), contains at this point
+      all macros relevant to the requested path
 
-  - innerslot: unicode, the "magic" slot filled by evaluating the next more
-               specific template. Example use:
-               <div tal:content="structure innerslot">
+  :innerslot: unicode, the "magic" slot filled by evaluating the next more
+      specific template. Example use::
 
-               Making this slot magic avoids writing any boilerplate code at
-               all in run-of-the-mill templates and pages.
+      <div tal:content="structure innerslot">
+
+      Making this slot magic avoids writing any boilerplate code at all in
+      run-of-the-mill templates and pages.
 
 * all variables in the script context
 
@@ -125,20 +128,20 @@ import ophelia.publisher
 
 The module defines the following items:
 
-* StopTraversal: exception, see "controlling traversal" below
+:StopTraversal: exception, see "controlling traversal" below
 
-* NotFound: exception signalling that some file needed to respond to the
-            request was not found
+:NotFound: exception signalling that some file needed to respond to the
+    request was not found
 
-* Namespace: class whose instances do nothing but carry attributes
+:Namespace: class whose instances do nothing but carry attributes
 
-             Not using pure dictionaries here makes for more aesthetic code if
-             nothing else. Namespaces can still be accessed as dictionaries.
+    Not using pure dictionaries here makes for more aesthetic code if nothing
+    else. Namespaces can still be accessed as dictionaries.
 
-* Publisher: an instance of this class is currently directing the execution of
-             scripts and assembly of the HTTP response.
+:Publisher: an instance of this class is currently directing the execution of
+    scripts and assembly of the HTTP response.
 
-* get_publisher: function returning the currently running Publisher instance
+:get_publisher: function returning the currently running Publisher instance
 
 
 Controlling traversal
@@ -150,6 +153,6 @@ Raising publisher.StopTraversal in a script prevents more specific scripts
 from being executed and the current as well as more specific templates from
 being evaluated. The exception accepts two optional parameters:
 
-* content: str, used to fill the inner slot
+:content: str, used to fill the inner slot
 
-* use_template: bool, whether to use the current template, defaults to False
+:use_template: bool, whether to use the current template, defaults to False
