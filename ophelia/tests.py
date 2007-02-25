@@ -2,12 +2,15 @@
 # See also LICENSE.txt
 
 import unittest
-from zope.testing.doctestunit import DocFileSuite
+import doctest
+from zope.testing.doctest import DocFileSuite
 
+
+flags = doctest.NORMALIZE_WHITESPACE | doctest.ELLIPSIS
 
 def test_suite():
     return unittest.TestSuite((
-        DocFileSuite("util.txt", package="ophelia"),
+        DocFileSuite("util.txt", package="ophelia", optionflags=flags),
         ))
 
 

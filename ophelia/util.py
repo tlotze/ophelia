@@ -12,13 +12,16 @@ def strftime(format, t=None):
     Decodes the time representation returned by time.strftime according to the
     character encoding as determined by the current locale.
 
-    format: str, a time format string
+    format: str or unicode, a time format string
     t: optional, if given: tuple, datetime.datetime, or datetime.time
        If t is omitted, the current time is used. If t is a tuple, it must be
        a valid time tuple as accepted by time.strftime().
 
     returns unicode
     """
+    encoding = locale.nl_langinfo(locale.CODESET)
+    format = format.encode(encoding)
+
     if t is None:
         time_str = time.strftime(format)
     else:
@@ -26,5 +29,4 @@ def strftime(format, t=None):
             t = t.timetuple()
         time_str = time.strftime(format, t)
 
-    encoding = locale.nl_langinfo(locale.CODESET)
     return time_str.decode(encoding)

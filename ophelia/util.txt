@@ -1,11 +1,46 @@
+=================
 Ophelia utilities
 =================
 
 
-    >>> import ophelia.util
-
-
 Unicode dates and times
-+++++++++++++++++++++++
+=======================
+
+    >>> import locale
+    >>> import datetime
+    >>> from ophelia.util import strftime
+
 
 Ophelia provides its own version of strftime which always returns unicode.
+
+Otherwise, it works the same as the time.strftime function: With only a format
+string given, it formats the current time::
+
+    >>> strftime("%c")
+    u'...'
+
+Our strftime function uses the current locale's encoding to decode
+time.strftime's output, as that is what time.strftime uses to encode it in the
+first place. Let's try out it with the german locale as we have month names
+with nice umlauts there::
+
+    >>> locale.setlocale(locale.LC_ALL, "de_DE")
+    'de_DE'
+    >>> strftime("%B", datetime.date(2007, 3, 1))
+    u'M\xe4rz'
+
+Not only do we always get unicode output from our strftime function, but we
+can also pass it a unicode format string (which time.strftime would not
+accept)::
+
+    >>> strftime(u"Im sch\xf6nen Monat %B...", datetime.date(2007, 3, 1))
+    u'Im sch\xf6nen Monat M\xe4rz...'
+
+However, to avoid confusion with the locale's encoding which we don't even
+want to think about when calling strftime, we cannot pass any encoded strings
+as the format specification:
+
+   >>> strftime("Im sch\xf6nen Monat %B...", datetime.date(2007, 3, 1))
+   Traceback (most recent call last):
+   ...
+   UnicodeDecodeError: 'ascii' codec can't decode byte ... in position ...
