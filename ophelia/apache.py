@@ -9,9 +9,14 @@ from mod_python import apache, util
 from ophelia.publisher import Publisher, NotFound, Redirect
 
 
-# generic request handler
-def handler(request):
-    """generic Apache request handler serving pages from Ophelia's publisher
+# fix-up request handler
+def fixuphandler(request):
+    """Fix-up handler setting up the Ophelia content handler iff applicable.
+
+    This handler has the Ophelia publisher traverse the requested URL and
+    registers the generic content handler if and only if traversal is possible
+    and the requested resource can actually be served by Ophelia. This is to
+    prevent clobbering Apache's default generic handler chain if it's needed.
 
     never raises a 404 but declines instead
     may raise anything else
@@ -43,9 +48,30 @@ def handler(request):
 
     publisher = Publisher(path, root, site, request, log_error)
     try:
-        response_headers, content = publisher()
+        publisher.traverse()
     except NotFound:
         return apache.DECLINED
+    except Redirect, e:
+        util.redirect(request, e.uri, permanent=True)
+    else:
+        request.handler = "mod_python"
+        request.add_handler("PythonHandler", "ophelia.apache")
+        request.__ophelia_publisher__ = publisher
+        return apache.OK
+
+
+# generic request handler
+def handler(request):
+    """Generic Apache request handler serving pages from Ophelia's publisher.
+
+    This handler is called only after it is known that the requested resource
+    can actually be served by Ophelia.
+
+    may raise anything
+    """
+    publisher = request.__ophelia_publisher__
+    try:
+        response_headers, content = publisher.build()
     except Redirect, e:
         util.redirect(request, e.uri, permanent=True)
 

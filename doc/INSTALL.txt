@@ -27,7 +27,7 @@ Prerequisites
 
 - Apache2
 - Python 2.4 or better
-- mod_python 3.1 or better
+- mod_python 3.3 or better
 - the zope.tal package from Zope3 and anything it depends upon
 
 
@@ -64,17 +64,15 @@ To publish this site, add the following to your host's config::
 
     Alias /foo/bar /var/example/static
     <Location "/foo/bar">
-        SetHandler mod_python
         PythonPath "['/var/example/python'] + sys.path"
         PythonOption TemplateRoot /var/example/templates
         PythonOption Site http://www.example.com/foo/bar/
-        PythonHandler ophelia.apache
+        PythonFixupHandler ophelia.apache
     </Location>
     
 This instructs Apache to let Ophelia handle any URI under /foo/bar/. Ophelia
 will build pages from templates where they exist, and Apache will serve files
-from your static content otherwise. (Mind the caveat described in
-doc/OVERVIEW.txt.)
+from your static content otherwise.
 
 It is possible to set the Ophelia handler only for directories or HTML
 documents by applying some path name heuristics and matching the location

@@ -8,6 +8,9 @@ trunk
 User-visible:
   - use restructured text format for documentation
 
+Bug fixes:
+  - Apache-generated directory indexes and PHP pages work now. This needs at
+    least version 3.3 of mod_python.
 
 Organization:
   - made egg name lower case

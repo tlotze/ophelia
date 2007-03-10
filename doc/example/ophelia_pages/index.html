@@ -11,7 +11,8 @@ title = "Ophelia example site"
 
 <p>
   Take a look at the <a href="foo/">foo</a>, <a href="foo/bar.html">foo/bar</a>,
-  and <a href="foo/baz.html">foo/baz</a> pages.
+  and <a href="foo/baz.html">foo/baz</a> pages as well as the
+  <a href="asdf/">asdf</a> folder.
 </p>
 
 <p>
@@ -23,10 +24,9 @@ title = "Ophelia example site"
 <pre>
 Alias /software/ophelia/example .../Ophelia/doc/example/static
 &lt;Location "/software/ophelia/example"&gt;
-    SetHandler mod_python
     PythonPath "['.../Ophelia'] + sys.path"
     PythonOption TemplateRoot .../Ophelia/doc/example/ophelia_pages
     PythonOption Site http://www.thomas-lotze.de/software/ophelia/example
-    PythonHandler ophelia.apache
+    PythonFixupHandler ophelia.apache
 &lt;/Location&gt;
 </pre>

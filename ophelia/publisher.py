@@ -104,6 +104,9 @@ class Publisher(object):
         returns (dict, unicode), response headers and page content
         """
         self.traverse()
+        return self.build()
+
+    def build(self):
         self.set_tales_context()
 
         self.build_content()
