@@ -165,7 +165,7 @@ class Publisher(object):
         if os.path.isfile(file_path):
             self.process_file(file_path)
 
-    def process_file(self, file_path):
+    def process_file(self, file_path, fill_innerslot=True):
         # make publisher accessible from scripts
         __publisher__ = self
 
@@ -197,7 +197,8 @@ class Publisher(object):
                 raise
 
             program, macros = parser.getCode()
-            self.stack.append((program, file_path))
+            if fill_innerslot:
+                self.stack.append((program, file_path))
             self.macros.update(macros)
 
     def set_tales_context(self):
@@ -252,34 +253,22 @@ class Publisher(object):
 
     def load_macros(self, *args):
         base = self.file_path
-        if os.path.isfile(base):
+        if not os.path.isdir(base):
             base = os.path.dirname(base)
+
+        old_file_path = self.context.__file__
+        old_template = self.template
+
         for name in args:
             file_path = os.path.join(base, name)
             try:
-                content = open(file_path).read()
+                self.process_file(file_path, fill_innerslot=False)
             except:
-                self.log_error("Can't read macro file at " + file_path)
+                self.log_error("Can't read macros from " + file_path)
                 raise
 
-            script, template = self.splitter(content)
-            if script:
-                self.log_error("Macro file contains a script at " + file_path)
-                raise ValueError(
-                    "Macro file contains a script at " + file_path)
-
-            generator = TALGenerator(TALESEngine, xml=False,
-                                     source_file=file_path)
-            parser = HTMLTALParser(generator)
-
-            try:
-                parser.parseString(template)
-            except:
-                self.log_error("Can't compile template at " + file_path)
-                raise
-
-            program, macros = parser.getCode()
-            self.macros.update(macros)
+        self.context.__file__ = old_file_path
+        self.template = old_template
 
 
 ###########

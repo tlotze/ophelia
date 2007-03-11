@@ -8,6 +8,8 @@ trunk
 User-visible:
   - use restructured text format for documentation
 
+  - scripts are now allowed in macro files
+
 Bug fixes:
   - Apache-generated directory indexes and PHP pages work now. This needs at
     least version 3.3 of mod_python.
