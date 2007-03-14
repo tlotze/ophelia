@@ -61,6 +61,7 @@ class Publisher(object):
     tales_context = None
     content = None
     compiled_headers = None
+    current = None
     history = None
     stack = None
     file_path = None
