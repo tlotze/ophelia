@@ -124,7 +124,7 @@ class Publisher(object):
         # traverse the template root
         if not os.path.isdir(file_path):
             raise NotFound
-        self.process_dir(file_path)
+        self.traverse_dir(file_path)
 
         while tail:
             # determine the next traversal step
@@ -146,9 +146,9 @@ class Publisher(object):
             self.file_path = file_path = os.path.join(file_path, next)
 
             if os.path.isdir(file_path):
-                self.process_dir(file_path)
+                self.traverse_dir(file_path)
             elif os.path.isfile(file_path):
-                self.process_file(file_path)
+                self.traverse_file(file_path)
             else:
                 raise NotFound
 
@@ -158,14 +158,27 @@ class Publisher(object):
             parts[2] = path
         raise Redirect(urlparse.urlunparse(parts))
 
-    def process_dir(self, dir_path):
+    def traverse_dir(self, dir_path):
         if not self.tail:
             self.redirect(path=self.request.uri + '/')
         file_path = os.path.join(dir_path, "__init__")
         if os.path.isfile(file_path):
-            self.process_file(file_path)
+            self.traverse_file(file_path)
 
-    def process_file(self, file_path, fill_innerslot=True):
+    def traverse_file(self, file_path):
+        program, stop_traversal = self.process_file(file_path)
+
+        if stop_traversal:
+            if stop_traversal.content is not None:
+                self.innerslot = stop_traversal.content
+            if not stop_traversal.use_template:
+                program = None
+            del self.tail[:]
+
+        if program is not None:
+            self.stack.append((program, file_path))
+
+    def process_file(self, file_path):
         # make publisher accessible from scripts
         __publisher__ = self
 
@@ -173,18 +186,15 @@ class Publisher(object):
         script, self.template = self.splitter(open(file_path).read())
 
         # manipulate the context
+        stop_traversal = None
         if script:
             self.context.__file__ = file_path
             try:
                 exec script in self.context
             except StopTraversal, e:
-                if e.content is not None:
-                    self.innerslot = e.content
-                if not e.use_template:
-                    self.template = None
-                del self.tail[:]
+                stop_traversal = e
 
-        # compile the template, collect the macros
+        # compile the template, collect program and macros
         if self.template:
             generator = TALGenerator(TALESEngine, xml=False,
                                      source_file=file_path)
@@ -197,9 +207,11 @@ class Publisher(object):
                 raise
 
             program, macros = parser.getCode()
-            if fill_innerslot:
-                self.stack.append((program, file_path))
             self.macros.update(macros)
+        else:
+            program = None
+
+        return program, stop_traversal
 
     def set_tales_context(self):
         tales_ns = Namespace(
@@ -262,7 +274,7 @@ class Publisher(object):
         for name in args:
             file_path = os.path.join(base, name)
             try:
-                self.process_file(file_path, fill_innerslot=False)
+                self.process_file(file_path)
             except:
                 self.log_error("Can't read macros from " + file_path)
                 raise
