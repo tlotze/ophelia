@@ -28,7 +28,7 @@ Prerequisites
 - Apache2
 - Python 2.4 or better
 - mod_python 3.3 or better
-- the zope.tal package from Zope3 and anything it depends upon
+- the zope.pagetemplate package from Zope3 and anything it depends upon
 
 
 Installation steps
@@ -37,8 +37,11 @@ Installation steps
 - Copy the ophelia package into the system Python path or configure
   mod_python's Python path according to where you put the ophelia package.
 
-- If you don't have the zope package installed system-wide, put it in
-  mod_python's Python path as well.
+- Install needed parts of Zope3: either build a complete Zope3 from source and
+  make sure it's on mod_python's Python path, or easy_install the
+  zope.pagetemplate egg into mod_python's Python installation. Zope3 packages
+  can be obtained from the Python package index or from
+  ``<http://download.zope.org/distribution/>``.
 
 - Choose places in the files system to put your site's Ophelia pages and
   static (non-Ophelia) documents, resp., and configure Apache accordingly (see

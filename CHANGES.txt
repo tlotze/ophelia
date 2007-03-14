@@ -17,6 +17,8 @@ Bug fixes:
 Organization:
   - made egg name lower case
 
+  - made the ophelia egg require needed parts of Zope by egg dependencies
+
   - added svn:ignore property
 
   - set up a zc.buildout environment for a development installation

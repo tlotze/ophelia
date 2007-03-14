@@ -30,6 +30,10 @@ provides = [
     "ophelia",
     ]
 
+install_requires = [
+    "zope.pagetemplate",
+    ]
+
 extras_require = {
     "test": ["zope.testing"],
     }
@@ -58,6 +62,7 @@ setup(name="ophelia",
       url="http://www.thomas-lotze.de/en/software/ophelia/",
       license="ZPL 2.1",
       packages=find_packages(),
+      install_requires=install_requires,
       extras_require=extras_require,
       setup_requires=setup_requires,
       include_package_data=True,
