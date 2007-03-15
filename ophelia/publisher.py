@@ -3,13 +3,10 @@
 
 import os.path
 import inspect
-from StringIO import StringIO
 import urlparse
 
 from zope.tales.engine import Engine as TALESEngine
-from zope.tal.htmltalparser import HTMLTALParser
-from zope.tal.talgenerator import TALGenerator
-from zope.tal.talinterpreter import TALInterpreter
+import zope.pagetemplate.pagetemplate
 
 import ophelia.template
 
@@ -49,6 +46,28 @@ class Namespace(dict):
         self.__dict__ = self
         super(Namespace, self).__init__(*args, **kwargs)
 
+
+class PageTemplate(zope.pagetemplate.pagetemplate.PageTemplate):
+    """Page templates with Ophelia-style namespaces and source tracking.
+    """
+
+    publisher = None
+    file_path = None
+
+    def __init__(self, publisher, text, file_path=None):
+        super(PageTemplate, self).__init__()
+        self.publisher = publisher
+        self.write(text)
+        self.file_path = file_path
+
+    def pt_getContext(self, args=(), options=None, **ignored):
+        rval = Namespace(template=self)
+        rval.update(self.publisher.tales_namespace())
+        return rval
+
+    def pt_source_file(self):
+        return self.file_path
+
 
 ###########
 # publisher
@@ -58,7 +77,6 @@ class Publisher(object):
     """
 
     innerslot = None
-    tales_context = None
     content = None
     compiled_headers = None
     current = None
@@ -108,8 +126,6 @@ class Publisher(object):
         return self.build()
 
     def build(self):
-        self.set_tales_context()
-
         self.build_content()
         self.build_headers()
 
@@ -167,24 +183,25 @@ class Publisher(object):
             self.traverse_file(file_path)
 
     def traverse_file(self, file_path):
-        program, stop_traversal = self.process_file(file_path)
+        template, stop_traversal = self.process_file(file_path)
 
         if stop_traversal:
             if stop_traversal.content is not None:
                 self.innerslot = stop_traversal.content
             if not stop_traversal.use_template:
-                program = None
+                template = None
             del self.tail[:]
 
-        if program is not None:
-            self.stack.append((program, file_path))
+        if template is not None:
+            self.stack.append(template)
 
     def process_file(self, file_path):
         # make publisher accessible from scripts
         __publisher__ = self
 
         # get script and template
-        script, self.template = self.splitter(open(file_path).read())
+        script, text = self.splitter(open(file_path).read())
+        self.template = PageTemplate(self, text, file_path)
 
         # manipulate the context
         stop_traversal = None
@@ -195,51 +212,36 @@ class Publisher(object):
             except StopTraversal, e:
                 stop_traversal = e
 
-        # compile the template, collect program and macros
-        if self.template:
-            generator = TALGenerator(TALESEngine, xml=False,
-                                     source_file=file_path)
-            parser = HTMLTALParser(generator)
+        # collect the macros, complain if the template doesn't compile
+        self.macros.update(self.template.macros)
+        if self.template._v_errors:
+            self.log_error("Can't compile template at " + file_path)
+            raise zope.pagetemplate.pagetemplate.PTRuntimeError(
+                str(template._v_errors))
 
-            try:
-                parser.parseString(self.template)
-            except:
-                self.log_error("Can't compile template at " + file_path)
-                raise
+        return self.template, stop_traversal
 
-            program, macros = parser.getCode()
-            self.macros.update(macros)
-        else:
-            program = None
-
-        return program, stop_traversal
-
-    def set_tales_context(self):
+    def tales_namespace(self):
         tales_ns = Namespace(
             innerslot=lambda: self.innerslot,
             macros=self.macros,
             )
         tales_ns.update(TALESEngine.getBaseNames())
         tales_ns.update(self.context)
-        self.tales_context = TALESEngine.getContext(tales_ns)
+        return tales_ns
 
     def build_content(self):
         # make publisher accessible from TALES expressions
         __publisher__ = self
 
-        out = StringIO(u"")
-
         while self.stack:
-            program, file_path = self.stack.pop()
-            out.truncate(0)
+            template = self.stack.pop()
             try:
-                TALInterpreter(program, self.macros, self.tales_context, out,
-                               strictinsert=False)()
+                self.innerslot = template()
             except:
-                self.log_error("Can't interpret template at " + file_path)
+                self.log_error(
+                    "Can't interpret template at " + template.file_path)
                 raise
-            else:
-                self.innerslot = out.getvalue()
 
         self.content = """<?xml version="1.1" encoding="%s" ?>\n%s""" % (
             self.response_encoding,
@@ -250,6 +252,7 @@ class Publisher(object):
         __publisher__ = self
 
         self.compiled_headers = {}
+        tales_context = TALESEngine.getContext(self.tales_namespace())
 
         for name, expression in self.response_headers.iteritems():
             try:
@@ -258,7 +261,7 @@ class Publisher(object):
                 self.log_error("Can't compile expression for header " + name)
                 raise
             try:
-                value = str(compiled(self.tales_context))
+                value = str(compiled(tales_context))
             except:
                 log_error("Can't interpret expression for header " + name)
                 raise

@@ -65,7 +65,7 @@ Attributes internally used by Ophelia's traversal mechanism:
 :current: str, current partial URI, includes a trailing slash if it
     references a directory
 
-:template: unicode, the decoded source of the current template
+:template: the PageTemplate created from the input file's template text
 
 Methods meant for use in scripts:
 
