@@ -236,6 +236,10 @@ class Publisher(object):
 
         while self.stack:
             template = self.stack.pop()
+            # apply some common sense and interpret whitespace-only templates
+            # as non-existent instead of as describing an empty innerslot
+            if not template._text.strip():
+                continue
             try:
                 self.innerslot = template()
             except:
