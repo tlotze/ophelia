@@ -196,9 +196,6 @@ class Publisher(object):
             self.stack.append(template)
 
     def process_file(self, file_path):
-        # make publisher accessible from scripts
-        __publisher__ = self
-
         # get script and template
         script, text = self.splitter(open(file_path).read())
         self.template = PageTemplate(self, text, file_path)
@@ -231,9 +228,6 @@ class Publisher(object):
         return tales_ns
 
     def build_content(self):
-        # make publisher accessible from TALES expressions
-        __publisher__ = self
-
         while self.stack:
             template = self.stack.pop()
             # apply some common sense and interpret whitespace-only templates
@@ -252,9 +246,6 @@ class Publisher(object):
             self.innerslot.encode(self.response_encoding))
 
     def build_headers(self):
-        # make publisher accessible from TALES expressions
-        __publisher__ = self
-
         self.compiled_headers = {}
         tales_context = TALESEngine.getContext(self.tales_namespace())
 
@@ -296,7 +287,7 @@ class Publisher(object):
 
 def get_publisher():
     for frame_record in inspect.stack():
-        candidate = frame_record[0].f_locals.get("__publisher__")
+        candidate = frame_record[0].f_locals.get("self")
         if isinstance(candidate, Publisher):
             return candidate
     else:
