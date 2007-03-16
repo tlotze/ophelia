@@ -52,15 +52,30 @@ def fixuphandler(request):
     except NotFound:
         return apache.DECLINED
     except Redirect, e:
-        util.redirect(request, e.uri, permanent=True)
+        request.handler = "mod_python"
+        request.add_handler("PythonHandler", "ophelia.apache::redirect")
+        request.__ophelia_location__ = e.uri
     else:
         request.handler = "mod_python"
         request.add_handler("PythonHandler", "ophelia.apache")
         request.__ophelia_publisher__ = publisher
-        return apache.OK
+
+    return apache.OK
 
 
 # generic request handler
+def redirect(request):
+    """Generic Apache request handler doing an Ophelia traversal's redirect.
+
+    Under certain circumstances, Apache writes to the request during the
+    fix-up phase so calling modpython.util.redirect() in the fix-up handler
+    may result in an IOError since headers have supposedly already been sent.
+    The generic handler gets a new chance to do redirection, so we defer it
+    until then, using this handler.
+    """
+    util.redirect(request, request.__ophelia_location__, permanent=True)
+
+
 def handler(request):
     """Generic Apache request handler serving pages from Ophelia's publisher.
 
