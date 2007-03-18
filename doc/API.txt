@@ -95,6 +95,7 @@ The context of a page template, i.e. the set of variables that can be accessed
 by TALES expressions, contains:
 
 * variables from the ZPT engine
+
   - CONTEXTS
   - nothing
   - default
