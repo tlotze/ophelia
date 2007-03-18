@@ -136,9 +136,9 @@ class Publisher(object):
 
     def traverse(self):
         tail = self.tail
-        self.current = current = self.site
-        self.history = [current]
+        self.current = self.site
         self.file_path = file_path = self.root
+        self.history = []
         self.stack = []
 
         # traverse the template root
@@ -151,16 +151,13 @@ class Publisher(object):
             next = tail.pop(0)
 
             # add to traversal history
-            current += next
-            if tail:
-                current += '/'
-            self.current = current
-            self.history.append(current)
+            self.current += next
 
             # try to find a file to read
             self.file_path = file_path = os.path.join(file_path, next)
 
             if os.path.isdir(file_path):
+                self.current += '/'
                 self.traverse_dir(file_path)
             elif os.path.isfile(file_path):
                 self.traverse_file(file_path)
@@ -194,6 +191,7 @@ class Publisher(object):
             del self.tail[:]
 
         self.stack.append(file_context)
+        self.history.append(self.current)
 
     def process_file(self, file_path):
         # get script and template
