@@ -149,12 +149,6 @@ class Publisher(object):
         while tail:
             # determine the next traversal step
             next = tail.pop(0)
-            if not tail:
-                if self.redirect_index and next == self.index_name:
-                    raise Redirect(self.request.unparsed_uri,
-                                   path=self.request.uri[:-len(next)])
-                if not next:
-                    next = self.index_name
 
             # add to traversal history
             current += next
@@ -177,9 +171,17 @@ class Publisher(object):
         if not self.tail:
             raise Redirect(self.request.unparsed_uri,
                            path=self.request.uri + '/')
+
         file_path = os.path.join(dir_path, "__init__")
         if os.path.isfile(file_path):
             self.traverse_file(file_path)
+
+        if self.redirect_index and self.tail == [self.index_name]:
+            raise Redirect(self.request.unparsed_uri,
+                           path=self.request.uri[:-len(self.index_name)])
+
+        if self.tail == [""]:
+            self.tail[0] = self.index_name
 
     def traverse_file(self, file_path):
         file_context, stop_traversal = self.process_file(file_path)
