@@ -135,32 +135,31 @@ class Publisher(object):
         return self.compiled_headers, self.content
 
     def traverse(self):
-        tail = self.tail
         self.current = self.site
-        self.file_path = file_path = self.root
+        self.file_path = self.root
         self.history = []
         self.stack = []
 
         # traverse the template root
-        if not os.path.isdir(file_path):
+        if not os.path.isdir(self.file_path):
             raise NotFound
-        self.traverse_dir(file_path)
+        self.traverse_dir(self.file_path)
 
-        while tail:
+        while self.tail:
             # determine the next traversal step
-            next = tail.pop(0)
+            next = self.tail.pop(0)
 
             # add to traversal history
             self.current += next
 
             # try to find a file to read
-            self.file_path = file_path = os.path.join(file_path, next)
+            self.file_path = os.path.join(self.file_path, next)
 
-            if os.path.isdir(file_path):
+            if os.path.isdir(self.file_path):
                 self.current += '/'
-                self.traverse_dir(file_path)
-            elif os.path.isfile(file_path):
-                self.traverse_file(file_path)
+                self.traverse_dir(self.file_path)
+            elif os.path.isfile(self.file_path):
+                self.traverse_file(self.file_path)
             else:
                 raise NotFound
 
