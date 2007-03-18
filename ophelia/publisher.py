@@ -32,8 +32,11 @@ class NotFound(Exception):
 class Redirect(Exception):
     """Signals that the server should redirect the client to another URI."""
 
-    def __init__(self, uri):
-        self.uri = uri
+    def __init__(self, uri, path=None):
+        parts = list(urlparse.urlsplit(uri))
+        if path is not None:
+            parts[2] = path
+        self.uri = urlparse.urlunsplit(parts)
 
 
 class Namespace(dict):
@@ -148,7 +151,8 @@ class Publisher(object):
             next = tail.pop(0)
             if not tail:
                 if self.redirect_index and next == self.index_name:
-                    self.redirect(path=self.request.uri[:-len(next)])
+                    raise Redirect(self.request.unparsed_uri,
+                                   path=self.request.uri[:-len(next)])
                 if not next:
                     next = self.index_name
 
@@ -169,15 +173,10 @@ class Publisher(object):
             else:
                 raise NotFound
 
-    def redirect(self, path=None):
-        parts = list(urlparse.urlparse(self.request.unparsed_uri))
-        if path is not None:
-            parts[2] = path
-        raise Redirect(urlparse.urlunparse(parts))
-
     def traverse_dir(self, dir_path):
         if not self.tail:
-            self.redirect(path=self.request.uri + '/')
+            raise Redirect(self.request.unparsed_uri,
+                           path=self.request.uri + '/')
         file_path = os.path.join(dir_path, "__init__")
         if os.path.isfile(file_path):
             self.traverse_file(file_path)

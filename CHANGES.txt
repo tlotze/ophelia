@@ -18,8 +18,13 @@ API:
   - current template moved from publisher member (template) to pre-defined
     script and TALES variable __template__
 
+  - publisher.Redirect exception has an option for replacing the path portion
+    of the target URL (saves the client some urlparse acrobatics)
+
 Code:
   - use zope.pagetemplate instead of fiddling with the TAL engine directly
+
+  - some clean-up
 
 Organization:
   - made egg name lower case

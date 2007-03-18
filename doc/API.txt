@@ -140,6 +140,8 @@ The module defines the following items:
 :NotFound: exception signalling that some file needed to respond to the
     request was not found
 
+:Redirect: exception, see "redirection" below
+
 :Namespace: class whose instances do nothing but carry attributes
 
     Not using pure dictionaries here makes for more aesthetic code if nothing
@@ -149,6 +151,21 @@ The module defines the following items:
     scripts and assembly of the HTTP response.
 
 :get_publisher: function returning the currently running Publisher instance
+
+
+Redirection
+-----------
+
+Ophelia provides the publisher.Redirect exception that scripts and add-on
+libraries may raise to cause the HTTP server to redirect the client to another
+URI. The exception constructor takes a number of parameters:
+
+:uri: str, the URI to redirect to
+
+:path: str, optional override value for uri's path portion
+
+Overriding part of the redirection target is possible purely for convenience.
+It saves the client some URI manipulation in the simpler use cases.
 
 
 Controlling traversal
