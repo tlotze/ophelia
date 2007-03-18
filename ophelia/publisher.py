@@ -49,6 +49,8 @@ class Namespace(dict):
 
 class PageTemplate(zope.pagetemplate.pagetemplate.PageTemplate):
     """Page templates with Ophelia-style namespaces and source tracking.
+
+    Call parameters: the namespace of file context variables
     """
 
     publisher = None
@@ -61,9 +63,7 @@ class PageTemplate(zope.pagetemplate.pagetemplate.PageTemplate):
         self.file_path = file_path
 
     def pt_getContext(self, args=(), options=None, **ignored):
-        rval = Namespace(template=self)
-        rval.update(self.publisher.tales_namespace())
-        return rval
+        return Namespace(self.publisher.tales_namespace(args[0]))
 
     def pt_source_file(self):
         return self.file_path
@@ -183,59 +183,68 @@ class Publisher(object):
             self.traverse_file(file_path)
 
     def traverse_file(self, file_path):
-        template, stop_traversal = self.process_file(file_path)
+        file_context, stop_traversal = self.process_file(file_path)
 
         if stop_traversal:
             if stop_traversal.content is not None:
                 self.innerslot = stop_traversal.content
             if not stop_traversal.use_template:
-                template = None
+                file_context.__template__.write("")
             del self.tail[:]
 
-        if template is not None:
-            self.stack.append(template)
+        self.stack.append(file_context)
 
     def process_file(self, file_path):
         # get script and template
         script, text = self.splitter(open(file_path).read())
-        self.template = PageTemplate(self, text, file_path)
+
+        # build the file context namespace available as script globals
+        file_context = Namespace(
+            __file__ = file_path,
+            __template__ = PageTemplate(self, text, file_path),
+            )
 
         # manipulate the context
         stop_traversal = None
         if script:
-            self.context.__file__ = file_path
+            # get_file_context() will find the file context by its name
             try:
-                exec script in self.context
+                exec script in file_context, self.context
             except StopTraversal, e:
                 stop_traversal = e
 
         # collect the macros, complain if the template doesn't compile
-        self.macros.update(self.template.macros)
-        if self.template._v_errors:
+        template = file_context.__template__
+        self.macros.update(template.macros)
+        if template._v_errors:
             self.log_error("Can't compile template at " + file_path)
             raise zope.pagetemplate.pagetemplate.PTRuntimeError(
                 str(template._v_errors))
 
-        return self.template, stop_traversal
+        return file_context, stop_traversal
 
-    def tales_namespace(self):
+    def tales_namespace(self, file_context={}):
         tales_ns = Namespace(
             innerslot=lambda: self.innerslot,
             macros=self.macros,
             )
         tales_ns.update(TALESEngine.getBaseNames())
+        tales_ns.update(file_context)
         tales_ns.update(self.context)
         return tales_ns
 
     def build_content(self):
         while self.stack:
-            template = self.stack.pop()
+            # get_file_context() will find the file context by its name
+            file_context = self.stack.pop()
+            template = file_context.__template__
+
             # apply some common sense and interpret whitespace-only templates
             # as non-existent instead of as describing an empty innerslot
             if not template._text.strip():
                 continue
             try:
-                self.innerslot = template()
+                self.innerslot = template(file_context)
             except:
                 self.log_error(
                     "Can't interpret template at " + template.file_path)
@@ -267,9 +276,6 @@ class Publisher(object):
         if not os.path.isdir(base):
             base = os.path.dirname(base)
 
-        old_file_path = self.context.__file__
-        old_template = self.template
-
         for name in args:
             file_path = os.path.join(base, name)
             try:
@@ -277,9 +283,6 @@ class Publisher(object):
             except:
                 self.log_error("Can't read macros from " + file_path)
                 raise
-
-        self.context.__file__ = old_file_path
-        self.template = old_template
 
 
 ###########
@@ -292,3 +295,12 @@ def get_publisher():
             return candidate
     else:
         raise LookupError("Could not find publisher.")
+
+
+def get_file_context():
+    for frame_record in inspect.stack():
+        candidate = frame_record[0].f_locals.get("file_context")
+        if isinstance(candidate, Namespace):
+            return candidate
+    else:
+        raise LookupError("Could not find file context namespace.")

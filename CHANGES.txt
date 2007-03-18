@@ -14,6 +14,10 @@ Bug fixes:
   - Apache-generated directory indexes and PHP pages work now. This needs at
     least version 3.3 of mod_python.
 
+API:
+  - current template moved from publisher member (template) to pre-defined
+    script and TALES variable __template__
+
 Code:
   - use zope.pagetemplate instead of fiddling with the TAL engine directly
 

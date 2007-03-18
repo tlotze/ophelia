@@ -10,7 +10,14 @@ with the following variables:
 
 :__file__: the absolute file system path of the input file
 
+:__template__: the PageTemplate created from the input file's template text
+
 :__publisher__: the currently running Publisher instance
+
+The __publisher__ variable lives in the scripts' local namespace whereas
+variables referring to the current file are globals. None of these names
+should be assigned to. The template may be influenced by calling its methods;
+see the zope.pagetemplate documentation.
 
 
 Publisher
@@ -18,7 +25,7 @@ Publisher
 
 Attributes internally used by Ophelia's traversal mechanism:
 
-:context: namespace in which scripts are being executed
+:context: local namespace for script execution
 
 :macros: namespace of str, compiled macros encountered so far
 
@@ -64,8 +71,6 @@ Attributes internally used by Ophelia's traversal mechanism:
 
 :current: str, current partial URI, includes a trailing slash if it
     references a directory
-
-:template: the PageTemplate created from the input file's template text
 
 Methods meant for use in scripts:
 
@@ -113,7 +118,8 @@ by TALES expressions, contains:
       Making this slot magic avoids writing any boilerplate code at all in
       run-of-the-mill templates and pages.
 
-* all variables in the script context
+* all variables in the script context (including those relating to the input
+  file of the template at hand)
 
 Script variables using the same name as a variable defined by ZPT or Ophelia
 will override that variable.
