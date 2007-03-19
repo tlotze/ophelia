@@ -126,9 +126,9 @@ will override that variable.
 The publisher module
 --------------------
 
-To use the publisher or related functionality in a script or Python module:
+To use the publisher or related functionality in a script or Python module::
 
-import ophelia.publisher
+   import ophelia.publisher
 
 The module defines the following items meant to be used in client code:
 
@@ -148,6 +148,9 @@ The module defines the following items meant to be used in client code:
     scripts and assembly of the HTTP response.
 
 :get_publisher: function returning the currently running Publisher instance
+
+:get_file_context: function returning the namespace of file-related variables
+    (__file__, __template__)
 
 
 Redirection
