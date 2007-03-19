@@ -69,10 +69,17 @@ Attributes internally used by Ophelia's traversal mechanism:
 :current: str, current partial URI, includes a trailing slash if it
     references a directory
 
-Methods meant for use in scripts:
+Methods meant for use in scripts (all of them take a file name relative to the
+current file path as an argument and execute the script as well as load the
+METAL macros contained in the file, if any):
 
-:load_macros(\*args): load METAL macros from the files passed as arguments
-    (file names relative to current file path) into the macros namespace
+:load_macros(name): just execute script and load macros
+
+:insert_template(name): insert the template into the template stack on top of
+    the current one (so it gets rendered in the current inner slot)
+
+:interpret_template(name): interpret the template in the current namespace and
+    return the result as a unicode string
 
 
 Splitter
