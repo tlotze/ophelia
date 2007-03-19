@@ -49,6 +49,16 @@ class Namespace(dict):
         super(Namespace, self).__init__(*args, **kwargs)
 
 
+class PageTemplateTracebackSupplement(object):
+
+    def __init__(self, template):
+        self.template = template
+
+    @property
+    def warnings(self):
+        return self.template._v_errors
+
+
 class PageTemplate(zope.pagetemplate.pagetemplate.PageTemplate):
     """Page templates with Ophelia-style namespaces and source tracking.
 
@@ -63,6 +73,15 @@ class PageTemplate(zope.pagetemplate.pagetemplate.PageTemplate):
         self.publisher = publisher
         self.write(text)
         self.file_path = file_path
+
+    @property
+    def macros(self):
+        __traceback_supplement__ = (PageTemplateTracebackSupplement, self)
+        macros = super(PageTemplate, self).macros
+        if self._v_errors:
+            raise zope.pagetemplate.PTRuntimeError(
+                "Can't compile template at %s." % self.file_path)
+        return macros
 
     def pt_getContext(self, args=(), options=None, **ignored):
         return Namespace(self.publisher.tales_namespace(args[0]))
@@ -86,7 +105,7 @@ class Publisher(object):
     stack = None
     file_path = None
 
-    def __init__(self, path, root, site, request, log_error):
+    def __init__(self, path, root, site, request):
         """Set up the publisher for traversing path.
 
         path: str, path to traverse from the template root,
@@ -94,7 +113,6 @@ class Publisher(object):
         root: str, file system path to the template root
         site: str, absolute URL to site root, ends with '/'
         request: the request object
-        log_error: callable taking an error message as an argument
         """
         self.path = path
         self.tail = path.split('/')
@@ -112,7 +130,6 @@ class Publisher(object):
         self.response_headers = {}
         self.request = request
         self.options = options = request.get_options()
-        self.log_error = log_error
         self.splitter = ophelia.template.Splitter(options)
         self.response_encoding = options.get("ResponseEncoding", "utf-8")
         self.index_name = options.get("IndexName", "index.html")
@@ -189,10 +206,12 @@ class Publisher(object):
         self.history.append(self.current)
 
     def process_file(self, file_path):
+        __traceback_info__ = "Processing " + file_path
+
         # get script and template
         script, text = self.splitter(open(file_path).read())
 
-        # build the file context namespace available as script globals
+        # get_file_context() will find the file context by its name
         file_context = Namespace(
             __file__ = file_path,
             __template__ = PageTemplate(self, text, file_path),
@@ -201,19 +220,13 @@ class Publisher(object):
         # manipulate the context
         stop_traversal = None
         if script:
-            # get_file_context() will find the file context by its name
             try:
                 exec script in file_context, self.context
             except StopTraversal, e:
                 stop_traversal = e
 
-        # collect the macros, complain if the template doesn't compile
-        template = file_context.__template__
-        self.macros.update(template.macros)
-        if template._v_errors:
-            self.log_error("Can't compile template at " + file_path)
-            raise zope.pagetemplate.pagetemplate.PTRuntimeError(
-                str(template._v_errors))
+        # collect the macros
+        self.macros.update(file_context.__template__.macros)
 
         return file_context, stop_traversal
 
@@ -237,12 +250,9 @@ class Publisher(object):
             # as non-existent instead of as describing an empty innerslot
             if not template._text.strip():
                 continue
-            try:
-                self.innerslot = template(file_context)
-            except:
-                self.log_error(
-                    "Can't interpret template at " + template.file_path)
-                raise
+
+            __traceback_info__ = "Template at " + file_context.__file__
+            self.innerslot = template(file_context)
 
         self.content = """<?xml version="1.1" encoding="%s" ?>\n%s""" % (
             self.response_encoding,
@@ -253,17 +263,8 @@ class Publisher(object):
         tales_context = TALESEngine.getContext(self.tales_namespace())
 
         for name, expression in self.response_headers.iteritems():
-            try:
-                compiled = TALESEngine.compile(expression)
-            except:
-                self.log_error("Can't compile expression for header " + name)
-                raise
-            try:
-                value = str(compiled(tales_context))
-            except:
-                log_error("Can't interpret expression for header " + name)
-                raise
-            self.compiled_headers[name] = value
+            __traceback_info__ = "Header %s: %s" % (name, expression)
+            self.compiled_headers[name] = tales_context.evaluate(expression)
 
     def load_macros(self, *args):
         base = self.file_path
@@ -272,11 +273,7 @@ class Publisher(object):
 
         for name in args:
             file_path = os.path.join(base, name)
-            try:
-                self.process_file(file_path)
-            except:
-                self.log_error("Can't read macros from " + file_path)
-                raise
+            self.process_file(file_path)
 
 
 ###########

@@ -44,9 +44,6 @@ Attributes internally used by Ophelia's traversal mechanism:
 
 :request: the request object passed by mod_python
 
-:log_error: the error logging function used  by the publisher, takes a str as
-    the only argument
-
 :splitter: splits an input file into script and template (see below)
 
 :response_encoding: str, encoding of the HTTP response
@@ -133,7 +130,7 @@ To use the publisher or related functionality in a script or Python module:
 
 import ophelia.publisher
 
-The module defines the following items:
+The module defines the following items meant to be used in client code:
 
 :StopTraversal: exception, see "controlling traversal" below
 

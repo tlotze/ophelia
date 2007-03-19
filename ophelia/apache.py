@@ -1,8 +1,11 @@
 # Copyright (c) 2006-2007 Thomas Lotze
 # See also LICENSE.txt
 
+import sys
 import os.path
 import urlparse
+
+import zope.exceptions.exceptionformatter
 
 from mod_python import apache, util
 
@@ -42,11 +45,7 @@ def fixuphandler(request):
         return apache.DECLINED
     path = request.uri[len(site_path):]
 
-    # get the content
-    def log_error(msg):
-        request.log_error(msg, apache.APLOG_ERR)
-
-    publisher = Publisher(path, root, site, request, log_error)
+    publisher = Publisher(path, root, site, request)
     try:
         publisher.traverse()
     except NotFound:
@@ -55,6 +54,8 @@ def fixuphandler(request):
         request.handler = "mod_python"
         request.add_handler("PythonHandler", "ophelia.apache::redirect")
         request.__ophelia_location__ = e.uri
+    except:
+        report_exception(request)
     else:
         request.handler = "mod_python"
         request.add_handler("PythonHandler", "ophelia.apache")
@@ -89,6 +90,8 @@ def handler(request):
         response_headers, content = publisher.build()
     except Redirect, e:
         util.redirect(request, e.uri, permanent=True)
+    except:
+        report_exception(request)
 
     # deliver the page
     request.content_type = "text/html; charset=%s" % \
@@ -102,3 +105,24 @@ def handler(request):
         request.write(content)
 
     return apache.OK
+
+
+# helpers
+def report_exception(request):
+    exc_type, exc_value, traceback_info = sys.exc_info()
+
+    if request.get_config()["PythonDebug"] != "1":
+        raise exc_value
+
+    msg = zope.exceptions.exceptionformatter.format_exception(
+        exc_type, exc_value, traceback_info, with_filenames=True)
+
+    request.status = apache.HTTP_INTERNAL_SERVER_ERROR
+    request.content_type = "text/plain"
+    request.write("".join(msg))
+
+    for entry in msg:
+        for line in entry.splitlines():
+            request.log_error(line, apache.APLOG_ERR)
+
+    raise apache.SERVER_RETURN(apache.DONE)

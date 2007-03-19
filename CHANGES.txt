@@ -10,6 +10,8 @@ User-visible:
 
   - scripts are now allowed in macro files
 
+  - more informative error pages and logs
+
 Bug fixes:
   - Apache-generated directory indexes and PHP pages work now. This needs at
     least version 3.3 of mod_python.
@@ -27,6 +29,9 @@ API:
 
 Code:
   - use zope.pagetemplate instead of fiddling with the TAL engine directly
+
+  - use zope.exceptions instead of log_error to get supplemented tracebacks
+    and cleaner code
 
   - some clean-up
 
