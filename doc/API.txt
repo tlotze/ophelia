@@ -175,8 +175,6 @@ This is at the edge of Ophelia's scope.
 
 Raising publisher.StopTraversal in a script prevents more specific scripts
 from being executed and the current as well as more specific templates from
-being evaluated. The exception accepts two optional parameters:
+being evaluated. The exception accepts one optional parameter:
 
-:content: str, used to fill the inner slot
-
-:use_template: bool, whether to use the current template, defaults to False
+:text: unicode, template text to use instead of the input file's text

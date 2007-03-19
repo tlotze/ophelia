@@ -17,11 +17,10 @@ import ophelia.template
 class StopTraversal(Exception):
     """Flow control device for scripts to stop directory traversal."""
 
-    content = "" # str to use instead, interpreted as a template
+    text = "" # unicode, template text to use for this traversal step
 
-    def __init__(self, content=None, use_template=False):
-        self.content = content
-        self.use_template = use_template
+    def __init__(self, text=None):
+        self.text = text
 
 
 class NotFound(Exception):
@@ -181,12 +180,9 @@ class Publisher(object):
 
     def traverse_file(self, file_path):
         file_context, stop_traversal = self.process_file(file_path)
-
         if stop_traversal:
-            if stop_traversal.content is not None:
-                self.innerslot = stop_traversal.content
-            if not stop_traversal.use_template:
-                file_context.__template__.write("")
+            if stop_traversal.text is not None:
+                file_context.__template__.write(stop_traversal.text)
             del self.tail[:]
 
         self.stack.append(file_context)

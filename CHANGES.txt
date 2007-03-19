@@ -14,12 +14,16 @@ Bug fixes:
   - Apache-generated directory indexes and PHP pages work now. This needs at
     least version 3.3 of mod_python.
 
+  - actually use the template text passed to StopTraversal as a template
+
 API:
   - current template moved from publisher member (template) to pre-defined
     script and TALES variable __template__
 
   - publisher.Redirect exception has an option for replacing the path portion
     of the target URL (saves the client some urlparse acrobatics)
+
+  - combined publisher.StopTraversal exception parameters into one, text
 
 Code:
   - use zope.pagetemplate instead of fiddling with the TAL engine directly
