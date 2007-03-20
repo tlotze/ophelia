@@ -10,6 +10,8 @@ with the following variables:
 
 :__file__: the absolute file system path of the input file
 
+:__text__: the text of the current file's template, as unicode
+
 :__template__: the PageTemplate created from the input file's template text
 
 :__publisher__: the currently running Publisher instance
@@ -157,7 +159,7 @@ The module defines the following items meant to be used in client code:
 :get_publisher: function returning the currently running Publisher instance
 
 :get_file_context: function returning the namespace of file-related variables
-    (__file__, __template__)
+    (__file__, __text__, __template__)
 
 
 Redirection

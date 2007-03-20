@@ -214,6 +214,7 @@ class Publisher(object):
         # get_file_context() will find the file context by its name
         file_context = Namespace(
             __file__ = file_path,
+            __text__ = text,
             __template__ = PageTemplate(self, text, file_path),
             )
 
