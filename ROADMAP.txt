@@ -38,8 +38,15 @@ thing to do.
 0.4
 ---
 
-A JPEG handler that builds pages from JPEG files which display the image along
-with comments and some EXIF data.
+- A document adapter that builds pages from, e.g., JPEG files to display the
+  image along with comments and some EXIF and other metadata.
+
+- A ReST adapter that allows the template text to be written in restructured
+  text. Will need some infrastructure.
+
+- internal caching of processed information, especially when using docutils
+
+- directory listings
 
 1.0
 ---
