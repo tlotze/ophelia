@@ -40,8 +40,7 @@ Installation steps
 - Install needed parts of Zope3: either build a complete Zope3 from source and
   make sure it's on mod_python's Python path, or easy_install the
   zope.pagetemplate egg into mod_python's Python installation. Zope3 packages
-  can be obtained from the Python package index or from
-  ``<http://download.zope.org/distribution/>``.
+  can be obtained from the Python package index.
 
 - Choose places in the files system to put your site's Ophelia pages and
   static (non-Ophelia) documents, resp., and configure Apache accordingly (see
@@ -72,7 +71,7 @@ To publish this site, add the following to your host's config::
         PythonOption Site http://www.example.com/foo/bar/
         PythonFixupHandler ophelia.apache
     </Location>
-    
+
 This instructs Apache to let Ophelia handle any URI under /foo/bar/. Ophelia
 will build pages from templates where they exist, and Apache will serve files
 from your static content otherwise.
