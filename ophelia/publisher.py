@@ -79,7 +79,7 @@ class PageTemplate(zope.pagetemplate.pagetemplate.PageTemplate):
         __traceback_supplement__ = (PageTemplateTracebackSupplement, self)
         macros = super(PageTemplate, self).macros
         if self._v_errors:
-            raise zope.pagetemplate.PTRuntimeError(
+            raise zope.pagetemplate.pagetemplate.PTRuntimeError(
                 "Can't compile template at %s." % self.file_path)
         return macros
 
