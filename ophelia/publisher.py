@@ -196,14 +196,13 @@ class Publisher(object):
             self.tail[0] = self.index_name
 
     def traverse_file(self, file_path):
-        file_context, stop_traversal = self.process_file(file_path)
+        file_context, stop_traversal = self.process_file(file_path,
+                                                         insert=True)
         if stop_traversal:
             del self.tail[:]
-
-        self.stack.append(file_context)
         self.history.append(self.current)
 
-    def process_file(self, file_path):
+    def process_file(self, file_path, insert=False):
         __traceback_info__ = "Processing " + file_path
 
         # get script and template
@@ -215,6 +214,8 @@ class Publisher(object):
             __text__ = text,
             __template__ = PageTemplate(self, text, file_path),
             )
+        if insert:
+            self.stack.append(file_context)
 
         # manipulate the context
         stop_traversal = None
@@ -279,8 +280,7 @@ class Publisher(object):
         self.process_file_relative(name)
 
     def insert_template(self, name):
-        file_context, stop_traversal = self.process_file_relative(name)
-        self.stack.append(file_context)
+        self.process_file_relative(name, insert=True)
 
     def interpret_template(self, name):
         file_context, stop_traversal = self.process_file_relative(name)
