@@ -198,8 +198,6 @@ class Publisher(object):
     def traverse_file(self, file_path):
         file_context, stop_traversal = self.process_file(file_path)
         if stop_traversal:
-            if stop_traversal.text is not None:
-                file_context.__template__.write(stop_traversal.text)
             del self.tail[:]
 
         self.stack.append(file_context)
@@ -225,6 +223,9 @@ class Publisher(object):
                 exec script in file_context, self.context
             except StopTraversal, e:
                 stop_traversal = e
+                if  e.text is not None:
+                    file_context.__text__ = e.text
+                    file_context.__template__.write(e.text)
 
         # collect the macros
         self.macros.update(file_context.__template__.macros)
@@ -272,22 +273,17 @@ class Publisher(object):
         if not os.path.isdir(base):
             base = os.path.dirname(base)
 
-        file_path = os.path.join(base, name)
-
-        file_context, stop_traversal = self.process_file(file_path)
-        if stop_traversal:
-            file_context.__template__.write(stop_traversal.text)
-
-        return file_context
+        return self.process_file(os.path.join(base, name))
 
     def load_macros(self, name):
         self.process_file_relative(name)
 
     def insert_template(self, name):
-        self.stack.append(self.process_file_relative(name))
+        file_context, stop_traversal = self.process_file_relative(name)
+        self.stack.append(file_context)
 
     def interpret_template(self, name):
-        file_context = self.process_file_relative(name)
+        file_context, stop_traversal = self.process_file_relative(name)
         return file_context.__template__(file_context)
 
 
