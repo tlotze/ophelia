@@ -16,10 +16,9 @@ with the following variables:
 
 :__publisher__: the currently running Publisher instance
 
-The __publisher__ variable lives in the scripts' local namespace whereas
-variables referring to the current file are globals. None of these names
-should be assigned to. The template may be influenced by calling its methods;
-see the zope.pagetemplate documentation.
+All of the above variables except for __publisher__ will be reset after the
+script is run. None of the above names should be assigned to. The template may
+be influenced by calling its methods; see the zope.pagetemplate documentation.
 
 
 Publisher
