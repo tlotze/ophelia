@@ -37,8 +37,9 @@ class Navigation(object):
         self.chapter_title = title
 
     def add_menu(self, entries, root_title=None, root=None):
-        self.menu[urljoin(self.current, root)] = (
-            [(urljoin(self.current, href), title) for href, title in entries],
+        root = urljoin(self.current, root)
+        self.menu[root] = (
+            [(urljoin(root, href), title) for href, title in entries],
             root_title)
 
     def set_breadcrumb(self, title):
