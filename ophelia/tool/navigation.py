@@ -28,7 +28,7 @@ class Navigation(object):
             self.home = home
 
         self.breadcrumbs = {}
-        self.menu = {}
+        self.menu = ophelia.publisher.Namespace()
 
         self.alt_lang_uris = {}
 
@@ -38,9 +38,13 @@ class Navigation(object):
 
     def add_menu(self, entries, root_title=None, root=None):
         root = urljoin(self.current, root)
-        self.menu[root] = (
-            [(urljoin(root, href), title) for href, title in entries],
-            root_title)
+        self.menu[root] = ophelia.publisher.Namespace(
+            url=root,
+            root_title=root_title,
+            entry_pairs=entries,
+            entries=[dict(url=urljoin(root, href),
+                          title=title) for href, title in entries],
+            )
 
     def set_breadcrumb(self, title):
         self.breadcrumbs[self.current] = title
@@ -53,7 +57,7 @@ class Navigation(object):
                 yield (uri, title)
             menu = self.menu.get(uri, {})
             if menu:
-                menu = dict(menu[0])
+                menu = dict(menu.entry_pairs)
 
     def conditional_link(self, href, title):
         if href == self.uri:
@@ -71,13 +75,13 @@ class Navigation(object):
         lines = ["<dl>"]
         if uri is None:
             uri = self.home
-        root_title = self.menu[uri][1]
+        root_title = self.menu[uri].root_title
         if root_title:
             lines.append("<dt>%s</dt>" % self.conditional_link(
                     urljoin(self.uri, uri), root_title))
 
         def display(uri, deeper):
-            for href, title in self.menu[uri][0]:
+            for href, title in self.menu[uri].entry_pairs:
                 lines.append("<dt>%s</dt>" %
                              self.conditional_link(href, title))
                 if deeper and href in self.menu:
