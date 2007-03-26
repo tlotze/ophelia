@@ -119,7 +119,7 @@ def report_exception(request):
 
     request.status = apache.HTTP_INTERNAL_SERVER_ERROR
     request.content_type = "text/plain"
-    request.write("".join(msg))
+    request.write("".join(msg).encode("utf-8"))
 
     for entry in msg:
         for line in entry.splitlines():
