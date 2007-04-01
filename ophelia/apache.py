@@ -111,7 +111,7 @@ def handler(request):
 def report_exception(request):
     exc_type, exc_value, traceback_info = sys.exc_info()
 
-    if request.get_config()["PythonDebug"] != "1":
+    if request.get_config().get("PythonDebug") != "1":
         raise exc_value
 
     msg = zope.exceptions.exceptionformatter.format_exception(
