@@ -41,7 +41,8 @@ class Navigation(object):
         self.menu[root] = ophelia.publisher.Namespace(
             url=root,
             root_title=root_title,
-            entry_pairs=entries,
+            entry_pairs=[(urljoin(root, href), title)
+                         for href, title in entries],
             entries=[dict(url=urljoin(root, href),
                           title=title) for href, title in entries],
             )
