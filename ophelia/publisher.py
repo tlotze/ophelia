@@ -275,21 +275,21 @@ class Publisher(object):
             __traceback_info__ = "Header %s: %s" % (name, expression)
             self.compiled_headers[name] = tales_context.evaluate(expression)
 
-    def process_file_relative(self, name, insert=False):
+    def abs_file_path(self, name):
         base = self.file_path
         if not os.path.isdir(base):
             base = os.path.dirname(base)
-
-        return self.process_file(os.path.join(base, name), insert)
+        return os.path.join(base, name)
 
     def load_macros(self, name):
-        self.process_file_relative(name)
+        self.process_file(self.abs_file_path(name))
 
     def insert_template(self, name):
-        self.process_file_relative(name, insert=True)
+        self.process_file(self.abs_file_path(name), insert=True)
 
     def interpret_template(self, name):
-        file_context, stop_traversal = self.process_file_relative(name)
+        file_context, stop_traversal = self.process_file(
+            self.abs_file_path(name))
         return file_context.__template__(file_context)
 
 
