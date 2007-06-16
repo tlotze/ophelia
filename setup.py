@@ -36,6 +36,7 @@ provides = [
 install_requires = [
     "zope.pagetemplate",
     "zope.exceptions",
+    "feedparser",
     ]
 
 extras_require = {
