@@ -42,10 +42,6 @@ extras_require = {
     "test": ["zope.testing"],
     }
 
-setup_requires = [
-    "zope.testing",
-    ]
-
 classifiers = [
     "Development Status :: 3 - Alpha",
     "Environment :: Web Environment",
@@ -68,7 +64,6 @@ setup(name="ophelia",
       packages=find_packages(),
       install_requires=install_requires,
       extras_require=extras_require,
-      setup_requires=setup_requires,
       include_package_data=True,
       data_files=data_files,
       provides=provides,
