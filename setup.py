@@ -12,6 +12,9 @@ import glob
 from setuptools import setup, find_packages
 
 
+project_path = lambda *names: os.path.join(os.path.dirname(__file__), *names)
+
+
 def include_tree(dest, source):
     source_len = len(source)
     for dirpath, dirnames, filenames in os.walk(source):
@@ -21,10 +24,10 @@ def include_tree(dest, source):
             dirnames.remove(".svn")
 
 
-longdesc = open(os.path.join(os.path.dirname(__file__),
-                             "doc", "OVERVIEW.txt")).read()
+longdesc = open(project_path("doc", "OVERVIEW.txt")).read()
 
-data_files = [("", glob.glob("*.txt"))] + list(include_tree("doc", "doc"))
+data_files = [("", glob.glob(project_path("*.txt")))] + \
+             list(include_tree("doc", "doc"))
 
 provides = [
     "ophelia",
