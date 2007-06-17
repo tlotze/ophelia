@@ -64,7 +64,7 @@ Attributes internally used by Ophelia's traversal mechanism:
     the script being run) from template root, paths referring to directories
     have a trailing slash
 
-:file_path: str, absolute file system path to the directory containing the
+:dir_path: str, absolute file system path to the directory containing the
     source file of the script being run
 
 :current: str, current partial URI, includes a trailing slash if it

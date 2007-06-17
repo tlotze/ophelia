@@ -30,6 +30,8 @@ API:
   - added methods insert_template and interpret_template to publisher, reduced
     load_macros signature to a single relative file name
 
+  - replaced publisher member file_path by dir_path as that's simpler to use
+
 Code:
   - use zope.pagetemplate instead of fiddling with the TAL engine directly
 

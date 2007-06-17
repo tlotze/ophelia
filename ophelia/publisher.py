@@ -103,7 +103,7 @@ class Publisher(object):
     current = None
     history = None
     stack = None
-    file_path = None
+    dir_path = None
 
     def __init__(self, path, root, site, request):
         """Set up the publisher for traversing path.
@@ -152,14 +152,15 @@ class Publisher(object):
 
     def traverse(self):
         self.current = self.site
-        self.file_path = self.root
         self.history = []
         self.stack = []
 
         # traverse the template root
-        if not os.path.isdir(self.file_path):
+        if not os.path.isdir(self.root):
             raise NotFound
-        self.traverse_dir(self.file_path)
+
+        self.dir_path = self.root
+        self.traverse_dir()
 
         while self.tail:
             # determine the next traversal step
@@ -169,22 +170,23 @@ class Publisher(object):
             self.current += next
 
             # try to find a file to read
-            self.file_path = os.path.join(self.file_path, next)
+            next_path = os.path.join(self.dir_path, next)
 
-            if os.path.isdir(self.file_path):
+            if os.path.isdir(next_path):
                 self.current += '/'
-                self.traverse_dir(self.file_path)
-            elif os.path.isfile(self.file_path):
-                self.traverse_file(self.file_path)
+                self.dir_path = next_path
+                self.traverse_dir()
+            elif os.path.isfile(next_path):
+                self.traverse_file(next_path)
             else:
                 raise NotFound
 
-    def traverse_dir(self, dir_path):
+    def traverse_dir(self):
         if not self.tail:
             raise Redirect(self.request.unparsed_uri,
                            path=self.request.uri + '/')
 
-        file_path = os.path.join(dir_path, "__init__")
+        file_path = os.path.join(self.dir_path, "__init__")
         if os.path.isfile(file_path):
             self.traverse_file(file_path)
 
@@ -275,21 +277,15 @@ class Publisher(object):
             __traceback_info__ = "Header %s: %s" % (name, expression)
             self.compiled_headers[name] = tales_context.evaluate(expression)
 
-    def abs_file_path(self, name):
-        base = self.file_path
-        if not os.path.isdir(base):
-            base = os.path.dirname(base)
-        return os.path.join(base, name)
-
     def load_macros(self, name):
-        self.process_file(self.abs_file_path(name))
+        self.process_file(os.path.join(self.dir_path, name))
 
     def insert_template(self, name):
-        self.process_file(self.abs_file_path(name), insert=True)
+        self.process_file(os.path.join(self.dir_path, name), insert=True)
 
     def interpret_template(self, name):
         file_context, stop_traversal = self.process_file(
-            self.abs_file_path(name))
+            os.path.join(self.dir_path, name))
         return file_context.__template__(file_context)
 
 
