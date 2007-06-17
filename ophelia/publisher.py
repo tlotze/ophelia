@@ -172,7 +172,7 @@ class Publisher(object):
                 self.current += '/'
 
             # try to find a file to read
-            next_path = os.path.join(self.dir_path, next)
+            next_path = os.path.join(self.dir_path, next or self.index_name)
 
             if os.path.isdir(next_path):
                 self.dir_path = next_path
@@ -191,12 +191,9 @@ class Publisher(object):
         if os.path.isfile(file_path):
             self.traverse_file(file_path)
 
-        if self.redirect_index and self.tail == [self.index_name]:
+        if self.redirect_index and self.tail[:1] == [self.index_name]:
             raise Redirect(self.request.unparsed_uri,
-                           path=self.request.uri[:-len(self.index_name)])
-
-        if self.tail == [""]:
-            self.tail[0] = self.index_name
+                           path='/'.join([self.current] + self.tail[1:]))
 
     def traverse_file(self, file_path):
         file_context, stop_traversal = self.process_file(file_path,
