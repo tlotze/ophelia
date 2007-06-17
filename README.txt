@@ -10,7 +10,7 @@ At present, Ophelia contains a request handler for the Apache2 web server.
 Documentation
 +++++++++++++
 
-See INSTALL.txt for installation and configuration issues.
+See doc/INSTALL.txt for installation and configuration issues.
 
 See the files doc/OVERVIEW.txt to understand what Ophelia is and get a basic
 idea about using it to publish a web site, and doc/API.txt on using the

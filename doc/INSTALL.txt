@@ -26,25 +26,33 @@ Prerequisites
 -------------
 
 - Apache2
-- Python 2.4 or better
+- Python 2.4
 - mod_python 3.3 or better
-- the zope.pagetemplate package from Zope3 and anything it depends upon
+- Zope3 packages and their dependencies: zope.pagetemplate, zope.exceptions
+- optionally the feedparser and zope.testing packages
 
 
 Installation steps
 ------------------
 
-- Copy the ophelia package into the system Python path or configure
-  mod_python's Python path according to where you put the ophelia package.
+- Copy the ophelia package into the library path of the Python installation
+  used by mod_python, or configure mod_python's Python path according to where
+  you put the ophelia package.
 
-- Install needed parts of Zope3: either build a complete Zope3 from source and
-  make sure it's on mod_python's Python path, or easy_install the
-  zope.pagetemplate egg into mod_python's Python installation. Zope3 packages
-  can be obtained from the Python package index.
+- Install needed parts of Zope3:
 
-- Choose places in the files system to put your site's Ophelia pages and
-  static (non-Ophelia) documents, resp., and configure Apache accordingly (see
-  below).
+  + either build a complete Zope3 from source and make sure it's on
+    mod_python's Python path, or
+
+  + easy_install the zope.pagetemplate, zope.exceptions and optionally
+    zope.testing eggs into mod_python's Python installation. Zope3 eggs can be
+    obtained from the Python package index (`PyPI`_), and more recent ones
+    (read: bleeding edge) from <http://download.zope.org/distribution/>.
+
+- Install feedparser, either as an egg or from source. It's at the `PyPI`_.
+
+- Choose places in the file system to put your site's Ophelia pages and static
+  (non-Ophelia) documents, and configure Apache accordingly (see below).
 
 - Cause Apache to reload its configuration.
 
@@ -82,3 +90,6 @@ against a regular expression.
 
 See doc/OVERVIEW.txt for other Python options Ophelia recognizes, and for
 details on how Ophelia behaves.
+
+
+.. _`PyPI`: http://www.python.org/pypi
