@@ -219,11 +219,12 @@ class Publisher(object):
         if insert:
             self.stack.append(file_context)
 
-        # manipulate the context
+        # manipulate the context, restore the predefined variables in the end
+        # so any script that might be calling this method can rely on those
         stop_traversal = None
         if script:
-            old_file_context = dict((key, self.context.get(key))
-                                    for key in file_context)
+            old_predef_vars = dict((key, self.context.get(key))
+                                   for key in file_context)
             self.context.update(file_context)
             try:
                 try:
@@ -234,7 +235,7 @@ class Publisher(object):
                         file_context.__text__ = e.text
                         file_context.__template__.write(e.text)
             finally:
-                self.context.update(old_file_context)
+                self.context.update(old_predef_vars)
 
         # collect the macros
         self.macros.update(file_context.__template__.macros)
