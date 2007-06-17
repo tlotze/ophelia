@@ -168,12 +168,13 @@ class Publisher(object):
 
             # add to traversal history
             self.current += next
+            if self.tail:
+                self.current += '/'
 
             # try to find a file to read
             next_path = os.path.join(self.dir_path, next)
 
             if os.path.isdir(next_path):
-                self.current += '/'
                 self.dir_path = next_path
                 self.traverse_dir()
             elif os.path.isfile(next_path):
