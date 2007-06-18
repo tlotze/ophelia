@@ -164,7 +164,7 @@ class Publisher(object):
 
         while self.tail:
             # determine the next traversal step
-            next = self.tail.pop(0)
+            next = self.get_next()
 
             # add to traversal history
             self.current += next
@@ -185,18 +185,32 @@ class Publisher(object):
             if next:
                 self.history.append(self.current)
 
+    def get_next(self):
+        next = self.tail.pop(0)
+
+        target = None
+        if ((self.tail and not next) or
+            (not self.tail and next == self.index_name) or
+            next == "."):
+            target = self.current
+        elif next == "..":
+            segments = self.current.split('/')
+            del segments[-2:-1]
+            target = max(self.site, '/'.join(segments))
+
+        if target:
+            raise Redirect(self.request.unparsed_uri,
+                           path=target + '/'.join(self.tail))
+        else:
+            return next
+
     def traverse_dir(self):
         if not self.tail:
-            raise Redirect(self.request.unparsed_uri,
-                           path=self.request.uri + '/')
+            raise Redirect(self.request.unparsed_uri, path=self.current + '/')
 
         file_path = os.path.join(self.dir_path, "__init__")
         if os.path.isfile(file_path):
             self.traverse_file(file_path)
-
-        if self.redirect_index and self.tail[:1] == [self.index_name]:
-            raise Redirect(self.request.unparsed_uri,
-                           path='/'.join([self.current] + self.tail[1:]))
 
     def traverse_file(self, file_path):
         file_context, stop_traversal = self.process_file(file_path,
