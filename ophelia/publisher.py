@@ -34,7 +34,7 @@ class Redirect(Exception):
     def __init__(self, uri, path=None):
         parts = list(urlparse.urlsplit(uri))
         if path is not None:
-            parts[2] = path
+            parts[2] = urlparse.urlsplit(path)[2]
         self.uri = urlparse.urlunsplit(parts)
 
 
