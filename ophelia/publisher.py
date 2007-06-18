@@ -152,7 +152,7 @@ class Publisher(object):
 
     def traverse(self):
         self.current = self.site
-        self.history = []
+        self.history = [self.current]
         self.stack = []
 
         # traverse the template root
@@ -182,6 +182,9 @@ class Publisher(object):
             else:
                 raise NotFound
 
+            if next:
+                self.history.append(self.current)
+
     def traverse_dir(self):
         if not self.tail:
             raise Redirect(self.request.unparsed_uri,
@@ -200,7 +203,6 @@ class Publisher(object):
                                                          insert=True)
         if stop_traversal:
             del self.tail[:]
-        self.history.append(self.current)
 
     def process_file(self, file_path, insert=False):
         __traceback_info__ = "Processing " + file_path
