@@ -196,7 +196,9 @@ class Publisher(object):
         elif next == "..":
             segments = self.current.split('/')
             del segments[-2:-1]
-            target = max(self.site, '/'.join(segments))
+            target = '/'.join(segments)
+            if not target.startswith(self.site):
+                target = self.site
 
         if target:
             raise Redirect(self.request.unparsed_uri,
