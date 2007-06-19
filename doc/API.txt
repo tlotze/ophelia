@@ -168,7 +168,7 @@ Ophelia provides the publisher.Redirect exception that scripts and add-on
 libraries may raise to cause the HTTP server to redirect the client to another
 URI. The exception constructor takes a number of parameters:
 
-:uri: str, the URI to redirect to
+:uri: str, the URI to redirect to, defaults to the original request's URI
 
 :path: str, optional override value for uri's path portion
 

@@ -23,7 +23,8 @@ API:
     script and TALES variable __template__
 
   - publisher.Redirect exception has an option for replacing the path portion
-    of the target URL (saves the client some urlparse acrobatics)
+    of the target URL (saves the client some urlparse acrobatics) and uses the
+    original request's complete URI as a default base for the target
 
   - combined publisher.StopTraversal exception parameters into one, text
 
