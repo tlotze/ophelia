@@ -196,12 +196,9 @@ class Publisher(object):
             raise Redirect(path=self.current + '/'.join(self.tail))
 
         if next == "..":
-            segments = self.current.split('/')
-            del segments[-2:-1]
-            target = '/'.join(segments)
-            if not target.startswith(self.site):
-                target = self.site
-            raise Redirect(path=target + '/'.join(self.tail))
+            path_segments = urlparse.urlsplit(self.current)[2].split('/')
+            path_segments[-2:] = self.tail
+            raise Redirect(path='/'.join(path_segments))
 
         return next
 
