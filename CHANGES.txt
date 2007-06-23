@@ -29,7 +29,8 @@ API:
   - combined publisher.StopTraversal exception parameters into one, text
 
   - added methods insert_template and interpret_template to publisher, reduced
-    load_macros signature to a single relative file name
+    load_macros signature to a single relative file name, exposed traversal of
+    the next path segment in the API to allow overriding file names
 
   - replaced publisher member file_path by dir_path as that's simpler to use
 

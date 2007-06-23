@@ -165,27 +165,32 @@ class Publisher(object):
         self.traverse_dir()
 
         while self.tail:
-            # determine the next traversal step
-            next = self.get_next()
+            self.traverse_next()
 
-            # add to traversal history
-            self.current += next
-            if self.tail:
-                self.current += '/'
+    def traverse_next(self, name=None):
+        # determine the next traversal step
+        next = self.get_next()
 
-            # try to find a file to read
-            next_path = os.path.join(self.dir_path, next or self.index_name)
+        # add to traversal history
+        self.current += next
+        if self.tail:
+            self.current += '/'
 
-            if os.path.isdir(next_path):
-                self.dir_path = next_path
-                self.traverse_dir()
-            elif os.path.isfile(next_path):
-                self.traverse_file(next_path)
-            else:
-                raise NotFound
+        # try to find a file to read
+        if name is None:
+            name = next or self.index_name
+        next_path = os.path.join(self.dir_path, name)
 
-            if next:
-                self.history.append(self.current)
+        if os.path.isdir(next_path):
+            self.dir_path = next_path
+            self.traverse_dir()
+        elif os.path.isfile(next_path):
+            self.traverse_file(next_path)
+        else:
+            raise NotFound
+
+        if next:
+            self.history.append(self.current)
 
     def get_next(self):
         next = self.tail.pop(0)

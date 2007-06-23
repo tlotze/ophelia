@@ -82,6 +82,9 @@ METAL macros contained in the file, if any):
 :interpret_template(name): interpret the template in the current namespace and
     return the result as a unicode string
 
+:traverse_next(name=None): traverse the next path segment, maintain publisher
+    state and history, but allow to override the file name
+
 
 Splitter
 --------
