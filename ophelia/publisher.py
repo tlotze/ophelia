@@ -107,6 +107,8 @@ class Publisher(object):
     stack = None
     dir_path = None
 
+    _current = None
+
     def __init__(self, path, root, site, request):
         """Set up the publisher for traversing path.
 
@@ -176,6 +178,10 @@ class Publisher(object):
         if self.tail:
             self.current += '/'
 
+        if self._current:
+            self.history.append(self._current)
+        self._current = self.current
+
         # try to find a file to read
         if name is None:
             name = next or self.index_name
@@ -189,8 +195,9 @@ class Publisher(object):
         else:
             raise NotFound
 
-        if next:
+        if self.current == self._current and next:
             self.history.append(self.current)
+        self._current = None
 
     def get_next(self):
         next = self.tail.pop(0)
