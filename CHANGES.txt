@@ -34,6 +34,9 @@ API:
 
   - replaced publisher member file_path by dir_path as that's simpler to use
 
+  - store environment namespace on publisher as member env instead of the
+    Apache request
+
 Code:
   - use zope.pagetemplate instead of fiddling with the TAL engine directly
 

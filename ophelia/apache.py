@@ -9,7 +9,7 @@ import zope.exceptions.exceptionformatter
 
 from mod_python import apache, util
 
-from ophelia.publisher import Publisher, NotFound, Redirect
+from ophelia.publisher import Publisher, NotFound, Redirect, Namespace
 
 
 # fix-up request handler
@@ -27,12 +27,13 @@ def fixuphandler(request):
     The intent is for templates to take precedence, falling back on any static
     content gracefully.
     """
-    request_options = request.get_options()
+    env = Namespace(apache.build_cgi_env(request))
+    env.update(request.get_options())
 
-    root = os.path.abspath(request_options["TemplateRoot"])
+    root = os.path.abspath(env.TemplateRoot)
 
     # The site URL should be something we can safely urljoin path parts to.
-    site = request_options["Site"]
+    site = env.Site
     if not site.endswith('/'):
         site += '/'
 
@@ -45,7 +46,7 @@ def fixuphandler(request):
         return apache.DECLINED
     path = request.uri[len(site_path):]
 
-    publisher = Publisher(path, root, site, request)
+    publisher = Publisher(path, root, site, env)
     try:
         publisher.traverse()
     except NotFound:

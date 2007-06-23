@@ -33,7 +33,7 @@ class Redirect(Exception):
 
     def __init__(self, uri=None, path=None):
         if uri is None:
-            uri = get_publisher().request.unparsed_uri
+            uri = get_publisher().env.unparsed_uri
         parts = list(urlparse.urlsplit(uri))
         if path is not None:
             parts[2] = urlparse.urlsplit(path)[2]
@@ -109,14 +109,14 @@ class Publisher(object):
 
     _current = None
 
-    def __init__(self, path, root, site, request):
+    def __init__(self, path, root, site, env):
         """Set up the publisher for traversing path.
 
         path: str, path to traverse from the template root,
                    elements are separated by '/'
         root: str, file system path to the template root
         site: str, absolute URL to site root, ends with '/'
-        request: the request object
+        env: the environment namespace
         """
         self.path = path
         self.tail = path.split('/')
@@ -132,13 +132,11 @@ class Publisher(object):
             )
         self.macros = Namespace()
         self.response_headers = {}
-        self.request = request
-        self.options = options = request.get_options()
-        self.splitter = ophelia.template.Splitter(options)
-        self.response_encoding = options.get("ResponseEncoding", "utf-8")
-        self.index_name = options.get("IndexName", "index.html")
-        self.redirect_index = (
-            options.get("RedirectIndex", "").lower() == "on")
+        self.env = env
+        self.splitter = ophelia.template.Splitter(env)
+        self.response_encoding = env.get("ResponseEncoding", "utf-8")
+        self.index_name = env.get("IndexName", "index.html")
+        self.redirect_index = (env.get("RedirectIndex", "").lower() == "on")
 
     def __call__(self):
         """Publish the resource at path.

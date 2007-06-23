@@ -43,7 +43,7 @@ Attributes internally used by Ophelia's traversal mechanism:
   - unicode after content is complete: equals innerslot, preceded by XML
     declaration and encoded with response_encoding
 
-:request: the request object passed by mod_python
+:env: the environment namespace passed by the server
 
 :splitter: splits an input file into script and template (see below)
 
