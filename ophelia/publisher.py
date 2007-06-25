@@ -201,7 +201,8 @@ class Publisher(object):
         next = self.tail.pop(0)
 
         if ((self.tail and not next) or
-            (not self.tail and next == self.index_name) or
+            (self.redirect_index and
+             next == self.index_name and not self.tail) or
             next == "."):
             raise Redirect(path=self.current + '/'.join(self.tail))
 

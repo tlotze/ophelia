@@ -70,6 +70,11 @@ Attributes internally used by Ophelia's traversal mechanism:
 :current: str, current partial URI, includes a trailing slash if it
     references a directory
 
+:index_name: str, file name to access if a URI refers to a bare directory
+
+:redirect_index: bool, whether to redirect to the bare directory if the
+    requested URI refers to its index file (as specified by ``index_name``).
+
 Methods meant for use in scripts (all of them take a file name relative to the
 current file path as an argument and execute the script as well as load the
 METAL macros contained in the file, if any):
