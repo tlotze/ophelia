@@ -33,7 +33,7 @@ class Redirect(Exception):
 
     def __init__(self, uri=None, path=None):
         if uri is None:
-            uri = get_publisher().env.unparsed_uri
+            uri = get_publisher().site
         parts = list(urlparse.urlsplit(uri))
         if path is not None:
             parts[2] = urlparse.urlsplit(path)[2]
