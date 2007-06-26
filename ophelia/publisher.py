@@ -9,6 +9,7 @@ from zope.tales.engine import Engine as TALESEngine
 import zope.pagetemplate.pagetemplate
 
 import ophelia.template
+from ophelia.util import Namespace
 
 
 ########################
@@ -38,17 +39,6 @@ class Redirect(Exception):
         if path is not None:
             parts[2] = urlparse.urlsplit(path)[2]
         self.uri = urlparse.urlunsplit(parts)
-
-
-class Namespace(dict):
-    """Objects which exist only to carry attributes.
-
-    Attributes are also accessible as mapping items.
-    """
-
-    def __init__(self, *args, **kwargs):
-        self.__dict__ = self
-        super(Namespace, self).__init__(*args, **kwargs)
 
 
 class PageTemplateTracebackSupplement(object):

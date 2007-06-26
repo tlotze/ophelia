@@ -9,7 +9,8 @@ import zope.exceptions.exceptionformatter
 
 from mod_python import apache, util
 
-from ophelia.publisher import Publisher, NotFound, Redirect, Namespace
+from ophelia.publisher import Publisher, NotFound, Redirect
+from ophelia.util import Namespace
 
 
 # fix-up request handler

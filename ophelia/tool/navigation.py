@@ -4,6 +4,7 @@
 from urlparse import urljoin
 
 import ophelia.publisher
+import ophelia.util
 
 
 class Navigation(object):
@@ -28,7 +29,7 @@ class Navigation(object):
             self.home = home
 
         self.breadcrumbs = {}
-        self.menu = ophelia.publisher.Namespace()
+        self.menu = ophelia.util.Namespace()
 
         self.alt_lang_uris = {}
 
@@ -38,7 +39,7 @@ class Navigation(object):
 
     def add_menu(self, entries, root_title=None, root=None):
         root = urljoin(self.current, root)
-        self.menu[root] = ophelia.publisher.Namespace(
+        self.menu[root] = ophelia.util.Namespace(
             url=root,
             root_title=root_title,
             entry_pairs=[(urljoin(root, href), title)

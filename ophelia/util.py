@@ -6,6 +6,16 @@ import time
 import datetime
 
 
+class Namespace(dict):
+    """Collection of named variables, accessible both as attributes and
+       mapping items.
+    """
+
+    def __init__(self, *args, **kwargs):
+        self.__dict__ = self
+        super(Namespace, self).__init__(*args, **kwargs)
+
+
 def strftime(format, t=None):
     """Similar to time.strftime, but returns unicode.
 

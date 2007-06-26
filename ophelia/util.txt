@@ -3,6 +3,45 @@ Ophelia utilities
 =================
 
 
+Namespaces
+==========
+
+    >>> from ophelia.util import Namespace
+
+Handling a request involves namespaces for a number of things, e.g. for the
+page template context, or the request environment variables. This need is in
+principle served by plain Python dictionaries. However, it sometimes feels
+more convenient and natural to access a particular namespace member as an
+object attribute rather than by a key reference. Namespaces are Python
+dictionaries which expose their values as attributes::
+
+    >>> Namespace()
+    {}
+    >>> ns = Namespace(foo="bar")
+    >>> ns
+    {'foo': 'bar'}
+    >>> ns["foo"]
+    'bar'
+    >>> ns.foo
+    'bar'
+    >>> ns.foo = "baz"
+    >>> ns["foo"]
+    'baz'
+    >>> ns["asdf"] = "fdsa"
+    >>> ns.asdf
+    'fdsa'
+
+Dictionary methods work as expected, e.g. update()::
+
+    >>> a = Namespace()
+    >>> a.foo = 1
+    >>> b = Namespace()
+    >>> b.bar = 2
+    >>> a.update(b)
+    >>> a.bar
+    2
+
+
 Unicode dates and times
 =======================
 
