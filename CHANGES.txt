@@ -21,6 +21,7 @@ Bug fixes:
 API:
   - renamed modules, moved classes between modules:
       + publisher.Namespace -> util.Namespace
+      + template -> input
 
   - current template moved from publisher member (template) to pre-defined
     script and TALES variable __template__

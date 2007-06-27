@@ -8,7 +8,7 @@ import urlparse
 from zope.tales.engine import Engine as TALESEngine
 import zope.pagetemplate.pagetemplate
 
-import ophelia.template
+import ophelia.input
 from ophelia.util import Namespace
 
 
@@ -123,7 +123,7 @@ class Publisher(object):
         self.macros = Namespace()
         self.response_headers = {}
         self.env = env
-        self.splitter = ophelia.template.Splitter(env)
+        self.splitter = ophelia.input.Splitter(env)
         self.response_encoding = env.get("ResponseEncoding", "utf-8")
         self.index_name = env.get("IndexName", "index.html")
         self.redirect_index = (env.get("RedirectIndex", "").lower() == "on")
