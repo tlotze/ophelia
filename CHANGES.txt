@@ -23,6 +23,7 @@ API:
       + publisher.Namespace -> util.Namespace
       + template -> input
       + apache -> modpython
+      + publisher.PageTemplate* -> pagetemplate.PageTemplate*
 
   - current template moved from publisher member (template) to pre-defined
     script and TALES variable __template__

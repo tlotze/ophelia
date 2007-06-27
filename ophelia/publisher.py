@@ -6,9 +6,9 @@ import inspect
 import urlparse
 
 from zope.tales.engine import Engine as TALESEngine
-import zope.pagetemplate.pagetemplate
 
 import ophelia.input
+import ophelia.pagetemplate
 from ophelia.util import Namespace
 
 
@@ -39,47 +39,6 @@ class Redirect(Exception):
         if path is not None:
             parts[2] = urlparse.urlsplit(path)[2]
         self.uri = urlparse.urlunsplit(parts)
-
-
-class PageTemplateTracebackSupplement(object):
-
-    def __init__(self, template):
-        self.template = template
-
-    @property
-    def warnings(self):
-        return self.template._v_errors
-
-
-class PageTemplate(zope.pagetemplate.pagetemplate.PageTemplate):
-    """Page templates with Ophelia-style namespaces and source tracking.
-
-    Call parameters: the namespace of file context variables
-    """
-
-    publisher = None
-    file_path = None
-
-    def __init__(self, publisher, text, file_path=None):
-        super(PageTemplate, self).__init__()
-        self.publisher = publisher
-        self.write(text)
-        self.file_path = file_path
-
-    @property
-    def macros(self):
-        __traceback_supplement__ = (PageTemplateTracebackSupplement, self)
-        macros = super(PageTemplate, self).macros
-        if self._v_errors:
-            raise zope.pagetemplate.pagetemplate.PTRuntimeError(
-                "Can't compile template at %s." % self.file_path)
-        return macros
-
-    def pt_getContext(self, args=(), options=None, **ignored):
-        return Namespace(self.publisher.tales_namespace(args[0]))
-
-    def pt_source_file(self):
-        return self.file_path
 
 
 ###########
@@ -227,7 +186,8 @@ class Publisher(object):
         file_context = Namespace(
             __file__ = file_path,
             __text__ = text,
-            __template__ = PageTemplate(self, text, file_path),
+            __template__ = ophelia.pagetemplate.PageTemplate(self, text,
+                                                             file_path),
             )
         if insert:
             self.stack.append(file_context)
