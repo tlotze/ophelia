@@ -3,7 +3,7 @@
 
 from urlparse import urljoin
 
-import ophelia.publisher
+import ophelia.request
 import ophelia.util
 
 
@@ -16,13 +16,13 @@ class Navigation(object):
 
     @property
     def current(self):
-        return self.publisher.current
+        return self.request.current
 
     def __init__(self, home=None):
-        self.publisher = ophelia.publisher.get_publisher()
+        self.request = ophelia.request.get_request()
 
-        self.site = self.publisher.site
-        self.uri = self.site + self.publisher.path
+        self.site = self.request.site
+        self.uri = self.site + self.request.path
         if home is None:
             self.home = self.site
         else:
@@ -53,7 +53,7 @@ class Navigation(object):
 
     def iter_breadcrumbs(self):
         menu = {}
-        for uri in self.publisher.history:
+        for uri in self.request.history:
             title = self.breadcrumbs.get(uri) or menu.get(uri)
             if title:
                 yield (uri, title)

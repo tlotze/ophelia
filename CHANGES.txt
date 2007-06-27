@@ -24,24 +24,26 @@ API:
       + template -> input
       + apache -> modpython
       + publisher.PageTemplate* -> pagetemplate.PageTemplate*
+      + publisher.Publisher -> request.Request, publisher -> request,
+        also renamed script variable __publisher__ -> __request__
 
-  - current template moved from publisher member (template) to pre-defined
+  - current template moved from request member (template) to pre-defined
     script and TALES variable __template__
 
-  - publisher.Redirect exception has an option for replacing the path portion
-    of the target URL (saves the client some urlparse acrobatics) and uses the
+  - request.Redirect exception has an option for replacing the path portion of
+    the target URL (saves the client some urlparse acrobatics) and uses the
     original request's complete URI as a default base for the target
 
-  - combined publisher.StopTraversal exception parameters into one, text
+  - combined request.StopTraversal exception parameters into one, text
 
-  - added methods insert_template and interpret_template to publisher, reduced
+  - added methods insert_template and interpret_template to request, reduced
     load_macros signature to a single relative file name, exposed traversal of
     the next path segment in the API to allow overriding file names
 
-  - replaced publisher member file_path by dir_path as that's simpler to use
+  - replaced request member file_path by dir_path as that's simpler to use
 
-  - store environment namespace on publisher as member env instead of the
-    Apache request
+  - store environment namespace on request as member env instead of the Apache
+    request
 
 Code:
   - use zope.pagetemplate instead of fiddling with the TAL engine directly

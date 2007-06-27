@@ -1,4 +1,4 @@
-site = __publisher__.site
+site = __request__.site
 
 <?xml?>
 <!DOCTYPE html 

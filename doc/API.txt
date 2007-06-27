@@ -14,15 +14,15 @@ with the following variables:
 
 :__template__: the PageTemplate created from the input file's template text
 
-:__publisher__: the currently running Publisher instance
+:__request__: the currently running Request instance
 
-All of the above variables except for __publisher__ will be reset after the
+All of the above variables except for __request__ will be reset after the
 script is run. None of the above names should be assigned to. The template may
 be influenced by calling its methods; see the zope.pagetemplate documentation.
 
 
-Publisher
----------
+Request
+-------
 
 Attributes internally used by Ophelia's traversal mechanism:
 
@@ -87,7 +87,7 @@ METAL macros contained in the file, if any):
 :interpret_template(name): interpret the template in the current namespace and
     return the result as a unicode string
 
-:traverse_next(name=None): traverse the next path segment, maintain publisher
+:traverse_next(name=None): traverse the next path segment, maintain request
     state and history, but allow to override the file name
 
 
@@ -139,12 +139,12 @@ Script variables using the same name as a variable defined by ZPT or Ophelia
 will override that variable.
 
 
-The publisher module
---------------------
+The ophelia.request module
+--------------------------
 
-To use the publisher or related functionality in a script or Python module::
+To use the request or related functionality in a script or Python module::
 
-   import ophelia.publisher
+   import ophelia.request
 
 The module defines the following items meant to be used in client code:
 
@@ -155,10 +155,10 @@ The module defines the following items meant to be used in client code:
 
 :Redirect: exception, see "redirection" below
 
-:Publisher: an instance of this class is currently directing the execution of
-    scripts and assembly of the HTTP response.
+:Request: an instance of this class represents the HTTP request and
+    orchestrates the execution of scripts and assembly of the HTTP response.
 
-:get_publisher: function returning the currently running Publisher instance
+:get_request: function returning the currently running Request instance
 
 :get_file_context: function returning the namespace of file-related variables
     (__file__, __text__, __template__)
@@ -167,7 +167,7 @@ The module defines the following items meant to be used in client code:
 Redirection
 -----------
 
-Ophelia provides the publisher.Redirect exception that scripts and add-on
+Ophelia provides the request.Redirect exception that scripts and add-on
 libraries may raise to cause the HTTP server to redirect the client to another
 URI. The exception constructor takes a number of parameters:
 
@@ -184,9 +184,9 @@ Controlling traversal
 
 This is at the edge of Ophelia's scope.
 
-Raising publisher.StopTraversal in a script prevents more specific scripts
-from being executed and the current as well as more specific templates from
-being evaluated. The exception accepts one optional parameter:
+Raising request.StopTraversal in a script prevents more specific scripts from
+being executed and the current as well as more specific templates from being
+evaluated. The exception accepts one optional parameter:
 
 :text: unicode, template text to use instead of the input file's text
 

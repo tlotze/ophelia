@@ -34,19 +34,18 @@ class Redirect(Exception):
 
     def __init__(self, uri=None, path=None):
         if uri is None:
-            uri = get_publisher().site
+            uri = get_request().site
         parts = list(urlparse.urlsplit(uri))
         if path is not None:
             parts[2] = urlparse.urlsplit(path)[2]
         self.uri = urlparse.urlunsplit(parts)
 
 
-###########
-# publisher
+#########
+# request
 
-class Publisher(object):
-    """Ophelia's publisher building web pages from TAL page templates
-    """
+class Request(object):
+    """Ophelia's request object."""
 
     innerslot = None
     content = None
@@ -59,7 +58,7 @@ class Publisher(object):
     _current = None
 
     def __init__(self, path, root, site, env):
-        """Set up the publisher for traversing path.
+        """Set up the request for traversing path.
 
         path: str, path to traverse from the template root,
                    elements are separated by '/'
@@ -77,7 +76,7 @@ class Publisher(object):
         self.site = site
 
         self.context = Namespace(
-            __publisher__=self,
+            __request__=self,
             )
         self.macros = Namespace()
         self.response_headers = {}
@@ -88,7 +87,7 @@ class Publisher(object):
         self.redirect_index = (env.get("RedirectIndex", "").lower() == "on")
 
     def __call__(self):
-        """Publish the resource at path.
+        """Build the requested resource.
 
         returns (dict, unicode), response headers and page content
         """
@@ -266,13 +265,13 @@ class Publisher(object):
 ###########
 # functions
 
-def get_publisher():
+def get_request():
     for frame_record in inspect.stack():
         candidate = frame_record[0].f_locals.get("self")
-        if isinstance(candidate, Publisher):
+        if isinstance(candidate, Request):
             return candidate
     else:
-        raise LookupError("Could not find publisher.")
+        raise LookupError("Could not find request.")
 
 
 def get_file_context():

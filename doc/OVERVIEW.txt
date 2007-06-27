@@ -133,8 +133,8 @@ as the evaluation context of the templates. Variables that are set by a Python
 script may be used and modified by any scripts run later, as well as TALES
 expressions used in the templates.
 
-The namespace is initialized by Ophelia with a single variable, __publisher__,
-that references the publisher object. Thus, scripts have access to request
+The namespace is initialized by Ophelia with a single variable, __request__,
+that references the request object. Thus, scripts have access to request
 details and traversal internals. In addition to setting variables, scripts may
 also import modules and define functions.
 
@@ -163,8 +163,8 @@ read later during traversal. In a Python script, just do something like
 
 ::
 
-    __publisher__.splitter.script_encoding = "utf-8"
-    __publisher__.splitter.template_encoding = "utf-8"
+    __request__.splitter.script_encoding = "utf-8"
+    __request__.splitter.template_encoding = "utf-8"
 
 A site-wide default can be set by adding Python options to the Apache
 configuration::
@@ -187,7 +187,7 @@ To set the response encoding to, say, latin-1 in a script, do
 
 ::
 
-    __publisher__.response_encoding = "latin-1"
+    __request__.response_encoding = "latin-1"
 
 To set the response encoding site-wide, add
 

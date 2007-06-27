@@ -9,7 +9,7 @@ import pickle
 
 import feedparser
 
-import ophelia.publisher
+import ophelia.request
 
 
 def filename(var_dir, key):
@@ -45,8 +45,8 @@ class FeedLoader(object):
         self.date_format = date_format
 
     def __call__(self, key, count):
-        publisher = ophelia.publisher.get_publisher()
-        var_dir = publisher.env.VarDir
+        request = ophelia.request.get_request()
+        var_dir = request.env.VarDir
         fn = filename(var_dir, key)
         try:
             date, doc = pickle.load(open(fn))

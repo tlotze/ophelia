@@ -9,15 +9,15 @@ import zope.exceptions.exceptionformatter
 
 from mod_python import apache, util
 
-from ophelia.publisher import Publisher, NotFound, Redirect
+from ophelia.request import Request, NotFound, Redirect
 from ophelia.util import Namespace
 
 
 # fix-up request handler
-def fixuphandler(request):
+def fixuphandler(apache_request):
     """Fix-up handler setting up the Ophelia content handler iff applicable.
 
-    This handler has the Ophelia publisher traverse the requested URL and
+    This handler has the Ophelia request traverse the requested URL and
     registers the generic content handler if and only if traversal is possible
     and the requested resource can actually be served by Ophelia. This is to
     prevent clobbering Apache's default generic handler chain if it's needed.
@@ -28,8 +28,8 @@ def fixuphandler(request):
     The intent is for templates to take precedence, falling back on any static
     content gracefully.
     """
-    env = Namespace(apache.build_cgi_env(request))
-    env.update(request.get_options())
+    env = Namespace(apache.build_cgi_env(apache_request))
+    env.update(apache_request.get_options())
 
     root = os.path.abspath(env.TemplateRoot)
 
@@ -42,32 +42,33 @@ def fixuphandler(request):
     # URL. We want to catch requests to the site root specified without a
     # trailing slash.
     site_path = urlparse.urlparse(site)[2]
-    if not (request.uri == site_path[:-1] or
-            request.uri.startswith(site_path)):
+    if not (apache_request.uri == site_path[:-1] or
+            apache_request.uri.startswith(site_path)):
         return apache.DECLINED
-    path = request.uri[len(site_path):]
+    path = apache_request.uri[len(site_path):]
 
-    publisher = Publisher(path, root, site, env)
+    request = Request(path, root, site, env)
     try:
-        publisher.traverse()
+        request.traverse()
     except NotFound:
         return apache.DECLINED
     except Redirect, e:
-        request.handler = "mod_python"
-        request.add_handler("PythonHandler", "ophelia.modpython::redirect")
-        request.__ophelia_location__ = e.uri
+        apache_request.handler = "mod_python"
+        apache_request.add_handler("PythonHandler",
+                                   "ophelia.modpython::redirect")
+        apache_request.__ophelia_location__ = e.uri
     except:
-        report_exception(request)
+        report_exception(apache_request)
     else:
-        request.handler = "mod_python"
-        request.add_handler("PythonHandler", "ophelia.modpython")
-        request.__ophelia_publisher__ = publisher
+        apache_request.handler = "mod_python"
+        apache_request.add_handler("PythonHandler", "ophelia.modpython")
+        apache_request.__ophelia_request__ = request
 
     return apache.OK
 
 
 # generic request handler
-def redirect(request):
+def redirect(apache_request):
     """Generic Apache request handler doing an Ophelia traversal's redirect.
 
     Under certain circumstances, Apache writes to the request during the
@@ -76,55 +77,56 @@ def redirect(request):
     The generic handler gets a new chance to do redirection, so we defer it
     until then, using this handler.
     """
-    util.redirect(request, request.__ophelia_location__, permanent=True)
+    util.redirect(apache_request, apache_request.__ophelia_location__,
+                  permanent=True)
 
 
-def handler(request):
-    """Generic Apache request handler serving pages from Ophelia's publisher.
+def handler(apache_request):
+    """Generic Apache request handler serving pages from Ophelia's request.
 
     This handler is called only after it is known that the requested resource
     can actually be served by Ophelia.
 
     may raise anything
     """
-    publisher = request.__ophelia_publisher__
+    request = apache_request.__ophelia_request__
     try:
-        response_headers, content = publisher.build()
+        response_headers, content = request.build()
     except Redirect, e:
-        util.redirect(request, e.uri, permanent=True)
+        util.redirect(apache_request, e.uri, permanent=True)
     except:
-        report_exception(request)
+        report_exception(apache_request)
 
     # deliver the page
-    request.content_type = "text/html; charset=%s" % \
-                           publisher.response_encoding
-    request.set_content_length(len(content))
-    request.headers_out.update(response_headers)
+    apache_request.content_type = "text/html; charset=%s" % \
+                           request.response_encoding
+    apache_request.set_content_length(len(content))
+    apache_request.headers_out.update(response_headers)
 
-    if request.header_only:
-        request.write("")
+    if apache_request.header_only:
+        apache_request.write("")
     else:
-        request.write(content)
+        apache_request.write(content)
 
     return apache.OK
 
 
 # helpers
-def report_exception(request):
+def report_exception(apache_request):
     exc_type, exc_value, traceback_info = sys.exc_info()
 
-    if request.get_config().get("PythonDebug") != "1":
+    if apache_request.get_config().get("PythonDebug") != "1":
         raise exc_value
 
     msg = zope.exceptions.exceptionformatter.format_exception(
         exc_type, exc_value, traceback_info, with_filenames=True)
 
-    request.status = apache.HTTP_INTERNAL_SERVER_ERROR
-    request.content_type = "text/plain"
-    request.write("".join(msg).encode("utf-8"))
+    apache_request.status = apache.HTTP_INTERNAL_SERVER_ERROR
+    apache_request.content_type = "text/plain"
+    apache_request.write("".join(msg).encode("utf-8"))
 
     for entry in msg:
         for line in entry.splitlines():
-            request.log_error(line, apache.APLOG_ERR)
+            apache_request.log_error(line, apache.APLOG_ERR)
 
     raise apache.SERVER_RETURN(apache.DONE)

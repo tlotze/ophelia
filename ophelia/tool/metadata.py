@@ -5,7 +5,7 @@ import datetime
 import md5
 import codecs
 
-import ophelia.publisher
+import ophelia.request
 import ophelia.util
 
 
@@ -19,7 +19,7 @@ class MetaData(object):
     """
 
     def __init__(self):
-        self.publisher = ophelia.publisher.get_publisher()
+        self.request = ophelia.request.get_request()
         self._date = datetime.datetime.min
 
     def bump_date(self, *args):
@@ -56,10 +56,10 @@ class MetaData(object):
 
         returns str
         """
-        if self.publisher.content is None:
+        if self.request.content is None:
             raise RuntimeError(
                 "Can't compute an Etag before content has been built.")
 
         obj = md5.new()
-        obj.update(self.publisher.content)
+        obj.update(self.request.content)
         return HEX_ENCODER(obj.digest())[0]

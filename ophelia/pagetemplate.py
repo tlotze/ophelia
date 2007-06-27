@@ -22,12 +22,12 @@ class PageTemplate(zope.pagetemplate.pagetemplate.PageTemplate):
     Call parameters: the namespace of file context variables
     """
 
-    publisher = None
+    request = None
     file_path = None
 
-    def __init__(self, publisher, text, file_path=None):
+    def __init__(self, request, text, file_path=None):
         super(PageTemplate, self).__init__()
-        self.publisher = publisher
+        self.request = request
         self.write(text)
         self.file_path = file_path
 
@@ -41,7 +41,7 @@ class PageTemplate(zope.pagetemplate.pagetemplate.PageTemplate):
         return macros
 
     def pt_getContext(self, args=(), options=None, **ignored):
-        return Namespace(self.publisher.tales_namespace(args[0]))
+        return Namespace(self.request.tales_namespace(args[0]))
 
     def pt_source_file(self):
         return self.file_path
