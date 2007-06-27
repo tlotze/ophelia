@@ -155,11 +155,6 @@ The module defines the following items meant to be used in client code:
 
 :Redirect: exception, see "redirection" below
 
-:Namespace: class whose instances do nothing but carry attributes
-
-    Not using pure dictionaries here makes for more aesthetic code if nothing
-    else. Namespaces can still be accessed as dictionaries.
-
 :Publisher: an instance of this class is currently directing the execution of
     scripts and assembly of the HTTP response.
 
@@ -194,3 +189,17 @@ from being executed and the current as well as more specific templates from
 being evaluated. The exception accepts one optional parameter:
 
 :text: unicode, template text to use instead of the input file's text
+
+
+Utilities
+---------
+
+The ophelia.util module contains some utilities:
+
+:Namespace: class whose instances do nothing but carry attributes
+
+    Not using pure dictionaries here makes for more aesthetic code if nothing
+    else. Namespaces can still be accessed as dictionaries.
+
+:strftime: like ``time.strftime``, but handles unicode and takes into account
+    the current locale's character encoding.

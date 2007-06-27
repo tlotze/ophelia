@@ -19,6 +19,9 @@ Bug fixes:
   - actually use the template text passed to StopTraversal as a template
 
 API:
+  - renamed modules, moved classes between modules:
+      + publisher.Namespace -> util.Namespace
+
   - current template moved from publisher member (template) to pre-defined
     script and TALES variable __template__
 
