@@ -54,13 +54,13 @@ def fixuphandler(request):
         return apache.DECLINED
     except Redirect, e:
         request.handler = "mod_python"
-        request.add_handler("PythonHandler", "ophelia.apache::redirect")
+        request.add_handler("PythonHandler", "ophelia.modpython::redirect")
         request.__ophelia_location__ = e.uri
     except:
         report_exception(request)
     else:
         request.handler = "mod_python"
-        request.add_handler("PythonHandler", "ophelia.apache")
+        request.add_handler("PythonHandler", "ophelia.modpython")
         request.__ophelia_publisher__ = publisher
 
     return apache.OK

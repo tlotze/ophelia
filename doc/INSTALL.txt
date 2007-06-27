@@ -77,7 +77,7 @@ To publish this site, add the following to your host's config::
         PythonPath "['/var/example/python'] + sys.path"
         PythonOption TemplateRoot /var/example/templates
         PythonOption Site http://www.example.com/foo/bar/
-        PythonFixupHandler ophelia.apache
+        PythonFixupHandler ophelia.modpython
     </Location>
 
 This instructs Apache to let Ophelia handle any URI under /foo/bar/. Ophelia
