@@ -46,7 +46,7 @@ class FeedLoader(object):
 
     def __call__(self, key, count):
         publisher = ophelia.publisher.get_publisher()
-        var_dir = publisher.options["VarDir"]
+        var_dir = publisher.env.VarDir
         fn = filename(var_dir, key)
         try:
             date, doc = pickle.load(open(fn))
