@@ -1,0 +1,2 @@
+#!/bin/sh
+%(bin-directory)s/ophelia-wsgiref -c %(directory)s/.installed.cfg -s %(name)s
