@@ -29,6 +29,12 @@ longdesc = open(project_path("doc", "OVERVIEW.txt")).read()
 data_files = [("", glob.glob(project_path("*.txt")))] + \
              list(include_tree("doc", "doc"))
 
+entry_points = {
+    "console_scripts": [
+    "ophelia-wsgiref = ophelia.wsgi:wsgiref_server [wsgiref]",
+    ],
+    }
+
 provides = [
     "ophelia",
     ]
@@ -41,6 +47,7 @@ install_requires = [
 
 extras_require = {
     "test": ["zope.testing"],
+    "wsgiref": ["wsgiref"],
     }
 
 classifiers = [
@@ -63,6 +70,7 @@ setup(name="ophelia",
       url="http://www.thomas-lotze.de/en/software/ophelia/",
       license="ZPL 2.1",
       packages=find_packages(),
+      entry_points=entry_points,
       install_requires=install_requires,
       extras_require=extras_require,
       include_package_data=True,
