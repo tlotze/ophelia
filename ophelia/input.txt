@@ -1,0 +1,137 @@
+===================
+Input file handling
+===================
+
+
+Scripts and templates
+=====================
+
+Ophelia input files, which are read while traversing the requested resource
+path, contain both page templates and Python scripts. Splitter objects are
+responsible for splitting up input files into scripts and templates::
+
+    >>> from ophelia.input import Splitter
+    >>> splitter = Splitter()
+
+When called with the content of an input file as an argument, the splitter
+will return a pair of unicode strings: the script code and the template text.
+The two must be separated by an XML declaration in the input. While the script
+code will be stripped of any leading or trailing whitespace, the template text
+starts immediately after the end of the XML declaration, including any line
+breaks::
+
+    >>> splitter("""\
+    ... title = u"A headline"
+    ...
+    ... <?xml?>
+    ... <h1 tal:content="title" />
+    ... """)
+    (u'title = u"A headline"', u'\n<h1 tal:content="title" />\n')
+
+If no XML declaration is present, the whole input will be considered template
+text::
+
+    >>> splitter("""\
+    ... <h1 tal:content="title" />
+    ... """)
+    (u'', u'<h1 tal:content="title" />\n')
+
+The splitter does not complain if the Python script or the template text are
+invalid::
+
+    >>> splitter("""\
+    ...    !!!= foobar
+    ... <?xml?>
+    ... <h1 tal:asdf=+#.> ></h2>
+    ... """)
+    (u'!!!= foobar', u'\n<h1 tal:asdf=+#.> ></h2>\n')
+
+
+Input encoding
+==============
+
+The splitter assumes input to be ASCII encoded by default. Characters beyond
+the 7 bit range will cause the splitter to fail::
+
+    >>> splitter("""\
+    ... title = u"Überschrift"
+    ... <?xml?>
+    ... """)
+    Traceback (most recent call last):
+    ...
+    UnicodeDecodeError: 'ascii' codec can't decode byte 0xc3 in position 10:
+    ordinal not in range(128)
+
+    >>> splitter("""\
+    ... <h1 tal:content="title">Überschrift</h1>
+    ... """)
+    Traceback (most recent call last):
+    ...
+    UnicodeDecodeError: 'ascii' codec can't decode byte 0xc3 in position 24:
+    ordinal not in range(128)
+
+The encoding may be overridden on a file-by-file basis by including
+native-style encoding declarations in the script and template::
+
+    >>> splitter("""\
+    ... # coding: utf-8
+    ... title = u"Überschrift"
+    ... <?xml version="1.1" encoding="utf-8" ?>
+    ... <h1 tal:content="title">Überschrift</h1>
+    ... """)
+    (u'title = u"\xdcberschrift"',
+     u'\n<h1 tal:content="title">\xdcberschrift</h1>\n')
+
+These declarations are independent from each other. Declaring the encoding for
+only the script or the template but using non-ASCII characters in the other
+will still cause a failure::
+
+    >>> splitter("""\
+    ... title = u"Überschrift"
+    ... <?xml version="1.1" encoding="utf-8" ?>
+    ... <h1 tal:content="title">Überschrift</h1>
+    ... """)
+    Traceback (most recent call last):
+    ...
+    UnicodeDecodeError: 'ascii' codec can't decode byte 0xc3 in position 10:
+    ordinal not in range(128)
+
+    >>> splitter("""\
+    ... # coding: utf-8
+    ... title = u"Überschrift"
+    ... <?xml?>
+    ... <h1 tal:content="title">Überschrift</h1>
+    ... """)
+    Traceback (most recent call last):
+    ...
+    UnicodeDecodeError: 'ascii' codec can't decode byte 0xc3 in position 25:
+    ordinal not in range(128)
+
+To avoid having to specify the encoding of scripts and templates in every
+file, two attributes of the splitter may be assigned the name of the desired
+encoding. Their values read 'ascii' by default::
+
+    >>> splitter.script_encoding
+    'ascii'
+    >>> splitter.template_encoding
+    'ascii'
+
+These attributes are initialized from options that may be passed to the
+splitter upon instantiation::
+
+    >>> splitter = Splitter(ScriptEncoding="utf-8",
+    ...                     TemplateEncoding="utf-8")
+    >>> splitter.script_encoding
+    'utf-8'
+    >>> splitter.template_encoding
+    'utf-8'
+
+Now encoding declarations inside input files are no longer necessary:
+
+    >>> splitter("""\
+    ... title = u"Überschrift"
+    ... <?xml?>
+    ... <h1 tal:content="title">Überschrift</h1>
+    ... """)
+    (u'title = u"\xdcberschrift"',
+     u'\n<h1 tal:content="title">\xdcberschrift</h1>\n')

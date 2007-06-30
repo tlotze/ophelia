@@ -15,7 +15,7 @@ class Splitter(object):
     script_encoding = None
     template_encoding = None
 
-    def __init__(self, options):
+    def __init__(self, **options):
         self.script_encoding = options.get("ScriptEncoding", "ascii")
         self.template_encoding = options.get("TemplateEncoding", "ascii")
 

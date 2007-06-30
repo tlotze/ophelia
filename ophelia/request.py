@@ -84,7 +84,7 @@ class Request(object):
         self.macros = Namespace()
         self.response_headers = {}
         self.env = env
-        self.splitter = ophelia.input.Splitter(env)
+        self.splitter = ophelia.input.Splitter(**env)
         self.response_encoding = env.get("ResponseEncoding", "utf-8")
         self.index_name = env.get("IndexName", "index.html")
         self.redirect_index = (env.get("RedirectIndex", "").lower() == "on")
