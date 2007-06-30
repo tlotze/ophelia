@@ -98,8 +98,7 @@ def handler(apache_request):
         report_exception(apache_request)
 
     # deliver the page
-    apache_request.content_type = "text/html; charset=%s" % \
-                           request.response_encoding
+    apache_request.content_type = request.compiled_headers["Content-Type"]
     apache_request.set_content_length(len(content))
     apache_request.headers_out.update(response_headers)
 

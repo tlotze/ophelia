@@ -82,7 +82,9 @@ class Request(object):
             __request__=self,
             )
         self.macros = Namespace()
-        self.response_headers = {}
+        self.response_headers = {
+            "Content-Type":
+            "python:'text/html; charset=' + __request__.response_encoding"}
         self.env = env
         self.splitter = ophelia.input.Splitter(**env)
         self.response_encoding = env.get("ResponseEncoding", "utf-8")
