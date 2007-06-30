@@ -55,7 +55,10 @@ class Request(object):
     stack = None
     dir_path = None
 
-    _current = None
+    # XXX This is a temporary solution for overriding the file or directory
+    # read during the next traversal step. A better solution would be to put
+    # more information in self.path.
+    next_name = None
 
     def __init__(self, path, root, site, env):
         """Set up the request for traversing path.
@@ -114,21 +117,20 @@ class Request(object):
 
         while self.tail:
             self.traverse_next()
+            if self.history[-1:] != [self.current]:
+                self.history.append(self.current)
 
-    def traverse_next(self, name=None):
+    def traverse_next(self):
         # determine the next traversal step
         next = self.get_next()
 
-        # add to traversal history
         self.current += next
         if self.tail:
             self.current += '/'
 
-        if self._current:
-            self.history.append(self._current)
-        self._current = self.current
-
         # try to find a file to read
+        name = self.next_name
+        self.next_name = None
         if name is None:
             name = next or self.index_name
         next_path = os.path.join(self.dir_path, name)
@@ -140,10 +142,6 @@ class Request(object):
             self.traverse_file(next_path)
         else:
             raise NotFound
-
-        if self.current == self._current and next:
-            self.history.append(self.current)
-        self._current = None
 
     def get_next(self):
         next = self.tail.pop(0)
