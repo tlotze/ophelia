@@ -32,7 +32,7 @@ def fixuphandler(apache_request):
     env.update(apache.build_cgi_env(apache_request))
     env.apache_request = apache_request
 
-    root = os.path.abspath(env.TemplateRoot)
+    template_root = os.path.abspath(env.TemplateRoot)
 
     # The site URL should be something we can safely urljoin path parts to.
     site = env.Site
@@ -48,7 +48,7 @@ def fixuphandler(apache_request):
         return apache.DECLINED
     path = apache_request.uri[len(site_path):]
 
-    request = Request(path, root, site, env)
+    request = Request(path, template_root, site, env)
     try:
         request.traverse()
     except NotFound:

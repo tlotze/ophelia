@@ -3,14 +3,21 @@
 
 import re
 
+import zope.interface
+
+import ophelia.interfaces
+
+
 XML_START = re.compile("^\s*<\?xml\s*", re.MULTILINE)
 XML_END = re.compile("\s*\?>\s*$", re.MULTILINE)
 CODING_PATTERN = re.compile("coding[=:]\s*\"?\s*([-\w.]+)\s*\"?")
 
-
+
 class Splitter(object):
     """Splitter decomposing a file into Python script and template.
     """
+
+    zope.interface.implements(ophelia.interfaces.ISplitterAPI)
 
     script_encoding = None
     template_encoding = None

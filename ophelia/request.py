@@ -5,8 +5,10 @@ import os.path
 import inspect
 import urlparse
 
+import zope.interface
 from zope.tales.engine import Engine as TALESEngine
 
+import ophelia.interfaces
 import ophelia.input
 import ophelia.pagetemplate
 from ophelia.util import Namespace
@@ -47,6 +49,8 @@ class Redirect(Exception):
 class Request(object):
     """Ophelia's request object."""
 
+    zope.interface.implements(ophelia.interfaces.IRequestAPI)
+
     innerslot = None
     content = None
     compiled_headers = None
@@ -60,19 +64,19 @@ class Request(object):
     # more information in self.path.
     next_name = None
 
-    def __init__(self, path, root, site, env):
+    def __init__(self, path, template_root, site, env):
         """Set up the request for traversing path.
 
         path: str, path to traverse from the template root,
                    elements are separated by '/'
-        root: str, file system path to the template root
+        template_root: str, file system path to the template root
         site: str, absolute URL to site root, ends with '/'
         env: the environment namespace
         """
         self.path = path
         self.tail = path.split('/')
 
-        self.root = os.path.abspath(root)
+        self.template_root = os.path.abspath(template_root)
 
         if not site.endswith('/'):
             site += '/'
@@ -111,10 +115,10 @@ class Request(object):
         self.stack = []
 
         # traverse the template root
-        if not os.path.isdir(self.root):
+        if not os.path.isdir(self.template_root):
             raise NotFound
 
-        self.dir_path = self.root
+        self.dir_path = self.template_root
         self.traverse_dir()
 
         while self.tail:

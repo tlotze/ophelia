@@ -40,6 +40,7 @@ provides = [
     ]
 
 install_requires = [
+    "zope.interface",
     "zope.pagetemplate",
     "zope.exceptions",
     "feedparser",
