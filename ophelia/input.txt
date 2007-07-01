@@ -8,7 +8,7 @@ Scripts and templates
 
 Ophelia input files, which are read while traversing the requested resource
 path, contain both page templates and Python scripts. Splitter objects are
-responsible for splitting up input files into scripts and templates::
+responsible for splitting up input files into scripts and templates:
 
     >>> from ophelia.input import Splitter
     >>> splitter = Splitter()
@@ -18,7 +18,7 @@ will return a pair of unicode strings: the script code and the template text.
 The two must be separated by an XML declaration in the input. While the script
 code will be stripped of any leading or trailing whitespace, the template text
 starts immediately after the end of the XML declaration, including any line
-breaks::
+breaks:
 
     >>> splitter("""\
     ... title = u"A headline"
@@ -29,7 +29,7 @@ breaks::
     (u'title = u"A headline"', u'\n<h1 tal:content="title" />\n')
 
 If no XML declaration is present, the whole input will be considered template
-text::
+text:
 
     >>> splitter("""\
     ... <h1 tal:content="title" />
@@ -37,7 +37,7 @@ text::
     (u'', u'<h1 tal:content="title" />\n')
 
 The splitter does not complain if the Python script or the template text are
-invalid::
+invalid:
 
     >>> splitter("""\
     ...    !!!= foobar
@@ -51,7 +51,7 @@ Input encoding
 ==============
 
 The splitter assumes input to be ASCII encoded by default. Characters beyond
-the 7 bit range will cause the splitter to fail::
+the 7 bit range will cause the splitter to fail:
 
     >>> splitter("""\
     ... title = u"Überschrift"
@@ -71,7 +71,7 @@ the 7 bit range will cause the splitter to fail::
     ordinal not in range(128)
 
 The encoding may be overridden on a file-by-file basis by including
-native-style encoding declarations in the script and template::
+native-style encoding declarations in the script and template:
 
     >>> splitter("""\
     ... # coding: utf-8
@@ -84,7 +84,7 @@ native-style encoding declarations in the script and template::
 
 These declarations are independent from each other. Declaring the encoding for
 only the script or the template but using non-ASCII characters in the other
-will still cause a failure::
+will still cause a failure:
 
     >>> splitter("""\
     ... title = u"Überschrift"
@@ -109,7 +109,7 @@ will still cause a failure::
 
 To avoid having to specify the encoding of scripts and templates in every
 file, two attributes of the splitter may be assigned the name of the desired
-encoding. Their values read 'ascii' by default::
+encoding. Their values read 'ascii' by default:
 
     >>> splitter.script_encoding
     'ascii'
@@ -117,7 +117,7 @@ encoding. Their values read 'ascii' by default::
     'ascii'
 
 These attributes are initialized from options that may be passed to the
-splitter upon instantiation::
+splitter upon instantiation:
 
     >>> splitter = Splitter(ScriptEncoding="utf-8",
     ...                     TemplateEncoding="utf-8")

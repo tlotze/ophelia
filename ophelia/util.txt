@@ -13,7 +13,7 @@ page template context, or the request environment variables. This need is in
 principle served by plain Python dictionaries. However, it sometimes feels
 more convenient and natural to access a particular namespace member as an
 object attribute rather than by a key reference. Namespaces are Python
-dictionaries which expose their values as attributes::
+dictionaries which expose their values as attributes:
 
     >>> Namespace()
     {}
@@ -31,7 +31,7 @@ dictionaries which expose their values as attributes::
     >>> ns.asdf
     'fdsa'
 
-Dictionary methods work as expected, e.g. update()::
+Dictionary methods work as expected, e.g. update():
 
     >>> a = Namespace()
     >>> a.foo = 1
@@ -53,7 +53,7 @@ Unicode dates and times
 Ophelia provides its own version of strftime which always returns unicode.
 
 Otherwise, it works the same as the time.strftime function: With only a format
-string given, it formats the current time::
+string given, it formats the current time:
 
     >>> strftime("%c")
     u'...'
@@ -61,7 +61,7 @@ string given, it formats the current time::
 Our strftime function uses the current locale's encoding to decode
 time.strftime's output, as that is what time.strftime uses to encode it in the
 first place. Let's try out it with the german locale as we have month names
-with nice umlauts there::
+with nice umlauts there:
 
     >>> locale.setlocale(locale.LC_ALL, "de_DE")
     'de_DE'
@@ -70,7 +70,7 @@ with nice umlauts there::
 
 Not only do we always get unicode output from our strftime function, but we
 can also pass it a unicode format string (which time.strftime would not
-accept)::
+accept):
 
     >>> strftime(u"Im sch\xf6nen Monat %B...", datetime.date(2007, 3, 1))
     u'Im sch\xf6nen Monat M\xe4rz...'
