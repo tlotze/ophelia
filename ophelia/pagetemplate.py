@@ -3,8 +3,6 @@
 
 import zope.pagetemplate.pagetemplate
 
-from ophelia.util import Namespace
-
 
 class PageTemplateTracebackSupplement(object):
 
@@ -17,17 +15,15 @@ class PageTemplateTracebackSupplement(object):
 
 
 class PageTemplate(zope.pagetemplate.pagetemplate.PageTemplate):
-    """Page templates with Ophelia-style namespaces and source tracking.
+    """Page templates with supplemented tracebacks and source tracking.
 
     Call parameters: the namespace of file context variables
     """
 
-    request = None
     file_path = None
 
-    def __init__(self, request, text, file_path=None):
+    def __init__(self, text, file_path=None):
         super(PageTemplate, self).__init__()
-        self.request = request
         self.write(text)
         self.file_path = file_path
 
@@ -41,7 +37,7 @@ class PageTemplate(zope.pagetemplate.pagetemplate.PageTemplate):
         return macros
 
     def pt_getContext(self, args=(), options=None, **ignored):
-        return Namespace(self.request.tales_namespace(args[0]))
+        return args[0]
 
     def pt_source_file(self):
         return self.file_path

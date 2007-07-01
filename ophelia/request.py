@@ -185,8 +185,7 @@ class Request(object):
         file_context = Namespace(
             __file__ = file_path,
             __text__ = text,
-            __template__ = ophelia.pagetemplate.PageTemplate(self, text,
-                                                             file_path),
+            __template__ = ophelia.pagetemplate.PageTemplate(text, file_path),
             )
         if insert:
             self.stack.append(file_context)
@@ -236,7 +235,7 @@ class Request(object):
                 continue
 
             __traceback_info__ = "Template at " + file_context.__file__
-            self.innerslot = template(file_context)
+            self.innerslot = template(self.tales_namespace(file_context))
 
         self.content = """<?xml version="1.1" encoding="%s" ?>\n%s""" % (
             self.response_encoding,
