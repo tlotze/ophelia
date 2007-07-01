@@ -29,12 +29,22 @@ thing to do.
 0.3
 ---
 
+This version's goal is to implement a number of standards and best practices,
+besides further clean-up and the usual feature creep, of course.
+
 - internal usage of WSGI
 - zc.buildout based distribution
 - usage of Zope interfaces for API specification
 - testing framework including some unit and functional doc tests
-- documentation in the standard Python documentation style
 - more useful tracebacks for errors in scripts and templates
+
+0.3.1
+-----
+
+This minor release was planned when it became clear that not everything that
+would have been nice to have in 0.3 could be done in time for EuroPython 2007.
+
+- documentation in the standard Python documentation style
 
 0.4
 ---
