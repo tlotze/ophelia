@@ -28,8 +28,9 @@ def fixuphandler(apache_request):
     The intent is for templates to take precedence, falling back on any static
     content gracefully.
     """
-    env = Namespace(apache.build_cgi_env(apache_request))
-    env.update(apache_request.get_options())
+    env = Namespace(apache_request.get_options())
+    env.update(apache.build_cgi_env(apache_request))
+    env.apache_request = apache_request
 
     root = os.path.abspath(env.TemplateRoot)
 

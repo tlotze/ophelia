@@ -57,8 +57,8 @@ For the Python language, see <http://docs.python.org/>.
 For Zope page templates, see
 <http://www.zope.org/Documentation/Books/ZopeBook/2_6Edition/AppendixC.stx>.
 
-For the mod_python API parts of which are accessible from templates and
-scripts, see <http://www.modpython.org/live/current/doc-html/>.
+For the mod_python API, see
+<http://www.modpython.org/live/current/doc-html/>.
 
 For the Ophelia API and predefined script and template variables, see API.txt.
 
