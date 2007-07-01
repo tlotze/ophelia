@@ -3,8 +3,21 @@ Installation
 ============
 
 
+These instructions cover buildout-based installation as well as manual
+installation for either running Ophelia in an Apache/mod_python setup, or
+Ophelia's own wsgiref-based server.
+
+
 Buildout-based
 ==============
+
+- Create a buildout configuration, e.g. by copying the example configuration::
+
+      cp buildout.cfg.example buildout.cfg
+
+  In buildout.cfg, adjust the host, port, and servername or site settings. You
+  can also override which buildout parts will be created, thus leaving out the
+  mod_python or WSGI installation.
 
 - In the distribution directory, bootstrap the buildout::
 
@@ -19,8 +32,8 @@ Buildout-based
       bin/buildout
 
 
-Manual
-======
+Manual mod_python based installation
+====================================
 
 Prerequisites
 -------------
@@ -90,6 +103,43 @@ against a regular expression.
 
 See doc/OVERVIEW.txt for other Python options Ophelia recognizes, and for
 details on how Ophelia behaves.
+
+
+Manual wsgiref installation
+===========================
+
+Prerequisites
+-------------
+
+- Python 2.4
+- the wsgiref package
+- Zope3 packages and their dependencies: zope.pagetemplate, zope.exceptions
+- optionally the feedparser and zope.testing packages
+
+Installation steps
+------------------
+
+Put everything in your Python path. All the parts needed may be installed as
+eggs using easy_install::
+
+    easy_install "ophelia[wsgi]"
+
+Example wsgiref server configuration
+------------------------------------
+
+Create a configuration file, say, opheliasite.cfg::
+
+    [DEFAULT]
+    host = 127.0.0.1
+    port = 8080
+    templateroot = /home/johndoe/opheliasite
+    site = http://localhost:8080/
+
+and run the ophelia-wsgiref script on that file::
+
+    ophelia-wsgiref -c opheliasite.cfg
+
+You may want to wrap this call in a run-control script.
 
 
 .. _`PyPI`: http://www.python.org/pypi

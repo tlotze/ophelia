@@ -4,8 +4,8 @@ Ophelia
 Ophelia creates XHTML pages from templates written in TAL, the Zope Tag
 Attribute Language. It is designed to reduce code repetition to zero.
 
-At present, Ophelia contains a request handler for mod_python, the Python
-module for the Apache2 web server.
+The package contains both a WSGI application running Ophelia as well as a
+request handler for mod_python, the Python module for the Apache2 web server.
 
 
 Documentation
