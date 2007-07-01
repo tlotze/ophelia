@@ -8,4 +8,4 @@ servername = localhost:1080
 [wsgirefsite]
 host = 127.0.0.1
 port = 2080
-site = localhost:2080
+site = http://localhost:2080/
