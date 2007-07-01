@@ -8,7 +8,7 @@ site = __request__.site
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
   <head>
     <link rel="stylesheet" type="text/css" href=""
-          tal:attributes="href string:${site}/example.css"/>
+          tal:attributes="href string:${site}example.css"/>
 
     <title tal:content="title" />
   </head>
