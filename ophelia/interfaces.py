@@ -133,9 +133,9 @@ class IRequestAPI(zope.interface.Interface):
         """Stack of file contexts to process when rendering the response body.
 
         List of namespaces holding the file path, template text, and page
-        template for any non-empty page template encountered so far (during
-        traversal) or to be rendered yet (when building the response). The
-        outermost template is at the bottom of the stack (i.e. at index 0).
+        template for any input file processed so far (during traversal) or to
+        be rendered yet (when building the response). The outermost template
+        is at the bottom of the stack (i.e. at index 0).
         """)
 
     # Methods for processing further files.
