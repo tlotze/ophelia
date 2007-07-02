@@ -45,6 +45,8 @@ This minor release was planned when it became clear that not everything that
 would have been nice to have in 0.3 could be done in time for EuroPython 2007.
 
 - documentation in the standard Python documentation style
+- use of the Zope3 component architecture to separate core and tools better
+- buildout recipes to hide the Apache details and get rid of buildout_script
 
 0.4
 ---
