@@ -78,18 +78,18 @@ from that.
 
 There are two configuration options concerned with the index template. To
 change the name of the index template Ophelia looks for from index.html to,
-say, foobar.html, set the IndexName option. In an Apache configuration, say::
+say, foobar.html, set the index_name option. In an Apache configuration, say::
 
-    PythonOption "IndexName" "foobar.html"
+    PythonOption "index_name" "foobar.html"
 
 Additionally, Ophelia can be told to canonicalize URLs and redirect the
 browser if the path portion of the URL ends with the default index page's
 name. Provided the index name is the default index.html, a request to
 <http://www.example.com/index.html> would be redirected to
-<http://www.example.com/>. To achieve this, turn on the RedirectIndex option.
+<http://www.example.com/>. To achieve this, turn on the redirect_index option.
 In an Apache configuration, this reads::
 
-    PythonOption "RedirectIndex" On
+    PythonOption "redirect_index" On
 
 Furthermore, Ophelia canonicalizes URLs containing path segments "." and ".."
 according to :RFC:`3986` on generic URI syntax, and removes empty path
@@ -184,8 +184,8 @@ read later during traversal. In a Python script, just do something like
 A site-wide default can be set through options. In an Apache configuration,
 this would read::
 
-    PythonOption ScriptEncoding "utf-8"
-    PythonOption TemplateEncoding "utf-8"
+    PythonOption script_encoding "utf-8"
+    PythonOption template_encoding "utf-8"
 
 Failing any of these settings for scripts or templates, the respective default
 encoding will be 7-bit ASCII.
@@ -204,12 +204,12 @@ To set the response encoding to, say, latin-1 in a script, do
 
     __request__.response_encoding = "latin-1"
 
-To affect the response encoding site-wide, set the ResponseEncoding option,
+To affect the response encoding site-wide, set the response_encoding option,
 such as
 
 ::
 
-    PythonOption ResponseEncoding "latin-1"
+    PythonOption response_encoding "latin-1"
 
 in an Apache configuration. Failing any of these settings, the response
 encoding defaults to UTF-8.

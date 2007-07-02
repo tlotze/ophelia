@@ -30,7 +30,7 @@ class Application(object):
             path = path[1:]
 
         request = ophelia.request.Request(
-            path, env.templateroot, env.site, env)
+            path, env.template_root, env.site, env)
 
         try:
             response_headers, body = request()
@@ -97,7 +97,8 @@ def wsgiref_server():
 
     config = ConfigParser.ConfigParser()
     config.read(cmd_options.config_file)
-    options = Namespace(config.items(cmd_options.section))
+    options = Namespace((key.replace('-', '_'), value)
+                        for key, value in config.items(cmd_options.section))
 
     httpd = wsgiref.simple_server.make_server(
         options.host, int(options.port), Application(options))

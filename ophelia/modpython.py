@@ -32,10 +32,10 @@ def fixuphandler(apache_request):
     env.update(apache.build_cgi_env(apache_request))
     env.apache_request = apache_request
 
-    template_root = os.path.abspath(env.TemplateRoot)
+    template_root = os.path.abspath(env.template_root)
 
     # The site URL should be something we can safely urljoin path parts to.
-    site = env.Site
+    site = env.site
     if not site.endswith('/'):
         site += '/'
 

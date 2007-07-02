@@ -88,8 +88,8 @@ To publish this site, add the following to your host's config::
     Alias /foo/bar /var/example/static
     <Location "/foo/bar">
         PythonPath "['/var/example/python'] + sys.path"
-        PythonOption TemplateRoot /var/example/templates
-        PythonOption Site http://www.example.com/foo/bar/
+        PythonOption template_root /var/example/templates
+        PythonOption site http://www.example.com/foo/bar/
         PythonFixupHandler ophelia.modpython
     </Location>
 
@@ -132,7 +132,7 @@ Create a configuration file, say, opheliasite.cfg::
     [DEFAULT]
     host = 127.0.0.1
     port = 8080
-    templateroot = /home/johndoe/opheliasite
+    template_root = /var/example/opheliasite
     site = http://localhost:8080/
 
 and run the ophelia-wsgiref script on that file::

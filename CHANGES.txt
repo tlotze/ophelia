@@ -15,6 +15,8 @@ User-visible:
 
   - more informative error pages and logs
 
+  - configuration options changed from CamelCase to lower_case
+
 Bug fixes:
   - Apache-generated directory indexes and PHP pages work now. This needs at
     least version 3.3 of mod_python.

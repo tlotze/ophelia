@@ -23,8 +23,8 @@ class Splitter(object):
     template_encoding = None
 
     def __init__(self, **options):
-        self.script_encoding = options.get("ScriptEncoding", "ascii")
-        self.template_encoding = options.get("TemplateEncoding", "ascii")
+        self.script_encoding = options.get("script_encoding", "ascii")
+        self.template_encoding = options.get("template_encoding", "ascii")
 
     def __call__(self, content):
         """Split file content into Python script and template.

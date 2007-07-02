@@ -25,8 +25,8 @@ title = "Ophelia example site"
 Alias /software/ophelia/example .../Ophelia/doc/example/static
 &lt;Location "/software/ophelia/example"&gt;
     PythonPath "['.../Ophelia'] + sys.path"
-    PythonOption TemplateRoot .../Ophelia/doc/example/ophelia_pages
-    PythonOption Site http://www.thomas-lotze.de/software/ophelia/example
+    PythonOption template_root .../Ophelia/doc/example/ophelia_pages
+    PythonOption site http://www.thomas-lotze.de/software/ophelia/example
     PythonFixupHandler ophelia.modpython
 &lt;/Location&gt;
 </pre>

@@ -119,8 +119,8 @@ encoding. Their values read 'ascii' by default:
 These attributes are initialized from options that may be passed to the
 splitter upon instantiation:
 
-    >>> splitter = Splitter(ScriptEncoding="utf-8",
-    ...                     TemplateEncoding="utf-8")
+    >>> splitter = Splitter(script_encoding="utf-8",
+    ...                     template_encoding="utf-8")
     >>> splitter.script_encoding
     'utf-8'
     >>> splitter.template_encoding

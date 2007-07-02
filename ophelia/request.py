@@ -91,9 +91,9 @@ class Request(object):
             "python:'text/html; charset=' + __request__.response_encoding"}
         self.env = env
         self.splitter = ophelia.input.Splitter(**env)
-        self.response_encoding = env.get("ResponseEncoding", "utf-8")
-        self.index_name = env.get("IndexName", "index.html")
-        self.redirect_index = (env.get("RedirectIndex", "").lower() == "on")
+        self.response_encoding = env.get("response_encoding", "utf-8")
+        self.index_name = env.get("index_name", "index.html")
+        self.redirect_index = (env.get("redirect_index", "").lower() == "on")
 
     def __call__(self):
         """Build the requested resource.
