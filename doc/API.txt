@@ -2,6 +2,17 @@ Ophelia API and predefined script and template variables
 ========================================================
 
 
+This file describes the context variables as seen by user code in Python
+scripts and page templates, as well as the ophelia.request and ophelia.util
+modules (which are the parts of the Ophelia core most likely to be used in
+user code) and how to use exceptions for redirecting to another URL and
+controlling traversal.
+
+For the APIs of the request and input splitter objects, see their user
+interfaces specified in the ophelia.interfaces module: IRequestAPI and
+ISplitterAPI.
+
+
 Script context
 --------------
 
@@ -19,18 +30,6 @@ with the following variables:
 All of the above variables except for __request__ will be reset after the
 script is run. None of the above names should be assigned to. The template may
 be influenced by calling its methods; see the zope.pagetemplate documentation.
-
-
-Request
--------
-
-See the IRequestAPI interface defined in the ophelia.interfaces module.
-
-
-Splitter
---------
-
-See the ISplitterAPI interface defined in the ophelia.interfaces module.
 
 
 Page template context

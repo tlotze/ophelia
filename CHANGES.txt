@@ -58,6 +58,8 @@ Code:
   - use zope.exceptions instead of log_error to get supplemented tracebacks
     and cleaner code
 
+  - use zope.interface to formally specify the API exposed to user code
+
   - some clean-up
 
 Organization:
