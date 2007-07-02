@@ -8,9 +8,14 @@ Scripts and templates
 
 Ophelia input files, which are read while traversing the requested resource
 path, contain both page templates and Python scripts. Splitter objects are
-responsible for splitting up input files into scripts and templates:
+responsible for splitting up input files into scripts and templates. They
+implement the ISplitterAPI interface meant for use in scripts and templates:
 
     >>> from ophelia.input import Splitter
+    >>> from ophelia.interfaces import ISplitterAPI
+    >>> ISplitterAPI.implementedBy(Splitter)
+    True
+
     >>> splitter = Splitter()
 
 When called with the content of an input file as an argument, the splitter
