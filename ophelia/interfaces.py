@@ -7,6 +7,8 @@
 import zope.interface
 
 
+# APIs intended to be used from scripts and templates.
+
 class IRequestAPI(zope.interface.Interface):
     """HTTP request API for use in scripts and TALES expressions.
     """
@@ -193,3 +195,101 @@ class ISplitterAPI(zope.interface.Interface):
 
         String, defaults to "ascii".
         """)
+
+
+# APIs used internally.
+
+class IRequestTraversal(zope.interface.Interface):
+    """Methods used in traversing from site root to requested resource.
+    """
+
+    def __call__():
+        """Process the request, return response headers and body.
+
+        Returns (dict, unicode), response headers and page content.
+        """
+
+    def traverse():
+        """Traverse the path, read input, and prepare the template context.
+
+        Returns nothing.
+
+        Raises NotFound if the template root is not a file system directory.
+        """
+
+    def traverse_next():
+        """Traverse the next path segment, possibly process an input file.
+
+        Returns nothing.
+
+        Raises NotFound if no matching file system resource could be found.
+        """
+
+    def get_next():
+        """Get the next path segment from the tail sequence.
+
+        This step canonicalizes of "//", "/./", and "/../" path portions as
+        well as paths specifying a directory index explicitly.
+
+        Returns str, the next path portion.
+
+        May raise Redirect due to URI canonicalization.
+        """
+
+    def traverse_dir():
+        """Handle the current resource if it is a file system directory.
+
+        This method assumes that a file system directory corresponds directly
+        to a resource with directory semantics and performs trailing slash
+        canonicalization based on that assumption.
+
+        Returns nothing.
+
+        May raise Redirect due to URI canonicalization.
+        """
+
+    def traverse_file(file_path):
+        """Handle a file system resource that is a file.
+
+        If the file's Python script emitted a signal to stop traversal, this
+        step removes any further path segments from the queue.
+
+        file_path: str, absolute file system path to the file.
+
+        Returns nothing.
+        """
+
+    def process_file(file_path, insert=False):
+        """Process an input file that may consist of script and template.
+
+        file_path: str, absolute file system path to the file.
+
+        Returns (file context namespace, StopTraversal or None).
+        """
+
+    def tales_namespace(file_context={}):
+        """Constructs the namespace in which to evaluate a template.
+
+        file_context: namespace, predefined variables specific to input file
+
+        Returns the TALES namespace.
+        """
+
+    def build():
+        """Build the complete response after the template context is prepared.
+
+        Returns (namespace of compiled response headers,
+                 unicode response body).
+        """
+
+    def build_content():
+        """Build the response body by rendering templates from the stack.
+
+        Returns nothing.
+        """
+
+    def build_headers():
+        """Compile the response header TALES expressions.
+
+        Returns nothing.
+        """

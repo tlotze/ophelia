@@ -49,7 +49,8 @@ class Redirect(Exception):
 class Request(object):
     """Ophelia's request object."""
 
-    zope.interface.implements(ophelia.interfaces.IRequestAPI)
+    zope.interface.implements(ophelia.interfaces.IRequestAPI,
+                              ophelia.interfaces.IRequestTraversal)
 
     innerslot = None
     content = None
@@ -96,18 +97,8 @@ class Request(object):
         self.redirect_index = (env.get("redirect_index", "").lower() == "on")
 
     def __call__(self):
-        """Build the requested resource.
-
-        returns (dict, unicode), response headers and page content
-        """
         self.traverse()
         return self.build()
-
-    def build(self):
-        self.build_content()
-        self.build_headers()
-
-        return self.compiled_headers, self.content
 
     def traverse(self):
         self.current = self.site
@@ -227,6 +218,11 @@ class Request(object):
         tales_ns.update(self.context)
         tales_ns.pop("__builtins__", None)
         return tales_ns
+
+    def build(self):
+        self.build_content()
+        self.build_headers()
+        return self.compiled_headers, self.content
 
     def build_content(self):
         while self.stack:

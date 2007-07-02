@@ -14,6 +14,7 @@ def test_suite():
         DocFileSuite("pagetemplate.txt",
                      package="ophelia", optionflags=flags),
         DocFileSuite("util.txt", package="ophelia", optionflags=flags),
+        DocFileSuite("request.txt", package="ophelia", optionflags=flags),
         ))
 
 

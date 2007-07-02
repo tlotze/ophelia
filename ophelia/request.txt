@@ -1,0 +1,20 @@
+==================
+The request object
+==================
+
+
+Ophelia's request object is both used for processing the request as the HTTP
+server needs to obtain a response, and accessed by user code to use the
+current traversal state and influence how the request will be further
+processed. Accordingly, a request object provides two interfaces, IRequestAPI
+meant to be exposed to user code, and IRequestTraversal specifying the
+traversal mechanism:
+
+    >>> from ophelia.interfaces import IRequestAPI, IRequestTraversal
+    >>> from ophelia.request import Request
+
+    >>> from zope.interface.verify import verifyClass
+    >>> verifyClass(IRequestAPI, Request)
+    True
+    >>> verifyClass(IRequestTraversal, Request)
+    True
