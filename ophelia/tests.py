@@ -11,6 +11,8 @@ flags = doctest.NORMALIZE_WHITESPACE | doctest.ELLIPSIS
 def test_suite():
     return unittest.TestSuite((
         DocFileSuite("input.txt", package="ophelia", optionflags=flags),
+        DocFileSuite("pagetemplate.txt",
+                     package="ophelia", optionflags=flags),
         DocFileSuite("util.txt", package="ophelia", optionflags=flags),
         ))
 

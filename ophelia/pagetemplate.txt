@@ -1,0 +1,71 @@
+======================
+Ophelia page templates
+======================
+
+
+API differences to Zope3 page templates
+=======================================
+
+Ophelia page templates are Zope3 page templates which provide some convenience
+of usage.
+
+    >>> from ophelia.pagetemplate import PageTemplate
+
+For one thing, the template text is passed directly to the page template upon
+instantiation:
+
+    >>> pt = PageTemplate("""<h1 tal:content="title" />""")
+    >>> pt._text
+    '<h1 tal:content="title" />'
+
+In order to render the page template, it is sufficient to pass the TALES
+namespace to be used as the only argument:
+
+    >>> pt({"title": "A title"})
+    u'<h1>A title</h1>\n'
+
+If the template can't be compiled, it raises an exception as soon as
+compilation is first attempted, which is when its macros are accessed:
+
+    >>> pt = PageTemplate("""<h1 tal:asdf="title" />""")
+    >>> pt.macros
+    Traceback (most recent call last):
+    ...
+    PTRuntimeError: Can't compile template ...
+
+When the template is instantiated, a file path may be given that appears in
+the traceback of any compilation errors to aid debugging:
+
+    >>> pt = PageTemplate("""<h1 tal:asdf="title" />""", "/tmp/asdf")
+    >>> pt.macros
+    Traceback (most recent call last):
+    ...
+    PTRuntimeError: Can't compile template at /tmp/asdf.
+
+
+Traceback supplements
+=====================
+
+If an Ophelia page template is invalid so that an attempt to compile it raises
+an Exception, Zope3's exception formatter can be used to include supplementary
+information with the traceback's text representation, such as what error
+caused the first failure and where in the template text the problem occurred:
+
+    >>> import sys
+    >>> from zope.exceptions.exceptionformatter import print_exception
+
+    >>> pt = PageTemplate("""\
+    ... </body>
+    ... <h1 tal:asdf="title" />
+    ... """)
+
+    >>> try:
+    ...     pt.macros
+    ... except Exception:
+    ...     print_exception(file=sys.stdout, *sys.exc_info())
+    Traceback (most recent call last):
+    ...
+       - Warning: Compilation failed
+       - Warning: zope.tal.htmltalparser.NestingError:
+                  No tags are open to match </body>, at line 1, column 1
+    PTRuntimeError: Can't compile template ...
