@@ -24,13 +24,13 @@ be influenced by calling its methods; see the zope.pagetemplate documentation.
 Request
 -------
 
-See the IRequest interface defined in the ophelia.interfaces module.
+See the IRequestAPI interface defined in the ophelia.interfaces module.
 
 
 Splitter
 --------
 
-See the ISplitter interface defined in the ophelia.interfaces module.
+See the ISplitterAPI interface defined in the ophelia.interfaces module.
 
 
 Page template context
