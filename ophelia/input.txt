@@ -11,9 +11,10 @@ path, contain both page templates and Python scripts. Splitter objects are
 responsible for splitting up input files into scripts and templates. They
 implement the ISplitterAPI interface meant for use in scripts and templates:
 
+    >>> from zope.interface.verify import verifyClass
     >>> from ophelia.input import Splitter
     >>> from ophelia.interfaces import ISplitterAPI
-    >>> ISplitterAPI.implementedBy(Splitter)
+    >>> verifyClass(ISplitterAPI, Splitter)
     True
 
     >>> splitter = Splitter()
