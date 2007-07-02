@@ -54,7 +54,7 @@ The splitter assumes input to be ASCII encoded by default. Characters beyond
 the 7 bit range will cause the splitter to fail:
 
     >>> splitter("""\
-    ... title = u"Überschrift"
+    ... title = u"\xc3\x9cberschrift"
     ... <?xml?>
     ... """)
     Traceback (most recent call last):
@@ -63,7 +63,7 @@ the 7 bit range will cause the splitter to fail:
     ordinal not in range(128)
 
     >>> splitter("""\
-    ... <h1 tal:content="title">Überschrift</h1>
+    ... <h1 tal:content="title">\xc3\x9cberschrift</h1>
     ... """)
     Traceback (most recent call last):
     ...
@@ -75,9 +75,9 @@ native-style encoding declarations in the script and template:
 
     >>> splitter("""\
     ... # coding: utf-8
-    ... title = u"Überschrift"
+    ... title = u"\xc3\x9cberschrift"
     ... <?xml version="1.1" encoding="utf-8" ?>
-    ... <h1 tal:content="title">Überschrift</h1>
+    ... <h1 tal:content="title">\xc3\x9cberschrift</h1>
     ... """)
     (u'title = u"\xdcberschrift"',
      u'\n<h1 tal:content="title">\xdcberschrift</h1>\n')
@@ -87,9 +87,9 @@ only the script or the template but using non-ASCII characters in the other
 will still cause a failure:
 
     >>> splitter("""\
-    ... title = u"Überschrift"
+    ... title = u"\xc3\x9cberschrift"
     ... <?xml version="1.1" encoding="utf-8" ?>
-    ... <h1 tal:content="title">Überschrift</h1>
+    ... <h1 tal:content="title">\xc3\x9cberschrift</h1>
     ... """)
     Traceback (most recent call last):
     ...
@@ -98,9 +98,9 @@ will still cause a failure:
 
     >>> splitter("""\
     ... # coding: utf-8
-    ... title = u"Überschrift"
+    ... title = u"\xc3\x9cberschrift"
     ... <?xml?>
-    ... <h1 tal:content="title">Überschrift</h1>
+    ... <h1 tal:content="title">\xc3\x9cberschrift</h1>
     ... """)
     Traceback (most recent call last):
     ...
@@ -129,9 +129,9 @@ splitter upon instantiation:
 Now encoding declarations inside input files are no longer necessary:
 
     >>> splitter("""\
-    ... title = u"Überschrift"
+    ... title = u"\xc3\x9cberschrift"
     ... <?xml?>
-    ... <h1 tal:content="title">Überschrift</h1>
+    ... <h1 tal:content="title">\xc3\x9cberschrift</h1>
     ... """)
     (u'title = u"\xdcberschrift"',
      u'\n<h1 tal:content="title">\xdcberschrift</h1>\n')
