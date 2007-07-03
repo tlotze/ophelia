@@ -49,10 +49,9 @@ class Application(object):
             msg = "".join(zope.exceptions.exceptionformatter.format_exception(
                 with_filenames=True, *exc_info))
             print msg
-            return self.error_response(
-                "500 Internal server error",
-                "<pre>\n%s\n</pre>" % msg,
-                exc_info=sys.exc_info())
+            return self.error_response("500 Internal server error",
+                                       "<pre>\n%s\n</pre>" % msg,
+                                       exc_info=exc_info)
         else:
             start_response("200 OK", response_headers.items())
             return [body]
