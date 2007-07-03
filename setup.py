@@ -31,6 +31,7 @@ data_files = [("", glob.glob(project_path("*.txt")))] + \
 
 entry_points = {
     "console_scripts": [
+    "ophelia-dump = ophelia.dump:dump",
     "ophelia-wsgiref = ophelia.wsgi:wsgiref_server [wsgiref]",
     ],
     }
