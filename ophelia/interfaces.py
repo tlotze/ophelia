@@ -214,7 +214,8 @@ class IRequestTraversal(zope.interface.Interface):
 
         Returns nothing.
 
-        Raises NotFound if the template root is not a file system directory.
+        Raises RuntimeError if the template root is not a file system
+                            directory.
         """
 
     def traverse_next():

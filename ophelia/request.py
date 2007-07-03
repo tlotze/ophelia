@@ -107,7 +107,8 @@ class Request(object):
 
         # traverse the template root
         if not os.path.isdir(self.template_root):
-            raise NotFound
+            raise RuntimeError(
+                "The Ophelia template root must be a file system directory.")
 
         self.dir_path = self.template_root
         self.traverse_dir()
