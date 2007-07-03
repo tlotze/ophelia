@@ -7,6 +7,9 @@ These instructions cover buildout-based installation as well as manual
 installation for either running Ophelia in an Apache/mod_python setup, or
 Ophelia's own wsgiref-based server.
 
+See doc/CONFIGURATION.txt for an overview of the configuration options Ophelia
+recognizes.
+
 
 Buildout-based
 ==============
@@ -100,9 +103,6 @@ from your static content otherwise.
 It is possible to set the Ophelia handler only for directories or HTML
 documents by applying some path name heuristics and matching the location
 against a regular expression.
-
-See doc/OVERVIEW.txt for other Python options Ophelia recognizes, and for
-details on how Ophelia behaves.
 
 
 Manual wsgiref installation

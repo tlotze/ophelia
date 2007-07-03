@@ -50,69 +50,6 @@ of logic and presentation. Don't use Ophelia for sites that are actually web
 interfaces to applications, content management systems and the like.
 
 
-Languages and APIs used in templates and scripts
-================================================
-
-For the Python language, see <http://docs.python.org/>.
-
-For Zope page templates, see
-<http://www.zope.org/Documentation/Books/ZopeBook/2_6Edition/AppendixC.stx>.
-
-For WSGI, the web server gateway interface, see
-<http://www.python.org/dev/peps/pep-0333/>.
-
-For the mod_python API, see
-<http://www.modpython.org/live/current/doc-html/>.
-
-For the Ophelia API and predefined script and template variables, see API.txt.
-
-
-How Ophelia behaves
-===================
-
-If Ophelia encounters a URL that corresponds to a directory it behaves similar
-to Apache in its default configuration: If the URL doesn't end with a slash,
-it will redirect the browser to add the slash. If the slash is there, it will
-try to find a template named index.html by default, and build the "index" page
-from that.
-
-There are two configuration options concerned with the index template. To
-change the name of the index template Ophelia looks for from index.html to,
-say, foobar.html, set the index_name option. In an Apache configuration, say::
-
-    PythonOption "index_name" "foobar.html"
-
-Additionally, Ophelia can be told to canonicalize URLs and redirect the
-browser if the path portion of the URL ends with the default index page's
-name. Provided the index name is the default index.html, a request to
-<http://www.example.com/index.html> would be redirected to
-<http://www.example.com/>. To achieve this, turn on the redirect_index option.
-In an Apache configuration, this reads::
-
-    PythonOption "redirect_index" On
-
-Furthermore, Ophelia canonicalizes URLs containing path segments "." and ".."
-according to :RFC:`3986` on generic URI syntax, and removes empty path
-segments which are not at the end of the path. If the URL is changed by these
-rules, Ophelia redirects the browser accordingly.
-
-The mod_python handler
-----------------------
-
-Apache2 processes a request in phases, each of which can be handled by modules
-such as mod_python. Ophelia provides a mod_python handler for the content
-generation phase. If a requested URL is configured to be handled by Ophelia,
-the handler tries to find appropriate templates in the file system, and build
-a page from them.
-
-Ophelia's mod_python handler never causes a File Not Found HTTP error.
-Instead, it passes control back to Apache and other modules if it finds it
-can't build a particular resource. Apache falls back to serving static content
-from disk in that case. Ophelia can thus be installed on top of a static site
-to handle just those requests for which templates exist in the template
-directory.
-
-
 How Ophelia works
 =================
 
@@ -121,8 +58,8 @@ Template files
 
 For each request, Ophelia looks for a number of template files. It takes one
 file named "__init__" from each directory on the path from the site root to
-the page, and a final one for the page itself. The request is served if that
-final template is found, otherwise control is given back to Apache.
+the page, and a final one for the page itself. The request is served by
+Ophelia if that final template is found.
 
 When building the page, the page's template is evaluated and its content
 stored in what is called the inner slot. Then each template on the way back
@@ -151,65 +88,37 @@ The namespace is initialized by Ophelia with a single variable, __request__,
 that references the request object. Thus, scripts have access to request
 details and traversal internals. In addition to setting variables, scripts may
 also import modules, define functions, access the file system, and generally
-do anything a Python script can do.
+do anything a Python program can do.
+
+The mod_python handler
+----------------------
+
+Apache2 processes a request in phases, each of which can be handled by modules
+such as mod_python. Ophelia provides a mod_python handler for the content
+generation phase. If a requested URL is configured to be handled by Ophelia,
+the handler tries to find appropriate templates in the file system, and build
+a page from them.
+
+Ophelia's mod_python handler never causes a File Not Found HTTP error.
+Instead, it passes control back to Apache and other modules if it finds it
+can't build a particular resource. Apache falls back to serving static content
+from disk in that case. Ophelia can thus be installed on top of a static site
+to handle just those requests for which templates exist in the template
+directory.
 
 
-Character encoding
-==================
+Languages and APIs used in templates and scripts
+================================================
 
-Input encoding
---------------
+For the Python language, see <http://docs.python.org/>.
 
-You can declare a character encoding both for the Python script and the
-template, and the two encodings may differ. To specify the Python encoding,
-just start the script with a Python style encoding declaration like this::
+For Zope page templates, see
+<http://www.zope.org/Documentation/Books/ZopeBook/2_6Edition/AppendixC.stx>.
 
-# -*- coding: utf-8 -*-
+For WSGI, the web server gateway interface, see
+<http://www.python.org/dev/peps/pep-0333/>.
 
-The template's encoding is determined by looking at the "<?xml?>" tag::
+For the mod_python API, see
+<http://www.modpython.org/live/current/doc-html/>.
 
-<?xml coding="utf-8" ?>
-
-specifies UTF-8 encoding for the template. The tag itself will be stripped
-from the template and will not appear in the rendered page.
-
-You may also specify a default encoding for any scripts and templates to be
-read later during traversal. In a Python script, just do something like
-
-::
-
-    __request__.splitter.script_encoding = "utf-8"
-    __request__.splitter.template_encoding = "utf-8"
-
-A site-wide default can be set through options. In an Apache configuration,
-this would read::
-
-    PythonOption script_encoding "utf-8"
-    PythonOption template_encoding "utf-8"
-
-Failing any of these settings for scripts or templates, the respective default
-encoding will be 7-bit ASCII.
-
-Response encoding
------------------
-
-Ophelia uses unicode internally, but an HTTP response consists of one-byte
-characters, so some encoding has to be applied in the end. This encoding is
-automatically declared in the page's XML declaration as well as the response
-headers.
-
-To set the response encoding to, say, latin-1 in a script, do
-
-::
-
-    __request__.response_encoding = "latin-1"
-
-To affect the response encoding site-wide, set the response_encoding option,
-such as
-
-::
-
-    PythonOption response_encoding "latin-1"
-
-in an Apache configuration. Failing any of these settings, the response
-encoding defaults to UTF-8.
+For the Ophelia API and predefined script and template variables, see API.txt.

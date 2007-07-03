@@ -1,3 +1,4 @@
+=======
 Ophelia
 =======
 
@@ -9,17 +10,21 @@ request handler for mod_python, the Python module for the Apache2 web server.
 
 
 Documentation
-+++++++++++++
+=============
 
-See doc/INSTALL.txt for installation and configuration issues.
+:doc/INSTALL.txt: installation instructions and example configurations
 
-See the files doc/OVERVIEW.txt to understand what Ophelia is and get a basic
-idea about using it to publish a web site, and doc/API.txt on using the
-Ophelia Python API for doing something more interesting.
+:doc/OVERVIEW.txt: an explanation what Ophelia is and how to use it to publish
+    a basic web site
+
+:doc/CONFIGURATION.txt: a description of Ophelia's configuration options
+
+:doc/API.txt: how to use the Ophelia Python API for doing something more
+    interesting
 
 
 Contact
-+++++++
+=======
 
 Ophelia is written by Thomas Lotze. Please contact the author at
 <thomas@thomas-lotze.de> to provide feedback or suggestions on or
