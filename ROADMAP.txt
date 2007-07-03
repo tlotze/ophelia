@@ -78,13 +78,10 @@ The wishlist:
 
 - straight-forward form submission infrastructure
 
-- internals following the WSGI standard, connecting to
+- interfaces to:
+  * WSGI servers
   * Apache/mod_python
   * Twisted Web
-  * CGI
   * CLI-based converter to static files
-  * Firefox extension to view a site locally, once FF has Python scripting
 
 - cataloging, local search infrastructure (xapian)
-
-- flexible storage backend (use OS file system or Subversion repository)
