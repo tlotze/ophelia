@@ -2,12 +2,14 @@ Changes between versions
 ========================
 
 
-trunk
------
+0.3
+---
 
 User-visible:
   - a WSGI application running Ophelia was added along with a basic
     wsgiref-based server running that application
+
+  - a script for dumping a single Ophelia-generated page to stdout
 
   - use restructured text format for documentation
 
