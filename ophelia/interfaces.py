@@ -113,10 +113,6 @@ class IRequestAPI(zope.interface.Interface):
         processed.
         """)
 
-    history = zope.interface.Attribute(
-        """List of all past values of the "current" attribute.
-        """)
-
     dir_path = zope.interface.Attribute(
         """Absolute file system path to the current directory.
 

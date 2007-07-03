@@ -56,7 +56,7 @@ class Request(object):
     content = None
     compiled_headers = None
     current = None
-    history = None
+    history = None # XXX deprecated, planned to be removed in 0.3.1
     stack = None
     dir_path = None
 
