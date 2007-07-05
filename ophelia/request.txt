@@ -18,3 +18,128 @@ traversal mechanism:
     True
     >>> verifyClass(IRequestTraversal, Request)
     True
+
+
+Initial state of a request
+==========================
+
+A request is passed four parameters upon instantiation: the path to traverse
+from the site root URI to the requested resource URI, the file system path to
+the directory holding the input files, the URI of the site root, and the
+namespace of environment variables.
+
+These parameters will be stored on the request object. They are not meant to
+be changed during traversal. However, the template root path is normalized by
+os.path.abspath, and the site root URI is appended a '/' if it doesn't end
+with one yet:
+
+    >>> from ophelia.util import Namespace
+
+    >>> request = Request("example/somepage.html",
+    ...                   "/tmp//nonexistent/",
+    ...                   "http://localhost:1080",
+    ...                   Namespace(QUERY_STRING=""))
+
+    >>> request.path
+    'example/somepage.html'
+
+    >>> request.template_root
+    '/tmp/nonexistent'
+
+    >>> request.site
+    'http://localhost:1080/'
+
+    >>> request.env
+    {'QUERY_STRING': ''}
+
+Also, the traversal state and rendering context have been initialized. This
+comprises two sets of attributes, those meant for common user code and those
+that are probably only useful in a few special cases.
+
+Among the former are the namespaces of variables visible to scripts and TALES
+expressions, macros, and response headers, as well as the attributes for the
+inner slot that will be built up as the templates are rendered, and the
+encoded body text after its is complete:
+
+    >>> request.context
+    {'__request__': <ophelia.request.Request object at ...>}
+
+    >>> request.macros
+    {}
+
+    >>> request.response_headers
+    {'Content-Type':
+     "python:'text/html; charset=' + __request__.response_encoding"}
+
+    >>> request.innerslot
+
+    >>> request.content
+
+The latter include the beginning of the URI and the file system path as far as
+it has been traversed, the tail of path segments yet to traverse, and the
+stack of file contexts collected:
+
+    >>> request.current
+    'http://localhost:1080/'
+
+    >>> request.dir_path
+    '/tmp/nonexistent'
+
+    >>> request.tail
+    ['example', 'somepage.html']
+
+    >>> request.stack
+    []
+
+Finally, the request has attributes reflecting configuration options. The
+simpler ones are the response encoding, index file name, and index URI
+redirection flag:
+
+    >>> request.response_encoding
+    'utf-8'
+
+    >>> request.index_name
+    'index.html'
+
+    >>> request.redirect_index
+    False
+
+Also, the input file splitter has been set up, storing the input encodings:
+
+    >>> request.splitter
+    <ophelia.input.Splitter object at ...>
+
+    >>> request.splitter.script_encoding
+    'ascii'
+
+    >>> request.splitter.template_encoding
+    'ascii'
+
+As our above example request wasn't given any special configuration, these
+attributes all have default values. They can be overridden by the caller
+passing configuration variables in the environment:
+
+    >>> request = Request("example/somepage.html",
+    ...                   "/tmp//nonexistent/",
+    ...                   "http://localhost:1080",
+    ...                   Namespace(QUERY_STRING="",
+    ...                             response_encoding="utf-16",
+    ...                             index_name="default.html",
+    ...                             redirect_index=True,
+    ...                             script_encoding="latin-9",
+    ...                             template_encoding="utf-8"))
+
+    >>> request.response_encoding
+    'utf-16'
+
+    >>> request.index_name
+    'default.html'
+
+    >>> request.redirect_index
+    True
+
+    >>> request.splitter.script_encoding
+    'latin-9'
+
+    >>> request.splitter.template_encoding
+    'utf-8'

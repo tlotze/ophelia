@@ -55,10 +55,7 @@ class Request(object):
     innerslot = None
     content = None
     compiled_headers = None
-    current = None
     history = None # XXX deprecated, planned to be removed in 0.3.1
-    stack = None
-    dir_path = None
 
     # XXX This is a temporary solution for overriding the file or directory
     # read during the next traversal step. A better solution would be to put
@@ -77,11 +74,15 @@ class Request(object):
         self.path = path
         self.tail = path.split('/')
 
-        self.template_root = os.path.abspath(template_root)
+        self.template_root = self.dir_path = os.path.abspath(template_root)
 
         if not site.endswith('/'):
             site += '/'
-        self.site = site
+        self.site = self.current = site
+
+        self.env = env
+
+        self.stack = []
 
         self.context = Namespace(
             __request__=self,
@@ -90,27 +91,29 @@ class Request(object):
         self.response_headers = {
             "Content-Type":
             "python:'text/html; charset=' + __request__.response_encoding"}
-        self.env = env
+
         self.splitter = ophelia.input.Splitter(**env)
         self.response_encoding = env.get("response_encoding", "utf-8")
         self.index_name = env.get("index_name", "index.html")
-        self.redirect_index = (env.get("redirect_index", "").lower() == "on")
+
+        # XXX Handling config syntax doesn't belong here.
+        redirect_index = env.get("redirect_index", False)
+        if redirect_index not in (True, False):
+            redirect_index = redirect_index.lower() in ("on", "true", "yes")
+        self.redirect_index = redirect_index
 
     def __call__(self):
         self.traverse()
         return self.build()
 
     def traverse(self):
-        self.current = self.site
         self.history = [self.current]
-        self.stack = []
 
         # traverse the template root
         if not os.path.isdir(self.template_root):
             raise RuntimeError(
                 "The Ophelia template root must be a file system directory.")
 
-        self.dir_path = self.template_root
         self.traverse_dir()
 
         while self.tail:
