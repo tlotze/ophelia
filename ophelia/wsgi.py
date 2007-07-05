@@ -11,36 +11,22 @@ import os.path
 import zope.exceptions.exceptionformatter
 
 import ophelia.request
-from ophelia.util import Namespace
 
 
 class Application(object):
     """Ophelia's WSGI application.
-
-    Instantiate as Application(template_root, site, **options).
-
-    template_root: str, file system path to the template root
-    site: str, absolute URL to site root, ends with '/'
-    options: configuration
     """
 
-    def __init__(self, template_root, site, **options):
-        self.template_root = template_root
-        self.site = site
-        self.options = options
-
-    def __call__(self, environ, start_response):
+    def __call__(self, env, start_response):
+        self.env = env
         self.start_response = start_response
 
-        self.env = env = Namespace(self.options)
-        env.update(environ)
-
-        path = env.PATH_INFO
+        path = env["PATH_INFO"]
         if path.startswith('/'):
             path = path[1:]
 
         request = ophelia.request.Request(
-            path, self.template_root, self.site, **env)
+            path, env.pop("template_root"), env.pop("site"), **env)
 
         try:
             response_headers, body = request()
@@ -73,7 +59,7 @@ class Application(object):
         response_headers.setdefault("Content-Type", "text/html")
         self.start_response(status, response_headers.items(), exc_info)
 
-        if self.env.REQUEST_METHOD == "GET":
+        if self.env["REQUEST_METHOD"] == "GET":
             return [ERROR_BODY % {"status": status, "text": text}]
         else:
             return []
@@ -109,8 +95,12 @@ def wsgiref_server():
     options = dict((key.replace('-', '_'), value)
                    for key, value in config.items(cmd_options.section))
 
-    app = Application(
-        options.pop("template_root"), options.pop("site"), **options)
+    app = Application()
+
+    def configured_app(environ, start_response):
+        environ.update(options)
+        return app(environ, start_response)
+
     httpd = wsgiref.simple_server.make_server(
-        options.pop("host"), int(options.pop("port")), app)
+        options.pop("host"), int(options.pop("port")), configured_app)
     httpd.serve_forever()
