@@ -3,6 +3,32 @@ Configuring Ophelia
 ===================
 
 
+Configuration files
+===================
+
+Ophelia's wsgiref-based HTTP server and the ``ophelia-dump`` script read their
+configuration from a section of an INI-style configuration file. The
+mod_python handler gets the same information from PythonOption variables set
+in the Apache configuration.
+
+Two variables must always be present:
+
+:template_root:
+    The file system path to the template root directory.
+
+:site:
+    The absolute URI of the Ophelia site's root, i.e. that part of a page's
+    URI that is the same for all pages served from the template directory.
+
+The wsgiref-based HTTP server needs additional information:
+
+:host:
+    The network interface to bind to.
+
+:port:
+    The TCP port to listen at on that interface.
+
+
 URL canonicalization and redirection
 ====================================
 

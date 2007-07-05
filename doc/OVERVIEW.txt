@@ -11,6 +11,37 @@ request handler for mod_python, the Python module for the Apache2 web server.
 See INSTALL.txt for installation instruction and an example configuration.
 
 
+Entry points
+============
+
+After you installed Ophelia and written some templates, how can you make it
+render web pages?
+
+:Use Ophelia with Apache:
+    The Python package contains a module ``ophelia.modpython`` that provides a
+    request handler for the mod_python Apache module.
+
+:Use Ophelia as a WSGI application:
+    Ophelia defines an application class compliant with the WSGI standard,
+    :PEP:`333`: ``ophelia.wsgi.Application``. You can either try it by running
+    Ophelia's own wsgiref-based HTTP server or run it by any WSGI server you
+    might care to use.
+
+    The wsgiref-based server is installed as the ``ophelia-wsgiref``
+    executable if Ophelia is installed as an egg with the "wsgiref" extra
+    enabled. Its script entry point is ``ophelia.wsgi.wsgiref_server``.
+
+:Dump single pages to stdout:
+    An executable which is always installed with the ophelia egg is
+    ``ophelia-dump``. This script has Ophelia render the response
+    corresponding to the path you specify, and prints it to ``sys.stdout``,
+    optionally with HTTP headers. The script's entry point is
+    ``ophelia.dump.dump``.
+
+Both scripts provide some usage instructions when called with the ``--help``
+option. They read a configuration file; see CONFIGURATION.txt for details.
+
+
 What kind of sites is Ophelia good for?
 =======================================
 
