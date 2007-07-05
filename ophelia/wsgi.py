@@ -17,10 +17,16 @@ from ophelia.util import Namespace
 class Application(object):
     """Ophelia's WSGI application.
 
-    Instantiate as Application(options).
+    Instantiate as Application(template_root, site, **options).
+
+    template_root: str, file system path to the template root
+    site: str, absolute URL to site root, ends with '/'
+    options: configuration
     """
 
-    def __init__(self, options):
+    def __init__(self, template_root, site, **options):
+        self.template_root = template_root
+        self.site = site
         self.options = options
 
     def __call__(self, environ, start_response):
@@ -34,7 +40,7 @@ class Application(object):
             path = path[1:]
 
         request = ophelia.request.Request(
-            path, env.template_root, env.site, env)
+            path, self.template_root, self.site, **env)
 
         try:
             response_headers, body = request()
@@ -100,9 +106,11 @@ def wsgiref_server():
 
     config = ConfigParser.ConfigParser()
     config.read(cmd_options.config_file)
-    options = Namespace((key.replace('-', '_'), value)
-                        for key, value in config.items(cmd_options.section))
+    options = dict((key.replace('-', '_'), value)
+                   for key, value in config.items(cmd_options.section))
 
+    app = Application(
+        options.pop("template_root"), options.pop("site"), **options)
     httpd = wsgiref.simple_server.make_server(
-        options.host, int(options.port), Application(options))
+        options.pop("host"), int(options.pop("port")), app)
     httpd.serve_forever()

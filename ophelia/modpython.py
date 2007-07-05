@@ -29,13 +29,11 @@ def fixuphandler(apache_request):
     content gracefully.
     """
     env = Namespace(apache_request.get_options())
-    env.update(apache.build_cgi_env(apache_request))
-    env.apache_request = apache_request
 
-    template_root = os.path.abspath(env.template_root)
+    template_root = os.path.abspath(env.pop("template_root"))
 
     # The site URL should be something we can safely urljoin path parts to.
-    site = env.site
+    site = env.pop("site")
     if not site.endswith('/'):
         site += '/'
 
@@ -48,7 +46,10 @@ def fixuphandler(apache_request):
         return apache.DECLINED
     path = apache_request.uri[len(site_path):]
 
-    request = Request(path, template_root, site, env)
+    env.update(apache.build_cgi_env(apache_request))
+    env.apache_request = apache_request
+
+    request = Request(path, template_root, site, **env)
     try:
         request.traverse()
     except NotFound:

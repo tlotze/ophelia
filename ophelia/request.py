@@ -49,12 +49,12 @@ class Redirect(Exception):
 class Request(object):
     """Ophelia's request object.
 
-    Instantiate as Request(path, template_root, site, env).
+    Instantiate as Request(path, template_root, site, **env).
 
     path: str, path to traverse from the site root, elements separated by '/'
     template_root: str, file system path to the template root
     site: str, absolute URL to site root, ends with '/'
-    env: the environment namespace
+    env: the environment
     """
 
     zope.interface.implements(ophelia.interfaces.IRequestAPI,
@@ -70,7 +70,7 @@ class Request(object):
     # more information in self.path.
     next_name = None
 
-    def __init__(self, path, template_root, site, env):
+    def __init__(self, path, template_root, site, **env):
         self.path = path
         self.tail = path.split('/')
 
@@ -80,9 +80,7 @@ class Request(object):
             site += '/'
         self.site = self.current = site
 
-        self.env = env
-
-        self.stack = []
+        self.env = Namespace(env)
 
         self.context = Namespace(
             __request__=self,
@@ -91,6 +89,7 @@ class Request(object):
         self.response_headers = {
             "Content-Type":
             "python:'text/html; charset=' + __request__.response_encoding"}
+        self.stack = []
 
         self.splitter = ophelia.input.Splitter(**env)
         self.response_encoding = env.get("response_encoding", "utf-8")
