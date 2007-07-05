@@ -15,6 +15,8 @@ CODING_PATTERN = re.compile("coding[=:]\s*\"?\s*([-\w.]+)\s*\"?")
 
 class Splitter(object):
     """Splitter decomposing a file into Python script and template.
+
+    Instantiate as Splitter(**options).
     """
 
     zope.interface.implements(ophelia.interfaces.ISplitterAPI)

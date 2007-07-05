@@ -47,7 +47,15 @@ class Redirect(Exception):
 # request
 
 class Request(object):
-    """Ophelia's request object."""
+    """Ophelia's request object.
+
+    Instantiate as Request(path, template_root, site, env).
+
+    path: str, path to traverse from the site root, elements separated by '/'
+    template_root: str, file system path to the template root
+    site: str, absolute URL to site root, ends with '/'
+    env: the environment namespace
+    """
 
     zope.interface.implements(ophelia.interfaces.IRequestAPI,
                               ophelia.interfaces.IRequestTraversal)
@@ -63,14 +71,6 @@ class Request(object):
     next_name = None
 
     def __init__(self, path, template_root, site, env):
-        """Set up the request for traversing path.
-
-        path: str, path to traverse from the template root,
-                   elements are separated by '/'
-        template_root: str, file system path to the template root
-        site: str, absolute URL to site root, ends with '/'
-        env: the environment namespace
-        """
         self.path = path
         self.tail = path.split('/')
 

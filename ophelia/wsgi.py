@@ -15,6 +15,10 @@ from ophelia.util import Namespace
 
 
 class Application(object):
+    """Ophelia's WSGI application.
+
+    Instantiate as Application(options).
+    """
 
     def __init__(self, options):
         self.options = options
