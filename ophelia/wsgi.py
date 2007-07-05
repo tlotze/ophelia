@@ -18,9 +18,6 @@ class Application(object):
     """
 
     def __call__(self, env, start_response):
-        self.env = env
-        self.start_response = start_response
-
         path = env["PATH_INFO"]
         if path.startswith('/'):
             path = path[1:]
@@ -28,56 +25,55 @@ class Application(object):
         request = ophelia.request.Request(
             path, env.pop("template_root"), env.pop("site"), **env)
 
+        response_headers = {"Content-Type": "text/html"}
+        body = None
+        exc_info = None
+
         try:
             response_headers, body = request()
         except ophelia.request.Redirect, e:
-            return self.error_response(
-                "301 Moved permanently",
-                'The resource you were trying to access '
-                'has moved permanently to <a href="%(uri)s">%(uri)s</a>',
-                {"location": e.uri})
+            status = "301 Moved permanently"
+            text = ('The resource you were trying to access '
+                    'has moved permanently to <a href="%(uri)s">%(uri)s</a>')
+            response_headers["location"] = e.uri
         except ophelia.request.NotFound, e:
-            return self.error_response(
-                "404 Not found",
-                "The resource you were trying to access could not be found.")
+            status = "404 Not found"
+            text = "The resource you were trying to access could not be found."
         except Exception, e:
+            status = "500 Internal server error"
             exc_info = sys.exc_info()
             msg = "".join(zope.exceptions.exceptionformatter.format_exception(
                 with_filenames=True, *exc_info))
-            print msg
-            return self.error_response("500 Internal server error",
-                                       "<pre>\n%s\n</pre>" % msg,
-                                       exc_info=exc_info)
+            text = "<pre>\n%s\n</pre>" % msg
+            self.report_exception(env, msg)
         else:
-            start_response("200 OK", response_headers.items())
+            status = "200 OK"
+
+        start_response(status, response_headers.items(), exc_info)
+
+        if env["REQUEST_METHOD"] == "GET":
+            if body is None:
+                body = self.error_body % {"status": status, "text": text}
             return [body]
-
-    def error_response(self, status, text,
-                       response_headers=None, exc_info=None):
-        if response_headers is None:
-            response_headers = {}
-        response_headers.setdefault("Content-Type", "text/html")
-        self.start_response(status, response_headers.items(), exc_info)
-
-        if self.env["REQUEST_METHOD"] == "GET":
-            return [ERROR_BODY % {"status": status, "text": text}]
         else:
             return []
 
+    def report_exception(self, env, msg):
+        sys.stderr.write(msg)
 
-ERROR_BODY = """\
-<html>
-  <head>
-    <title>%(status)s</title>
-  </head>
-  <body>
-    <h1>%(status)s</h1>
-    <p>
-      %(text)s
-    </p>
-  </body>
-</html>
-"""
+    error_body = """\
+        <html>
+          <head>
+            <title>%(status)s</title>
+          </head>
+          <body>
+            <h1>%(status)s</h1>
+            <p>
+              %(text)s
+            </p>
+          </body>
+        </html>
+        """.replace(" ", "")
 
 
 def wsgiref_server():
