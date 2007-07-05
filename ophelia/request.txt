@@ -23,9 +23,10 @@ traversal mechanism:
 Initial state of a request
 ==========================
 
-A request is passed four parameters upon instantiation: the path to traverse
-from the site root URI to the requested resource URI, the file system path to
-the directory holding the input files, the URI of the site root, and the
+A request is three positional parameters upon instantiation: the path to
+traverse from the site root URI to the requested resource URI, the file system
+path to the directory holding the input files, and the URI of the site root.
+Additionally, it accepts any number of keyword parameters that make up the
 namespace of environment variables.
 
 These parameters will be stored on the request object. They are not meant to
@@ -38,7 +39,7 @@ with one yet:
     >>> request = Request("example/somepage.html",
     ...                   "/tmp//nonexistent/",
     ...                   "http://localhost:1080",
-    ...                   Namespace(QUERY_STRING=""))
+    ...                   QUERY_STRING="")
 
     >>> request.path
     'example/somepage.html'
@@ -122,12 +123,12 @@ passing configuration variables in the environment:
     >>> request = Request("example/somepage.html",
     ...                   "/tmp//nonexistent/",
     ...                   "http://localhost:1080",
-    ...                   Namespace(QUERY_STRING="",
-    ...                             response_encoding="utf-16",
-    ...                             index_name="default.html",
-    ...                             redirect_index=True,
-    ...                             script_encoding="latin-9",
-    ...                             template_encoding="utf-8"))
+    ...                   QUERY_STRING="",
+    ...                   response_encoding="utf-16",
+    ...                   index_name="default.html",
+    ...                   redirect_index=True,
+    ...                   script_encoding="latin-9",
+    ...                   template_encoding="utf-8")
 
     >>> request.response_encoding
     'utf-16'
