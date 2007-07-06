@@ -3,36 +3,97 @@ Installation
 ============
 
 
-These instructions cover buildout-based installation as well as manual
-installation for either running Ophelia in an Apache/mod_python setup, or
-Ophelia's own wsgiref-based server.
+These instructions cover easy_install- as well as buildout-based installation
+and example configurations for running Ophelia in an Apache/mod_python setup
+and for Ophelia's own wsgiref-based server. Manual installation other than
+based on eggs is not described.
 
 See doc/CONFIGURATION.txt for an overview of the configuration options Ophelia
 recognizes.
 
 
+Egg-based
+=========
+
+Prerequisites
+-------------
+
+- Python 2.4 (not all parts of Zope3 used run with Python 2.5 yet)
+- setuptools
+- easy_install
+
+Installation
+------------
+
+- Install the bare ophelia egg using easy_install::
+
+      /path/to/python2.4 easy_install "ophelia"
+
+  This will put the ophelia package as well as its dependencies on the Python
+  installation's module search path, and install one executable script:
+
+  :ophelia-dump:
+      dumps single pages rendered by Ophelia to stdout
+
+- Install Ophelia with its wsgiref-based HTTP server::
+
+      /path/to/python2.4 easy_install "ophelia [wsgiref]"
+
+  The "wsgiref" extra provides another executable script:
+
+  :ophelia-wsgiref:
+      wsgiref-based HTTP server running Ophelia' WSGI application
+
+
 Buildout-based
 ==============
+
+Prerequisites
+-------------
+
+- Python 2.4
+
+Installation steps
+------------------
 
 - Create a buildout configuration, e.g. by copying the example configuration::
 
       cp buildout.cfg.example buildout.cfg
 
-  In buildout.cfg, adjust the host, port, and servername or site settings. You
-  can also override which buildout parts will be created, thus leaving out the
-  mod_python or WSGI installation.
+  In buildout.cfg, adjust the host, port, servername, and site settings and
+  any other configuration variables. You can also override which buildout
+  parts will be created, thus leaving out the mod_python or WSGI installation.
 
 - In the distribution directory, bootstrap the buildout::
 
-      python bootstrap/bootstrap
+      /path/to/python2.4 bootstrap/bootstrap
 
-  where ``python`` is the Python executable you want to run the server with.
   You may also customize the buildout configuration to build and use its own
   Python.
 
 - Run the buildout script::
 
       bin/buildout
+
+- You will now find a number of new executables in the bin/ directory. Among
+  them are the two scripts described above, ophelia-dump and ophelia-wsgiref.
+  If no buildout parts were removed, the others are:
+
+  :python: a link to the buildout's own Python executable
+
+  :mypython: a script that runs a Python interpreter with a module search path
+      that holds all packages used by Ophelia
+
+  :dump: a wrapper script around ophelia-dump that loads the configuration
+      specified in buildout.cfg
+
+  :wsgirefsite: a wrapper script that runs ophelia-wsgiref with the
+      configuration from buildout.cfg
+
+  :apachesite: the run-control script for the Apache site configured in
+      buildout.cfg
+
+  :test: a test runner that finds and runs Ophelia's test suites
 
 
 Manual mod_python based installation
@@ -41,37 +102,27 @@ Manual mod_python based installation
 Prerequisites
 -------------
 
-- Apache2
 - Python 2.4
+- Apache2
 - mod_python 3.3 or better
-- Zope3 packages and their dependencies: zope.pagetemplate, zope.exceptions
-- optionally the feedparser and zope.testing packages
-
 
 Installation steps
 ------------------
 
-- Copy the ophelia package into the library path of the Python installation
-  used by mod_python, or configure mod_python's Python path according to where
-  you put the ophelia package.
+- Install the ophelia egg into the Python installation run by the mod_python
+  you intend to use::
 
-- Install needed parts of Zope3:
+      $ /path/to/python2.4 /path/to/easy_install "ophelia"
 
-  + either build a complete Zope3 from source and make sure it's on
-    mod_python's Python path, or
-
-  + easy_install the zope.pagetemplate, zope.exceptions and optionally
-    zope.testing eggs into mod_python's Python installation. Zope3 eggs can be
-    obtained from the Python package index (`PyPI`_), and more recent ones
-    (read: bleeding edge) from <http://download.zope.org/distribution/>.
-
-- Install feedparser, either as an egg or from source. It's at the `PyPI`_.
+  (If you don't have write access to the Python installation used by
+  mod_python, e.g. in a shared hosting environment, you can install the egg
+  into another Python 2.4 installation and adjust mod_python's PythonPath in
+  your site's Apache configuration.)
 
 - Choose places in the file system to put your site's Ophelia pages and static
   (non-Ophelia) documents, and configure Apache accordingly (see below).
 
 - Cause Apache to reload its configuration.
-
 
 Example Apache 2 configuration
 ------------------------------
@@ -108,21 +159,10 @@ against a regular expression.
 Manual wsgiref installation
 ===========================
 
-Prerequisites
--------------
+Installation
+------------
 
-- Python 2.4
-- the wsgiref package
-- Zope3 packages and their dependencies: zope.pagetemplate, zope.exceptions
-- optionally the feedparser and zope.testing packages
-
-Installation steps
-------------------
-
-Put everything in your Python path. All the parts needed may be installed as
-eggs using easy_install::
-
-    easy_install "ophelia[wsgi]"
+Install the ophelia egg with the "wsgiref" extra as described above.
 
 Example wsgiref server configuration
 ------------------------------------
@@ -141,5 +181,5 @@ and run the ophelia-wsgiref script on that file::
 
 You may want to wrap this call in a run-control script.
 
-
-.. _`PyPI`: http://www.python.org/pypi
+The same configuration can be used with the ophelia-dump script, except that
+it doesn't require the host and port to be set.
