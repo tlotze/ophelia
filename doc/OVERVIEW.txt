@@ -11,7 +11,7 @@ See INSTALL.txt for installation instructions and example configurations.
 Entry points
 ============
 
-After you installed Ophelia and written some templates, how can you make it
+After you installed Ophelia and wrote some templates, how can you make it
 render web pages?
 
 :Use Ophelia with Apache:
