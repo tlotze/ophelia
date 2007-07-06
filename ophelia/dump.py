@@ -11,7 +11,6 @@ import ConfigParser
 import zope.exceptions.exceptionformatter
 
 import ophelia.request
-from ophelia.util import Namespace
 
 
 def dump():
@@ -30,15 +29,16 @@ def dump():
 
     config = ConfigParser.ConfigParser()
     config.read(cmd_options.config_file)
-    env = Namespace((key.replace('-', '_'), value)
-                    for key, value in config.items(cmd_options.section))
+    env = dict((key.replace('-', '_'), value)
+               for key, value in config.items(cmd_options.section))
 
     if path.startswith('/'):
         path = path[1:]
     if '?' in path:
-        path, env.QUERY_STRING = path.split('?', 1)
+        path, env["QUERY_STRING"] = path.split('?', 1)
 
-    request = ophelia.request.Request(path, env.template_root, env.site, env)
+    request = ophelia.request.Request(
+        path, env.pop("template_root"), env.pop("site"), **env)
     try:
         headers, body = request()
     except:
