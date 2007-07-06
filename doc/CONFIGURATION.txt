@@ -6,10 +6,11 @@ Configuring Ophelia
 Configuration files
 ===================
 
-Ophelia's wsgiref-based HTTP server and the ``ophelia-dump`` script read their
-configuration from a section of an INI-style configuration file. The
-mod_python handler gets the same information from PythonOption variables set
-in the Apache configuration.
+Ophelia comes with a number of clients that all exercise its request handler,
+but have different configuration mechanisms. The wsgiref-based HTTP server and
+the ``ophelia-dump`` script read their configuration from a section of an
+INI-style configuration file while the mod_python handler gets the same
+information from PythonOption variables set in the Apache configuration.
 
 Two variables must always be present:
 
@@ -20,7 +21,15 @@ Two variables must always be present:
     The absolute URI of the Ophelia site's root, i.e. that part of a page's
     URI that is the same for all pages served from the template directory.
 
-The wsgiref-based HTTP server needs additional information:
+In addition, the variables described below may be specified in order to
+influence the request handler's behaviour. All of them have sensible default
+values. They will end up in the environment namespace stored on the request
+object, along with any other variables that are not recognized by Ophelia.
+This allows configuring Python modules and scripts that belong to your site's
+content.
+
+While the above pertains to all three clients, the wsgiref server needs
+additional information:
 
 :host:
     The network interface to bind to.
@@ -28,35 +37,25 @@ The wsgiref-based HTTP server needs additional information:
 :port:
     The TCP port to listen at on that interface.
 
+For boolean variables such as redirect_index, the values "on", "true", or
+"yes" (case-insensitive) are taken to mean True, anything else means False.
+
 
 URL canonicalization and redirection
 ====================================
 
-If Ophelia encounters a URL that corresponds to a directory it behaves similar
-to Apache in its default configuration: If the URL doesn't end with a slash,
-it will redirect the browser to add the slash. If the slash is there, it will
-try to find a template named index.html by default, and build the "index" page
-from that.
+If a requested URL points to a directory, Ophelia will try to find a template
+with a special file name and build the "index" page from that. There are two
+configuration options concerned with the index template:
 
-There are two configuration options concerned with the index template. To
-change the name of the index template Ophelia looks for from index.html to,
-say, foobar.html, set the index_name option. In an Apache configuration, say::
+:index_name:
+    The name of the index template Ophelia looks for. It defaults to
+    "index.html".
 
-    PythonOption "index_name" "foobar.html"
-
-Additionally, Ophelia can be told to canonicalize URLs and redirect the
-browser if the path portion of the URL ends with the default index page's
-name. Provided the index name is the default index.html, a request to
-<http://www.example.com/index.html> would be redirected to
-<http://www.example.com/>. To achieve this, turn on the redirect_index option.
-In an Apache configuration, this reads::
-
-    PythonOption "redirect_index" On
-
-Furthermore, Ophelia canonicalizes URLs containing path segments "." and ".."
-according to :RFC:`3986` on generic URI syntax, and removes empty path
-segments which are not at the end of the path. If the URL is changed by these
-rules, Ophelia redirects the browser accordingly.
+:redirect_index:
+    Whether to canonicalize the URL and redirect the browser if the path
+    portion of the URL ends with the default index page's name. This option is
+    turned off by default.
 
 
 Character encoding
@@ -64,6 +63,10 @@ Character encoding
 
 Input encoding
 --------------
+
+By default, Ophelia expects Python scripts and TAL templates it reads from
+input files to be in 7-bit ASCII encoding. There are several ways to override
+this default.
 
 You can declare a character encoding both for the Python script and the
 template, and the two encodings may differ. To specify the Python encoding,
@@ -86,14 +89,13 @@ read later during traversal. In a Python script, just do something like
     __request__.splitter.script_encoding = "utf-8"
     __request__.splitter.template_encoding = "utf-8"
 
-A site-wide default can be set through options. In an Apache configuration,
-this would read::
+A site-wide default can be set through options:
 
-    PythonOption script_encoding "utf-8"
-    PythonOption template_encoding "utf-8"
+:script_encoding:
+    Encoding of Python scripts found in input files, defaults to "ascii".
 
-Failing any of these settings for scripts or templates, the respective default
-encoding will be 7-bit ASCII.
+:template_encoding:
+    Encoding of TAL templates found in input files, defaults to "ascii".
 
 Response encoding
 -----------------
@@ -101,20 +103,15 @@ Response encoding
 Ophelia uses unicode internally, but an HTTP response consists of one-byte
 characters, so some encoding has to be applied in the end. This encoding is
 automatically declared in the page's XML declaration as well as the response
-headers.
+headers. By default, Ophelia encodes responses using UTF-8.
 
-To set the response encoding to, say, latin-1 in a script, do
+To set the response encoding to, say, latin-1 for a particular resource, do
 
 ::
 
     __request__.response_encoding = "latin-1"
 
-To affect the response encoding site-wide, set the response_encoding option,
-such as
+in a script. To affect the response encoding site-wide, set an option:
 
-::
-
-    PythonOption response_encoding "latin-1"
-
-in an Apache configuration. Failing any of these settings, the response
-encoding defaults to UTF-8.
+:response_encoding:
+    Encoding of the HTTP response body, default to "utf-8".
