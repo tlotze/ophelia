@@ -144,3 +144,108 @@ passing configuration variables in the environment:
 
     >>> request.splitter.template_encoding
     'utf-8'
+
+
+TALES expression evaluation
+===========================
+
+Building response body and headers both involve evaluating TALES expressions.
+For the body, this is done through rendering page templates while header
+expressions are evaluated directly by the request handler.
+
+The TALES namespace
+-------------------
+
+The first step in both cases is to build the namespace to evaluate the
+expressions in. The request provides a method that takes a namespace of input
+file specific variables and returns a namespace that includes additional
+variables defined by the TALES engine, an accessor for the inner template
+slot, the namespace for METAL macros, and the current script context variables
+(which initially is exactly one name, "__request__"):
+
+    >>> tales_ns = request.tales_namespace({})
+    >>> sorted(tales_ns.items())
+    [('__request__', <ophelia.request.Request object at ...>),
+     ('innerslot', None),
+     ('macros', {}),
+     ('modules', <zope.tales.expressions.SimpleModuleImporter object at ...>)]
+
+    >>> tales_ns = request.tales_namespace({"__file__": "/tmp/asdf"})
+    >>> sorted(tales_ns.items())
+    [('__file__', '/tmp/asdf'),
+     ('__request__', <ophelia.request.Request object at ...>),
+     ('innerslot', None),
+     ('macros', {}),
+     ('modules', <zope.tales.expressions.SimpleModuleImporter object at ...>)]
+
+After a Python script has been run on the context namespace, it has the name
+"__builtins__" defined. This name will not be passed on to TALES expressions
+(mainly because it messes up execption tracebacks supplemented with a
+namespace listing):
+
+    >>> exec 'title = u"A heading"' in request.context
+    >>> sorted(request.context)
+    ['__builtins__', '__request__', 'title']
+
+    >>> tales_ns = request.tales_namespace({})
+    >>> sorted(tales_ns.items())
+    [('__request__', <ophelia.request.Request object at ...>),
+     ('innerslot', None),
+     ('macros', {}),
+     ('modules', <zope.tales.expressions.SimpleModuleImporter object at ...>),
+     ('title', u'A heading')]
+
+Note that TALES expressions actually see some more variables than those
+prepared in this namespace:
+
+    >>> from zope.tales.engine import Engine as TALESEngine
+    >>> contexts = TALESEngine.getContext(tales_ns).evaluate("CONTEXTS")
+    >>> sorted(contexts.items())
+    [('__request__', <ophelia.request.Request object at ...>),
+     ('default', <object object at ...>),
+     ('innerslot', None),
+     ('loop', {}),
+     ('macros', {}),
+     ('modules', <zope.tales.expressions.SimpleModuleImporter object at ...>),
+     ('nothing', None),
+     ('repeat', {}),
+     ('title', u'A heading')]
+
+Building response headers
+-------------------------
+
+Response headers are TALES expressions stored in the mapping that is the
+response_headers request attribute. The namespace these expressions will be
+evaluated in is the same namespace that has been modified by scripts and
+already used for TALES expressions while rendering the templates.
+
+The Request class has a method that builds response headers from the TALES
+expressions registered. The Content-Type header is always there, making use of
+the response encoding configured for the request:
+
+    >>> request.response_headers
+    {'Content-Type':
+     "python:'text/html; charset=' + __request__.response_encoding"}
+
+    >>> request.response_encoding = 'ascii'
+    >>> request.build_headers()
+    >>> request.compiled_headers
+    {'Content-Type': 'text/html; charset=ascii'}
+
+    >>> request.response_encoding = 'utf-8'
+    >>> request.build_headers()
+    >>> request.compiled_headers
+    {'Content-Type': 'text/html; charset=utf-8'}
+
+Further headers can be added during traversal. They are evaluated after the
+response body is finished to allow for, e.g., the Content-Length header to be
+calculated from the body text:
+
+    >>> request.response_headers["Content-Length"] = \
+    ...     "python:str(len(__request__.content))"
+    >>> request.content = "asdf"
+    >>> request.build_headers()
+    >>> sorted(request.compiled_headers)
+    ['Content-Length', 'Content-Type']
+    >>> request.compiled_headers["Content-Length"]
+    '4'

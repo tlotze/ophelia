@@ -213,7 +213,7 @@ class Request(object):
 
     def tales_namespace(self, file_context={}):
         tales_ns = Namespace(
-            innerslot=lambda: self.innerslot,
+            innerslot=self.innerslot,
             macros=self.macros,
             )
         tales_ns.update(TALESEngine.getBaseNames())
