@@ -178,9 +178,9 @@ slot, the namespace for METAL macros, and the current script context variables
      ('macros', {}),
      ('modules', <zope.tales.expressions.SimpleModuleImporter object at ...>)]
 
-After a Python script has been run on the context namespace, it has the name
+After a Python script has been run in the context namespace, it has the name
 "__builtins__" defined. This name will not be passed on to TALES expressions
-(mainly because it messes up execption tracebacks supplemented with a
+(mainly because it messes up exception traceback supplements involving a
 namespace listing):
 
     >>> exec 'title = u"A heading"' in request.context
@@ -195,21 +195,17 @@ namespace listing):
      ('modules', <zope.tales.expressions.SimpleModuleImporter object at ...>),
      ('title', u'A heading')]
 
-Note that TALES expressions actually see some more variables than those
-prepared in this namespace:
+Note that TALES expressions actually see some additional variables beside
+those from our prepared namespace:
 
     >>> from zope.tales.engine import Engine as TALESEngine
+    >>> tales_ns = {}
     >>> contexts = TALESEngine.getContext(tales_ns).evaluate("CONTEXTS")
     >>> sorted(contexts.items())
-    [('__request__', <ophelia.request.Request object at ...>),
-     ('default', <object object at ...>),
-     ('innerslot', None),
+    [('default', <object object at ...>),
      ('loop', {}),
-     ('macros', {}),
-     ('modules', <zope.tales.expressions.SimpleModuleImporter object at ...>),
      ('nothing', None),
-     ('repeat', {}),
-     ('title', u'A heading')]
+     ('repeat', {})]
 
 Building response headers
 -------------------------
