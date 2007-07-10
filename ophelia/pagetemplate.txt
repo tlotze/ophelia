@@ -42,6 +42,17 @@ the traceback of any compilation errors to aid debugging:
     ...
     PTRuntimeError: Can't compile template at /tmp/asdf.
 
+Of course, the macros attribute hasn't been changed otherwise. It is still a
+dictionary mapping macro names to compiled macros:
+
+    >>> pt = PageTemplate("""\
+    ... <div metal:define-macro="parrot">
+    ...   <img src="parrot.jpg" alt="R.I.P." />
+    ... </div>
+    ... """)
+    >>> pt.macros
+    {'parrot': [('version', ...),...<img src="parrot.jpg" alt="R.I.P." />...]}
+
 
 Traceback supplements
 =====================
