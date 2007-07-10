@@ -52,6 +52,16 @@ invalid:
     ... """)
     (u'!!!= foobar', u'\n<h1 tal:asdf=+#.> ></h2>\n')
 
+The XML declaration is found by a regular expression search. It tries not to
+be inappropriately greedy:
+
+    >>> splitter("""\
+    ... title = u"A headline"
+    ... <?xml <?xml?> ?>
+    ... <h1 tal:content="title" />
+    ... """)
+    (u'title = u"A headline"\n<?xml', u' ?>\n<h1 tal:content="title" />\n')
+
 
 Input encoding
 ==============

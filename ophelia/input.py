@@ -8,7 +8,7 @@ import zope.interface
 import ophelia.interfaces
 
 
-XML_DECLARATION = re.compile("<\?xml(.*)\?>")
+XML_DECLARATION = re.compile("<\?xml([^<>]*)\?>")
 CODING_PATTERN = re.compile("coding[=:]\s*\"?\s*([-\w.]+)\s*\"?")
 
 
