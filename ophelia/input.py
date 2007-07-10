@@ -8,8 +8,7 @@ import zope.interface
 import ophelia.interfaces
 
 
-XML_START = re.compile("^\s*<\?xml\s*", re.MULTILINE)
-XML_END = re.compile("\s*\?>\s*$", re.MULTILINE)
+XML_DECLARATION = re.compile("<\?xml(.*)\?>")
 CODING_PATTERN = re.compile("coding[=:]\s*\"?\s*([-\w.]+)\s*\"?")
 
 
@@ -37,21 +36,16 @@ class Splitter(object):
 
         may raise ValueError if <?xml ... ?> is not closed
         """
-        template_encoding = self.template_encoding
-        parts = XML_START.split(content, 1)
+        parts = XML_DECLARATION.split(content, 1)
         if len(parts) == 1:
-            script, template = "", content
+            script, xml_options, template = "", "", content
         else:
-            script = parts[0]
-            try:
-                xml_declaration, template = XML_END.split(parts[1], 1)
-            except ValueError:
-                raise ValueError("Broken <?xml ?> declaration.")
-            coding_match = CODING_PATTERN.search(xml_declaration)
-            if coding_match:
-                template_encoding = coding_match.group(1)
-                if type(template_encoding) == tuple:
-                    template_encoding = template_encoding[0]
+            script, xml_options, template = parts
+
+        template_encoding = self.template_encoding
+        coding_match = CODING_PATTERN.search(xml_options)
+        if coding_match:
+            template_encoding = coding_match.group(1)
 
         template = template.decode(template_encoding)
 
@@ -62,8 +56,6 @@ class Splitter(object):
             coding_match = CODING_PATTERN.search(lines[0])
             if coding_match:
                 script_encoding = coding_match.group(1)
-                if type(script_encoding) == tuple:
-                    script_encoding = script_encoding[0]
                 del lines[0]
             script = "".join(lines)
 
