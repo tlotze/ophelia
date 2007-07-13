@@ -2,7 +2,7 @@
 Ophelia
 =======
 
-Ophelia creates XHTML pages from templates written in TAL, the Zope Tag
+Ophelia creates XHTML pages from templates written in TAL, the Zope Template
 Attribute Language. It is designed to reduce code repetition to zero.
 
 The package contains both a WSGI application running Ophelia as well as a
