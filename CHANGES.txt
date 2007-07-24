@@ -2,6 +2,16 @@ Changes between versions
 ========================
 
 
+0.3.1
+-----
+
+Bug fixes:
+  - Request.render_template uses full context for rendering a template
+
+API:
+  - renamed request method interpret_template to render_template
+
+
 0.3
 ---
 

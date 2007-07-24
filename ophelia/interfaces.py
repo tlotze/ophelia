@@ -162,7 +162,7 @@ class IRequestAPI(zope.interface.Interface):
         Returns nothing.
         """
 
-    def load_macros(name):
+    def render_template(name):
         """Process a file, rendering its template.
 
         The script contained in the file given will be executed, the macros

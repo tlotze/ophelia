@@ -259,10 +259,10 @@ class Request(object):
     def insert_template(self, name):
         self.process_file(os.path.join(self.dir_path, name), insert=True)
 
-    def interpret_template(self, name):
+    def render_template(self, name):
         file_context, stop_traversal = self.process_file(
             os.path.join(self.dir_path, name))
-        return file_context.__template__(file_context)
+        return file_context.__template__(self.tales_namespace(file_context))
 
 
 ###########
