@@ -42,7 +42,7 @@ Installation
   The "wsgiref" extra provides another executable script:
 
   :ophelia-wsgiref:
-      wsgiref-based HTTP server running Ophelia' WSGI application
+      wsgiref-based HTTP server running Ophelia's WSGI application
 
 
 Buildout-based
@@ -75,20 +75,19 @@ Installation steps
 
       bin/buildout
 
-- You will now find a number of new executables in the bin/ directory. Among
-  them are the two scripts described above, ophelia-dump and ophelia-wsgiref.
-  If no buildout parts were removed, the others are:
+- You will now find a number of new executables in the bin/ directory. If no
+  buildout parts were removed, they are:
 
   :python: a link to the buildout's own Python executable
 
   :mypython: a script that runs a Python interpreter with a module search path
       that holds all packages used by Ophelia
 
-  :dump: a wrapper script around ophelia-dump that loads the configuration
-      specified in buildout.cfg
+  :ophelia-dump: the single-page dumper calling its entry point in such a way
+      that it loads the configuration specified in buildout.cfg by default
 
-  :wsgirefsite: a wrapper script that runs ophelia-wsgiref with the
-      configuration from buildout.cfg
+  :ophelia-wsgiref: the wsgiref-based server calling its entry point in such a
+      way that it loads the configuration from buildout.cfg by default
 
   :apachesite: the run-control script for the Apache site configured in
       buildout.cfg
