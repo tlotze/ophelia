@@ -76,14 +76,14 @@ class Application(object):
         """.replace(" ", "")
 
 
-def wsgiref_server():
+def wsgiref_server(config_file="", section="DEFAULT"):
     import optparse
     import ConfigParser
     import wsgiref.simple_server
 
     oparser = optparse.OptionParser()
-    oparser.add_option("-c", dest="config_file")
-    oparser.add_option("-s", dest="section", default="DEFAULT")
+    oparser.add_option("-c", dest="config_file", default=config_file)
+    oparser.add_option("-s", dest="section", default=section)
     cmd_options, args = oparser.parse_args()
 
     config = ConfigParser.ConfigParser()

@@ -11,6 +11,11 @@ Bug fixes:
 API:
   - renamed request method interpret_template to render_template
 
+  - console script entry points accept defaults for some command line options
+
+Organization:
+  - simplified buildout configuration
+
 
 0.3
 ---

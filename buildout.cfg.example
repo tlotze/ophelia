@@ -5,7 +5,7 @@ extends = base.cfg
 listen = 127.0.0.1:1080
 servername = localhost:1080
 
-[wsgirefsite]
+[ophelia]
 host = 127.0.0.1
 port = 2080
 site = http://localhost:2080/

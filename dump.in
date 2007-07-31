@@ -1,2 +1,0 @@
-#!/bin/sh
-%(bin-directory)s/ophelia-dump -c %(directory)s/.installed.cfg -s %(name)s $@

@@ -13,10 +13,10 @@ import zope.exceptions.exceptionformatter
 import ophelia.request
 
 
-def dump():
+def dump(config_file="", section="DEFAULT"):
     oparser = optparse.OptionParser("usage: %prog [options] path")
-    oparser.add_option("-c", dest="config_file")
-    oparser.add_option("-s", dest="section", default="DEFAULT")
+    oparser.add_option("-c", dest="config_file", default=config_file)
+    oparser.add_option("-s", dest="section", default=section)
     oparser.add_option("-v", dest="verbose",
                        action="store_true", default=False,
                        help="verbose, print response headers")
