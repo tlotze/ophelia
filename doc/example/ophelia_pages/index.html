@@ -24,6 +24,7 @@ title = "Ophelia example site"
 <pre>
 Alias /software/ophelia/example .../Ophelia/doc/example/static
 &lt;Location "/software/ophelia/example"&gt;
+    PythonInterpreter main_interpreter
     PythonPath "['.../Ophelia'] + sys.path"
     PythonOption template_root .../Ophelia/doc/example/ophelia_pages
     PythonOption site http://www.thomas-lotze.de/software/ophelia/example

@@ -140,6 +140,7 @@ To publish this site, add the following to your host's config::
 
     Alias /foo/bar /var/example/static
     <Location "/foo/bar">
+        PythonInterpreter main_interpreter
         PythonPath "['/var/example/python'] + sys.path"
         PythonOption template_root /var/example/templates
         PythonOption site http://www.example.com/foo/bar/
@@ -153,6 +154,11 @@ from your static content otherwise.
 It is possible to set the Ophelia handler only for directories or HTML
 documents by applying some path name heuristics and matching the location
 against a regular expression.
+
+Due to an interaction between Python's restricted mode and how mod_python
+creates multiple Python interpreters, Ophelia must run in mod_python's main
+Python interpreter. This means that if more than one Ophelia site is hosted by
+the same Apache process, they cannot be isolated from each other.
 
 
 Manual wsgiref installation

@@ -8,6 +8,8 @@ Changes between versions
 Bug fixes:
   - Request.render_template uses full context for rendering a template
 
+  - Documented restriction to main_interpreter when run through mod_python.
+
 API:
   - renamed request method interpret_template to render_template
 
