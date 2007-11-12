@@ -5,6 +5,10 @@ Changes between versions
 0.3.1
 -----
 
+User-visible:
+  - tools: added the Metadata.mtime method which returns the current input
+    file's modification time as a datetime object
+
 Bug fixes:
   - Request.render_template uses full context for rendering a template
 
@@ -14,6 +18,8 @@ API:
   - renamed request method interpret_template to render_template
 
   - console script entry points accept defaults for some command line options
+
+  - tools: made Metadata.bump_date accept a datetime object
 
 Organization:
   - simplified buildout configuration

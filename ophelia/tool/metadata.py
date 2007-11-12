@@ -1,6 +1,7 @@
 # Copyright (c) 2006-2007 Thomas Lotze
 # See also LICENSE.txt
 
+import os
 import datetime
 import md5
 import codecs
@@ -29,8 +30,22 @@ class MetaData(object):
 
         returns nothing
         """
-        date = datetime.datetime(*args)
+        if len(args) == 1 and isinstance(args[0], datetime.datetime):
+            date = args[0]
+        else:
+            date = datetime.datetime(*args)
         self._date = max(self._date, date)
+
+    def mtime(self):
+        """Return the mtime of the current input file as a datetime object.
+        """
+        try:
+            file_path = ophelia.request.get_file_context().__file__
+        except AttributeError:
+            raise LookupError("Could not find current input file.")
+
+        mtime = os.stat(file_path).st_mtime
+        return datetime.datetime.fromtimestamp(mtime)
 
     def date(self, format=RFC2822_FORMAT):
         """Format the stored date, defaults to RFC 2822 compliant format.
