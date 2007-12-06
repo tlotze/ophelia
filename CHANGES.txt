@@ -17,6 +17,10 @@ Bug fixes:
 API:
   - renamed request method interpret_template to render_template
 
+  - Request.traverse and Request.__call__ accept additional context as keyword
+    arguments, the WSGI interface accepts it as a mapping named
+    ophelia.context in the environ dictionary
+
   - console script entry points accept defaults for some command line options
 
   - tools: made Metadata.bump_date accept a datetime object

@@ -199,14 +199,18 @@ class IRequestTraversal(zope.interface.Interface):
     """Methods used in traversing from site root to requested resource.
     """
 
-    def __call__():
+    def __call__(**context):
         """Process the request, return response headers and body.
+
+        context: name-value pairs to initialize the context with
 
         Returns (dict, unicode), response headers and page content.
         """
 
-    def traverse():
+    def traverse(**context):
         """Traverse the path, read input, and prepare the template context.
+
+        context: name-value pairs to initialize the context with
 
         Returns nothing.
 

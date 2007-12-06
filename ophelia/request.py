@@ -101,11 +101,12 @@ class Request(object):
             redirect_index = redirect_index.lower() in ("on", "true", "yes")
         self.redirect_index = redirect_index
 
-    def __call__(self):
-        self.traverse()
+    def __call__(self, **context):
+        self.traverse(**context)
         return self.build()
 
-    def traverse(self):
+    def traverse(self, **context):
+        self.context.update(context)
         self.history = [self.current]
 
         # traverse the template root

@@ -22,6 +22,8 @@ class Application(object):
         if path.startswith('/'):
             path = path[1:]
 
+        context = env.get("ophelia.context", {})
+
         request = ophelia.request.Request(
             path, env.pop("template_root"), env.pop("site"), **env)
 
@@ -30,7 +32,7 @@ class Application(object):
         exc_info = None
 
         try:
-            response_headers, body = request()
+            response_headers, body = request(**context)
         except ophelia.request.Redirect, e:
             status = "301 Moved permanently"
             text = ('The resource you were trying to access '

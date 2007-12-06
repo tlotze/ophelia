@@ -27,9 +27,15 @@ with the following variables:
 
 :__request__: the currently running Request instance
 
-All of the above variables except for __request__ will be reset after the
+All of the above variables except for __request__ will be reset after each
 script is run. None of the above names should be assigned to. The template may
 be influenced by calling its methods; see the zope.pagetemplate documentation.
+
+Additional context variables may be passed to the request when its traverse
+method (or the request itself) is called. They will be used to update the
+context namespace before the first script is run on it. When using the WSGI
+interface, a mapping that contains this additional context may be passed in
+the environ dictionary under the ophelia.context key.
 
 
 Page template context
