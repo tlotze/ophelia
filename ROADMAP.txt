@@ -43,6 +43,11 @@ besides further clean-up and the usual feature creep, of course.
 
 This minor release was planned when it became clear that not everything that
 would have been nice to have in 0.3 could be done in time for EuroPython 2007.
+Most of that stuff was postponed until 0.3.2 when 0.3.1 was released to get
+some bug fixes and minor features out of the door.
+
+0.3.2
+-----
 
 - documentation in the standard Python documentation style
 - use of the Zope3 component architecture to separate core and tools better
