@@ -6,8 +6,7 @@
 """Ophelia builds a web site from TAL templates with zero code repetition.
 """
 
-import os, os.path
-import glob
+import os.path
 from setuptools import setup, find_packages
 
 
