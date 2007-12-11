@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: latin-1 -*-
 #
 # Copyright (c) 2006-2007 Thomas Lotze
 # See also LICENSE.txt
@@ -12,22 +11,8 @@ import glob
 from setuptools import setup, find_packages
 
 
-project_path = lambda *names: os.path.join(os.path.dirname(__file__), *names)
-
-
-def include_tree(dest, source):
-    source_len = len(source)
-    for dirpath, dirnames, filenames in os.walk(source):
-        yield (dest + dirpath[source_len:],
-               [os.path.join(dirpath, fn) for fn in filenames])
-        if ".svn" in dirnames:
-            dirnames.remove(".svn")
-
-
-longdesc = open(project_path("doc", "OVERVIEW.txt")).read()
-
-data_files = [("", glob.glob(project_path("*.txt")))] + \
-             list(include_tree("doc", "doc"))
+longdesc = open(os.path.join(os.path.dirname(__file__), "doc", "OVERVIEW.txt")
+                ).read()
 
 entry_points = {
     "console_scripts": [
@@ -35,10 +20,6 @@ entry_points = {
     "ophelia-wsgiref = ophelia.wsgi:wsgiref_server [wsgiref]",
     ],
     }
-
-provides = [
-    "ophelia",
-    ]
 
 install_requires = [
     "zope.interface",
@@ -77,7 +58,6 @@ setup(name="ophelia",
       install_requires=install_requires,
       extras_require=extras_require,
       include_package_data=True,
-      data_files=data_files,
-      provides=provides,
+      zip_safe=False,
       test_suite="ophelia.tests.test_suite",
       )

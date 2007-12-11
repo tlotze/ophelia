@@ -1,6 +1,13 @@
 Changes between versions
 ========================
 
+0.3.2
+-----
+
+Organization:
+  - simplified setup.py: cleaned up egg contents, set zip_safe flag, removed
+    provides flag which is not supported by Python 2.4
+
 
 0.3.1
 -----
