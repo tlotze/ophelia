@@ -115,3 +115,16 @@ in a script. To affect the response encoding site-wide, set an option:
 
 :response_encoding:
     Encoding of the HTTP response body, default to "utf-8".
+
+
+Processing of the result
+------------------------
+
+By default, the page body is encoded with the response encoding and prefixed
+with an XML declaration before being returned by Request.build(). This can be
+prevented by an option if the returned value is going to be processed further
+instead of being sent directly to the client:
+
+:immediate_result:
+    Whether to use the unprocessed result of template evaluation as the
+    response content.

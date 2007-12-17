@@ -62,6 +62,15 @@ class IRequestAPI(zope.interface.Interface):
         to a file named like the index_name.
         """)
 
+    immediate_result = zope.interface.Attribute(
+        """Whether to return the result of template evaluation immediately.
+
+        Bool, defaults to False. By default, the page content is encoded and
+        prefixed with an XML declaration. Setting this option to True prevents
+        that processing step.
+        """
+        )
+
     # Components.
 
     splitter = zope.interface.Attribute(

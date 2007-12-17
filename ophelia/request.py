@@ -101,6 +101,8 @@ class Request(object):
             redirect_index = redirect_index.lower() in ("on", "true", "yes")
         self.redirect_index = redirect_index
 
+        self.immediate_result = env.get("immediate_result", False)
+
     def __call__(self, **context):
         self.traverse(**context)
         return self.build()
@@ -242,9 +244,11 @@ class Request(object):
             __traceback_info__ = "Template at " + file_context.__file__
             self.innerslot = template(self.tales_namespace(file_context))
 
-        self.content = """<?xml version="1.1" encoding="%s" ?>\n%s""" % (
-            self.response_encoding,
-            self.innerslot.encode(self.response_encoding))
+        self.content = self.innerslot
+        if not self.immediate_result:
+            self.content = """<?xml version="1.1" encoding="%s" ?>\n%s""" % (
+                self.response_encoding,
+                self.content.encode(self.response_encoding))
 
     def build_headers(self):
         self.compiled_headers = {}
