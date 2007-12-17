@@ -46,14 +46,28 @@ would have been nice to have in 0.3 could be done in time for EuroPython 2007.
 Most of that stuff was postponed until 0.3.2 when 0.3.1 was released to get
 some bug fixes and minor features out of the door.
 
-0.3.2
------
+0.3.2 (next planned release)
+----------------------------
 
 - documentation in the standard Python documentation style
 - use of the Zope3 component architecture to separate core and tools better
-- buildout recipes to hide the Apache details and get rid of buildout_script
 
 0.4
+---
+
+- turn ophelia into a namespace package, break the code into several eggs
+- a more powerful traversal mechanism
+- unified configuration for all the ways Ophelia can be used
+- buildout recipes to hide the Apache details and get rid of buildout_script
+
+0.4.1
+-----
+
+- views and traversers for using Ophelia inside Zope3 and Grok applications
+- a script for retrieving RSS feeds, e.g. via a cron job
+- a syntax checker for input files
+
+0.5
 ---
 
 - A document adapter that builds pages from, e.g., JPEG files to display the
@@ -75,7 +89,7 @@ time and code and documentation are of satisfactory quality.
 The wishlist:
 
 - zero-boilerplate creation of web sites inlcuding
-  * hand-written XHTML pages
+  * hand-written XHTML pages, other input mark-up such as ReST
   * pages generated from JPEG, PNG and PDF files
   * overviews such as photo albums
 
@@ -87,6 +101,7 @@ The wishlist:
   * WSGI servers
   * Apache/mod_python
   * Twisted Web
+  * Zope 3 and Grok
   * CLI-based converter to static files
 
 - cataloging, local search infrastructure (xapian)
