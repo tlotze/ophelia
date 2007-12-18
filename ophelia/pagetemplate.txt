@@ -25,58 +25,73 @@ namespace to be used as the only argument:
     u'<h1>A title</h1>\n'
 
 If the template can't be compiled, it raises an exception as soon as
-compilation is first attempted, which is when its macros are accessed:
+compilation is attempted, which is on instantiation as well as on any update:
 
     >>> pt = PageTemplate("""<h1 tal:asdf="title" />""")
-    >>> pt.macros
     Traceback (most recent call last):
     ...
-    PTRuntimeError: Can't compile template ...
+    ValueError: There were errors in the page template text.
 
-When the template is instantiated, a file path may be given that appears in
-the traceback of any compilation errors to aid debugging:
-
-    >>> pt = PageTemplate("""<h1 tal:asdf="title" />""", "/tmp/asdf")
-    >>> pt.macros
+    >>> pt = PageTemplate("")
+    >>> pt.write("""<h1 tal:asdf="title" />""")
     Traceback (most recent call last):
     ...
-    PTRuntimeError: Can't compile template at /tmp/asdf.
+    ValueError: There were errors in the page template text.
 
-Of course, the macros attribute hasn't been changed otherwise. It is still a
-dictionary mapping macro names to compiled macros:
+When instantiating the template, a file path may be passed that is stored for
+reference:
 
-    >>> pt = PageTemplate("""\
-    ... <div metal:define-macro="parrot">
-    ...   <img src="parrot.jpg" alt="R.I.P." />
-    ... </div>
-    ... """)
-    >>> pt.macros
-    {'parrot': [('version', ...),...<img src="parrot.jpg" alt="R.I.P." />...]}
+    >>> pt = PageTemplate("""<h1 tal:content="title" />""", "/tmp/asdf")
+    >>> pt.pt_source_file()
+    '/tmp/asdf'
 
 
 Traceback supplements
 =====================
 
-If an Ophelia page template is invalid so that an attempt to compile it raises
-an Exception, Zope3's exception formatter can be used to include supplementary
-information with the traceback's text representation, such as what error
-caused the first failure and where in the template text the problem occurred:
+If an Ophelia page template can't be compiled or evaluated, the traceback of
+the exception raised includes supplementary information which can be made
+visible using Zope3's exception formatter.
+
+If evaluation fails, the Zope page templates' traceback supplement which
+includes the source file path is rendered in the traceback's text
+representation:
 
     >>> import sys
     >>> from zope.exceptions.exceptionformatter import print_exception
 
-    >>> pt = PageTemplate("""\
-    ... </body>
-    ... <h1 tal:asdf="title" />
-    ... """)
-
+    >>> pt = PageTemplate("""<h1 tal:content="title" />""", "/tmp/asdf")
     >>> try:
-    ...     pt.macros
+    ...     pt({})
     ... except Exception:
     ...     print_exception(file=sys.stdout, *sys.exc_info())
     Traceback (most recent call last):
     ...
+       - /tmp/asdf
+       - Line 1, Column 0
+       - Expression: <PathExpr standard:'title'>
+       - Names:
+          ...
+    KeyError: 'title'
+
+If the template can't be compiled, the source file path is included along with
+detailed information on what error caused the first failure and where in the
+template text the problem occurred:
+
+    >>> import sys
+    >>> from zope.exceptions.exceptionformatter import print_exception
+
+    >>> try:
+    ...     pt = PageTemplate("""\
+    ...     </body>
+    ...     <h1 tal:asdf="title" />
+    ...     """, "/tmp/asdf")
+    ... except Exception:
+    ...     print_exception(file=sys.stdout, *sys.exc_info())
+    Traceback (most recent call last):
+    ...
+       - /tmp/asdf
        - Warning: Compilation failed
        - Warning: zope.tal.htmltalparser.NestingError:
-                  No tags are open to match </body>, at line 1, column 1
-    PTRuntimeError: Can't compile template ...
+                  No tags are open to match </body>, at line 1, column 5
+    ValueError: There were errors in the page template text.

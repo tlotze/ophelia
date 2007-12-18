@@ -8,6 +8,8 @@ API:
   - added request configuration parameter immediate_result that makes the
     request return the unmodified unicode page body to ease further processing
 
+  - page templates raise ValueError when constructed from broken template text
+
 Organization:
   - simplified setup.py: cleaned up egg contents, set zip_safe flag, removed
     provides flag which is not supported by Python 2.4
