@@ -11,6 +11,32 @@ class PageTemplateTracebackSupplement(object):
         self.source_url = template.file_path
         self.warnings = template._v_errors
 
+    def getInfo(self):
+        if len(self.template._v_errors) != 2:
+            return
+        fragments = self.template._v_errors[1].rsplit(',')[-2:]
+        if len(fragments) != 2:
+            return
+        try:
+            line = int(fragments[0].split()[-1])
+        except ValueError:
+            return
+        try:
+            column = int(fragments[1].split()[-1])
+        except ValueError:
+            return
+        if line >= 5:
+            lower = line - 5
+            err_line = 5
+        else:
+            lower = 0
+            err_line = line
+        text_lines = self.template._text.rstrip().splitlines()[lower:line + 5]
+        text_lines = ["%4d: %s" % (lower + i + 1, line)
+                      for i, line in enumerate(text_lines)]
+        text_lines.insert(err_line, "   -> %s^" % (' ' * column))
+        return '\n'.join(text_lines)
+
 
 class PageTemplate(zope.pagetemplate.pagetemplate.PageTemplate):
     """Page templates with supplemented tracebacks and source tracking.

@@ -94,4 +94,7 @@ template text the problem occurred:
        - Warning: Compilation failed
        - Warning: zope.tal.htmltalparser.NestingError:
                   No tags are open to match </body>, at line 1, column 5
+       1:     </body>
+       ->      ^
+       2:     <h1 tal:asdf="title" />
     ValueError: There were errors in the page template text.

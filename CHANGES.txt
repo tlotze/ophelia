@@ -4,6 +4,9 @@ Changes between versions
 0.3.2
 -----
 
+User-visible:
+  - more helpful tracebacks for broken page templates
+
 API:
   - added request configuration parameter immediate_result that makes the
     request return the unmodified unicode page body to ease further processing
