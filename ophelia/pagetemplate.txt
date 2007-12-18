@@ -98,3 +98,21 @@ template text the problem occurred:
        ->      ^
        2:     <h1 tal:asdf="title" />
     ValueError: There were errors in the page template text.
+
+
+Evaluation context
+==================
+
+As seen above, a context namespace is passed to a page template when calling
+it to render itself. In addition to those variables, the Python built-in None
+is available by the name "None":
+
+    >>> pt = PageTemplate("""<hr tal:attributes="class None" />""")
+    >>> pt({})
+    u'<hr />\n'
+
+That predefined variable "None" can be overridden (not that that would be a
+great idea):
+
+    >>> pt({"None": "asdf"})
+    u'<hr class="asdf" />\n'

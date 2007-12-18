@@ -58,7 +58,10 @@ class PageTemplate(zope.pagetemplate.pagetemplate.PageTemplate):
             raise ValueError("There were errors in the page template text.")
 
     def pt_getContext(self, args=(), options=None, **ignored):
-        return args[0]
+        context = {"None": None,
+                   }
+        context.update(args[0])
+        return context
 
     def pt_source_file(self):
         return self.file_path

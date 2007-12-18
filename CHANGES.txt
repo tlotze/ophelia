@@ -7,6 +7,8 @@ Changes between versions
 User-visible:
   - more helpful tracebacks for broken page templates
 
+  - None is available in the page template evaluation context
+
 API:
   - added request configuration parameter immediate_result that makes the
     request return the unmodified unicode page body to ease further processing
