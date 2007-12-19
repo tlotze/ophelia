@@ -57,10 +57,12 @@ class PageTemplate(zope.pagetemplate.pagetemplate.PageTemplate):
         if self._v_errors:
             raise ValueError("There were errors in the page template text.")
 
-    def pt_getContext(self, args=(), options=None, **ignored):
+    def pt_getContext(self, namespaces, names):
         context = {"None": None,
                    }
-        context.update(args[0])
+        for namespace in namespaces:
+            context.update(namespace)
+        context.update(names)
         return context
 
     def pt_source_file(self):
