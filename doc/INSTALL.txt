@@ -66,7 +66,7 @@ Installation steps
 
 - In the distribution directory, bootstrap the buildout::
 
-      /path/to/python2.4 bootstrap/bootstrap
+      /path/to/python2.4 bootstrap.py
 
   You may also customize the buildout configuration to build and use its own
   Python.
