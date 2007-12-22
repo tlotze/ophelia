@@ -62,15 +62,6 @@ class IRequestAPI(zope.interface.Interface):
         to a file named like the index_name.
         """)
 
-    immediate_result = zope.interface.Attribute(
-        """Whether to return the result of template evaluation immediately.
-
-        Bool, defaults to False. By default, the page content is encoded and
-        prefixed with an XML declaration. Setting this option to True prevents
-        that processing step.
-        """
-        )
-
     # Components.
 
     splitter = zope.interface.Attribute(
@@ -207,6 +198,14 @@ class ISplitterAPI(zope.interface.Interface):
 class IRequestTraversal(zope.interface.Interface):
     """Methods used in traversing from site root to requested resource.
     """
+
+    immediate_result = zope.interface.Attribute(
+        """Whether to return the result of template evaluation immediately.
+
+        Bool, defaults to False. By default, the page content is encoded and
+        prefixed with an XML declaration. Setting this option to True prevents
+        that processing step.
+        """)
 
     def __call__(**context):
         """Process the request, return response headers and body.
