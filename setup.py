@@ -42,7 +42,7 @@ classifiers = [
     ]
 
 setup(name="ophelia",
-      version="trunk",
+      version="0.3.2",
       description=__doc__.strip(),
       long_description=longdesc,
       keywords="web template xhtml tal",
