@@ -19,6 +19,9 @@ Organization:
   - simplified setup.py: cleaned up egg contents, set zip_safe flag, removed
     provides flag which is not supported by Python 2.4
 
+  - Un-declared the feedparser dependency since that egg is awkward to install
+    using zc.buildout. The feeds tool will stay until 0.4 for compatibility.
+
 
 0.3.1
 -----

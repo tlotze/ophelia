@@ -59,12 +59,12 @@ some bug fixes and minor features out of the door.
 - a more powerful traversal mechanism
 - unified configuration for all the ways Ophelia can be used
 - buildout recipes to hide the Apache details and get rid of buildout_script
+- remove the feeds tool which doesn't actually belong with Ophelia
 
 0.4.1
 -----
 
 - views and traversers for using Ophelia inside Zope3 and Grok applications
-- a script for retrieving RSS feeds, e.g. via a cron job
 - a syntax checker for input files
 
 0.5

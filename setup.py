@@ -25,7 +25,6 @@ install_requires = [
     "zope.tales",
     "zope.pagetemplate",
     "zope.exceptions",
-    "feedparser",
     ]
 
 extras_require = {
