@@ -46,7 +46,13 @@ would have been nice to have in 0.3 could be done in time for EuroPython 2007.
 Most of that stuff was postponed until 0.3.2 when 0.3.1 was released to get
 some bug fixes and minor features out of the door.
 
-0.3.2 (next planned release)
+0.3.2
+-----
+
+Some small improvements. Cutting this release was necessary in order to get
+rid of the awkward feedparser dependency ASAP.
+
+0.3.3 (next planned release)
 ----------------------------
 
 - documentation in the standard Python documentation style
