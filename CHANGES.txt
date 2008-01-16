@@ -1,6 +1,12 @@
 Changes between versions
 ========================
 
+0.3.3
+-----
+
+Bug fixes:
+  - Don't remove template_root, site, host and port from the environment.
+
 0.3.2
 -----
 
