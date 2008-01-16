@@ -30,10 +30,10 @@ def fixuphandler(apache_request):
     """
     env = Namespace(apache_request.get_options())
 
-    template_root = os.path.abspath(env["template_root"])
+    template_root = os.path.abspath(env.pop("template_root"))
 
     # The site URL should be something we can safely urljoin path parts to.
-    site = env["site"]
+    site = env.pop("site")
     if not site.endswith('/'):
         site += '/'
 
