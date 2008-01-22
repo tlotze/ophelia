@@ -220,8 +220,8 @@ class Request(object):
             macros=self.macros,
             )
         tales_ns.update(TALESEngine.getBaseNames())
-        tales_ns.update(file_context)
         tales_ns.update(self.context)
+        tales_ns.update(file_context)
         tales_ns.pop("__builtins__", None)
         return tales_ns
 

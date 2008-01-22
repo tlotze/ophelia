@@ -178,6 +178,15 @@ slot, the namespace for METAL macros, and the current script context variables
      ('macros', {}),
      ('modules', <zope.tales.expressions.SimpleModuleImporter object at ...>)]
 
+The namespace passed to tales_namespace() will override the variables defined
+in the request's own context:
+
+    >>> request.context.__file__ = "/tmp/foo"
+    >>> request.tales_namespace().__file__
+    '/tmp/foo'
+    >>> request.tales_namespace({"__file__": "/tmp/bar"}).__file__
+    '/tmp/bar'
+
 After a Python script has been run in the context namespace, it has the name
 "__builtins__" defined. This name will not be passed on to TALES expressions
 (mainly because it messes up exception traceback supplements involving a
@@ -185,11 +194,12 @@ namespace listing):
 
     >>> exec 'title = u"A heading"' in request.context
     >>> sorted(request.context)
-    ['__builtins__', '__request__', 'title']
+    ['__builtins__', '__file__', '__request__', 'title']
 
     >>> tales_ns = request.tales_namespace({})
     >>> sorted(tales_ns.items())
-    [('__request__', <ophelia.request.Request object at ...>),
+    [('__file__', '/tmp/foo'),
+     ('__request__', <ophelia.request.Request object at ...>),
      ('innerslot', None),
      ('macros', {}),
      ('modules', <zope.tales.expressions.SimpleModuleImporter object at ...>),

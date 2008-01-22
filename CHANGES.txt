@@ -1,6 +1,13 @@
 Changes between versions
 ========================
 
+0.3.3
+-----
+
+Bug fixes:
+  - file-specific context variables were not set during template evaluation
+
+
 0.3.2
 -----
 
