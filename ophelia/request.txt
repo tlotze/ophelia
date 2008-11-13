@@ -2,7 +2,6 @@
 The request object
 ==================
 
-
 Ophelia's request object is both used for processing the request as the HTTP
 server needs to obtain a response, and accessed by user code to use the
 current traversal state and influence how the request will be further
@@ -10,14 +9,14 @@ processed. Accordingly, a request object provides two interfaces, IRequestAPI
 meant to be exposed to user code, and IRequestTraversal specifying the
 traversal mechanism:
 
-    >>> from ophelia.interfaces import IRequestAPI, IRequestTraversal
-    >>> from ophelia.request import Request
+>>> from ophelia.interfaces import IRequestAPI, IRequestTraversal
+>>> from ophelia.request import Request
 
-    >>> from zope.interface.verify import verifyClass
-    >>> verifyClass(IRequestAPI, Request)
-    True
-    >>> verifyClass(IRequestTraversal, Request)
-    True
+>>> from zope.interface.verify import verifyClass
+>>> verifyClass(IRequestAPI, Request)
+True
+>>> verifyClass(IRequestTraversal, Request)
+True
 
 
 Initial state of a request
@@ -34,24 +33,24 @@ be changed during traversal. However, the template root path is normalized by
 os.path.abspath and the site root URI is appended a '/' if it doesn't end with
 one yet:
 
-    >>> from ophelia.util import Namespace
+>>> from ophelia.util import Namespace
 
-    >>> request = Request("example/somepage.html",
-    ...                   "/tmp//nonexistent/",
-    ...                   "http://localhost:1080",
-    ...                   QUERY_STRING="")
+>>> request = Request("example/somepage.html",
+...                   "/tmp//nonexistent/",
+...                   "http://localhost:1080",
+...                   QUERY_STRING="")
 
-    >>> request.path
-    'example/somepage.html'
+>>> request.path
+'example/somepage.html'
 
-    >>> request.template_root
-    '/tmp/nonexistent'
+>>> request.template_root
+'/tmp/nonexistent'
 
-    >>> request.site
-    'http://localhost:1080/'
+>>> request.site
+'http://localhost:1080/'
 
-    >>> request.env
-    {'QUERY_STRING': ''}
+>>> request.env
+{'QUERY_STRING': ''}
 
 Traversal state and rendering context have been initialized by now. This
 comprises two sets of attributes, those meant for common user code and those
@@ -62,88 +61,88 @@ scripts and TALES expressions, of macros and of response headers, as well as
 the inner slot that will be built up as the templates are rendered, and the
 encoded body text after it is complete:
 
-    >>> request.context
-    {'__request__': <ophelia.request.Request object at ...>}
+>>> request.context
+{'__request__': <ophelia.request.Request object at ...>}
 
-    >>> request.macros
-    {}
+>>> request.macros
+{}
 
-    >>> request.response_headers
-    {'Content-Type':
-     "python:'text/html; charset=' + __request__.response_encoding"}
+>>> request.response_headers
+{'Content-Type':
+ "python:'text/html; charset=' + __request__.response_encoding"}
 
-    >>> request.innerslot
+>>> request.innerslot
 
-    >>> request.content
+>>> request.content
 
 The second set of attributes includes the URI and file system path as far as
 they have been traversed, the tail of path segments yet to traverse, and the
 stack of file contexts collected:
 
-    >>> request.current
-    'http://localhost:1080/'
+>>> request.current
+'http://localhost:1080/'
 
-    >>> request.dir_path
-    '/tmp/nonexistent'
+>>> request.dir_path
+'/tmp/nonexistent'
 
-    >>> request.tail
-    ['example', 'somepage.html']
+>>> request.tail
+['example', 'somepage.html']
 
-    >>> request.stack
-    []
+>>> request.stack
+[]
 
 Finally, the request has attributes reflecting configuration options. The
 simpler ones are the response encoding, index file name, and index URI
 redirection flag:
 
-    >>> request.response_encoding
-    'utf-8'
+>>> request.response_encoding
+'utf-8'
 
-    >>> request.index_name
-    'index.html'
+>>> request.index_name
+'index.html'
 
-    >>> request.redirect_index
-    False
+>>> request.redirect_index
+False
 
 Also, the input file splitter has been set up, storing the input encodings:
 
-    >>> request.splitter
-    <ophelia.input.Splitter object at ...>
+>>> request.splitter
+<ophelia.input.Splitter object at ...>
 
-    >>> request.splitter.script_encoding
-    'ascii'
+>>> request.splitter.script_encoding
+'ascii'
 
-    >>> request.splitter.template_encoding
-    'ascii'
+>>> request.splitter.template_encoding
+'ascii'
 
 As our above example request wasn't given any special configuration, these
 attributes all have default values. They can be overridden by the caller
 passing configuration variables in the environment:
 
-    >>> request = Request("example/somepage.html",
-    ...                   "/tmp//nonexistent/",
-    ...                   "http://localhost:1080",
-    ...                   QUERY_STRING="",
-    ...                   response_encoding="utf-16",
-    ...                   index_name="default.html",
-    ...                   redirect_index=True,
-    ...                   script_encoding="latin-9",
-    ...                   template_encoding="utf-8")
+>>> request = Request("example/somepage.html",
+...                   "/tmp//nonexistent/",
+...                   "http://localhost:1080",
+...                   QUERY_STRING="",
+...                   response_encoding="utf-16",
+...                   index_name="default.html",
+...                   redirect_index=True,
+...                   script_encoding="latin-9",
+...                   template_encoding="utf-8")
 
-    >>> request.response_encoding
-    'utf-16'
+>>> request.response_encoding
+'utf-16'
 
-    >>> request.index_name
-    'default.html'
+>>> request.index_name
+'default.html'
 
-    >>> request.redirect_index
-    True
+>>> request.redirect_index
+True
 
-    >>> request.splitter.script_encoding
-    'latin-9'
+>>> request.splitter.script_encoding
+'latin-9'
 
-    >>> request.splitter.template_encoding
-    'utf-8'
+>>> request.splitter.template_encoding
+'utf-8'
 
 
 TALES expression evaluation
@@ -163,59 +162,59 @@ variables defined by the TALES engine, an accessor for the inner template
 slot, the namespace for METAL macros, and the current script context variables
 (which initially is exactly one name, "__request__"):
 
-    >>> tales_ns = request.tales_namespace({})
-    >>> sorted(tales_ns.items())
-    [('__request__', <ophelia.request.Request object at ...>),
-     ('innerslot', None),
-     ('macros', {}),
-     ('modules', <zope.tales.expressions.SimpleModuleImporter object at ...>)]
+>>> tales_ns = request.tales_namespace({})
+>>> sorted(tales_ns.items())
+[('__request__', <ophelia.request.Request object at ...>),
+ ('innerslot', None),
+ ('macros', {}),
+ ('modules', <zope.tales.expressions.SimpleModuleImporter object at ...>)]
 
-    >>> tales_ns = request.tales_namespace({"__file__": "/tmp/asdf"})
-    >>> sorted(tales_ns.items())
-    [('__file__', '/tmp/asdf'),
-     ('__request__', <ophelia.request.Request object at ...>),
-     ('innerslot', None),
-     ('macros', {}),
-     ('modules', <zope.tales.expressions.SimpleModuleImporter object at ...>)]
+>>> tales_ns = request.tales_namespace({"__file__": "/tmp/asdf"})
+>>> sorted(tales_ns.items())
+[('__file__', '/tmp/asdf'),
+ ('__request__', <ophelia.request.Request object at ...>),
+ ('innerslot', None),
+ ('macros', {}),
+ ('modules', <zope.tales.expressions.SimpleModuleImporter object at ...>)]
 
 The namespace passed to tales_namespace() will override the variables defined
 in the request's own context:
 
-    >>> request.context.__file__ = "/tmp/foo"
-    >>> request.tales_namespace().__file__
-    '/tmp/foo'
-    >>> request.tales_namespace({"__file__": "/tmp/bar"}).__file__
-    '/tmp/bar'
+>>> request.context.__file__ = "/tmp/foo"
+>>> request.tales_namespace().__file__
+'/tmp/foo'
+>>> request.tales_namespace({"__file__": "/tmp/bar"}).__file__
+'/tmp/bar'
 
 After a Python script has been run in the context namespace, it has the name
 "__builtins__" defined. This name will not be passed on to TALES expressions
 (mainly because it messes up exception traceback supplements involving a
 namespace listing):
 
-    >>> exec 'title = u"A heading"' in request.context
-    >>> sorted(request.context)
-    ['__builtins__', '__file__', '__request__', 'title']
+>>> exec 'title = u"A heading"' in request.context
+>>> sorted(request.context)
+['__builtins__', '__file__', '__request__', 'title']
 
-    >>> tales_ns = request.tales_namespace({})
-    >>> sorted(tales_ns.items())
-    [('__file__', '/tmp/foo'),
-     ('__request__', <ophelia.request.Request object at ...>),
-     ('innerslot', None),
-     ('macros', {}),
-     ('modules', <zope.tales.expressions.SimpleModuleImporter object at ...>),
-     ('title', u'A heading')]
+>>> tales_ns = request.tales_namespace({})
+>>> sorted(tales_ns.items())
+[('__file__', '/tmp/foo'),
+ ('__request__', <ophelia.request.Request object at ...>),
+ ('innerslot', None),
+ ('macros', {}),
+ ('modules', <zope.tales.expressions.SimpleModuleImporter object at ...>),
+ ('title', u'A heading')]
 
 Note that TALES expressions actually see some additional variables beside
 those from our prepared namespace:
 
-    >>> from zope.tales.engine import Engine as TALESEngine
-    >>> tales_ns = {}
-    >>> contexts = TALESEngine.getContext(tales_ns).evaluate("CONTEXTS")
-    >>> sorted(contexts.items())
-    [('default', <object object at ...>),
-     ('loop', {}),
-     ('nothing', None),
-     ('repeat', {})]
+>>> from zope.tales.engine import Engine as TALESEngine
+>>> tales_ns = {}
+>>> contexts = TALESEngine.getContext(tales_ns).evaluate("CONTEXTS")
+>>> sorted(contexts.items())
+[('default', <object object at ...>),
+ ('loop', {}),
+ ('nothing', None),
+ ('repeat', {})]
 
 Building response headers
 -------------------------
@@ -229,29 +228,29 @@ The Request class has a method that builds response headers from the TALES
 expressions registered. The Content-Type header is always there, making use of
 the response encoding configured for the request:
 
-    >>> request.response_headers
-    {'Content-Type':
-     "python:'text/html; charset=' + __request__.response_encoding"}
+>>> request.response_headers
+{'Content-Type':
+ "python:'text/html; charset=' + __request__.response_encoding"}
 
-    >>> request.response_encoding = 'ascii'
-    >>> request.build_headers()
-    >>> request.compiled_headers
-    {'Content-Type': 'text/html; charset=ascii'}
+>>> request.response_encoding = 'ascii'
+>>> request.build_headers()
+>>> request.compiled_headers
+{'Content-Type': 'text/html; charset=ascii'}
 
-    >>> request.response_encoding = 'utf-8'
-    >>> request.build_headers()
-    >>> request.compiled_headers
-    {'Content-Type': 'text/html; charset=utf-8'}
+>>> request.response_encoding = 'utf-8'
+>>> request.build_headers()
+>>> request.compiled_headers
+{'Content-Type': 'text/html; charset=utf-8'}
 
 Further headers can be added during traversal. They are evaluated after the
 response body is finished to allow for, e.g., the Content-Length header to be
 calculated from the body text:
 
-    >>> request.response_headers["Content-Length"] = \
-    ...     "python:str(len(__request__.content))"
-    >>> request.content = "asdf"
-    >>> request.build_headers()
-    >>> sorted(request.compiled_headers)
-    ['Content-Length', 'Content-Type']
-    >>> request.compiled_headers["Content-Length"]
-    '4'
+>>> request.response_headers["Content-Length"] = \
+...     "python:str(len(__request__.content))"
+>>> request.content = "asdf"
+>>> request.build_headers()
+>>> sorted(request.compiled_headers)
+['Content-Length', 'Content-Type']
+>>> request.compiled_headers["Content-Length"]
+'4'

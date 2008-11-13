@@ -1,22 +1,24 @@
-# Copyright (c) 2007 Thomas Lotze
+# Copyright (c) 2007-2008 Thomas Lotze
 # See also LICENSE.txt
 
+import os
+import os.path
 import unittest
-import doctest
-from zope.testing.doctest import DocFileSuite
+from zope.testing import doctest
 
 
-flags = doctest.NORMALIZE_WHITESPACE | doctest.ELLIPSIS
+flags = (doctest.ELLIPSIS |
+         doctest.INTERPRET_FOOTNOTES |
+         doctest.NORMALIZE_WHITESPACE |
+         doctest.REPORT_NDIFF)
+
 
 def test_suite():
-    return unittest.TestSuite((
-        DocFileSuite("input.txt", package="ophelia", optionflags=flags),
-        DocFileSuite("pagetemplate.txt",
-                     package="ophelia", optionflags=flags),
-        DocFileSuite("util.txt", package="ophelia", optionflags=flags),
-        DocFileSuite("request.txt", package="ophelia", optionflags=flags),
-        ))
-
-
-if __name__ == '__main__':
-    unittest.main(defaultTest='test_suite')
+    return unittest.TestSuite([
+        doctest.DocFileSuite(filename,
+                             package="ophelia",
+                             optionflags=flags,
+                             )
+        for filename in sorted(os.listdir(os.path.dirname(__file__)))
+        if filename.endswith(".txt")
+        ])

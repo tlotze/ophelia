@@ -2,11 +2,10 @@
 Ophelia utilities
 =================
 
-
 Namespaces
 ==========
 
-    >>> from ophelia.util import Namespace
+>>> from ophelia.util import Namespace
 
 Handling a request involves namespaces for a number of things, e.g. for the
 page template context, or the request environment variables. This need is in
@@ -15,39 +14,39 @@ more convenient and natural to access a particular namespace member as an
 object attribute rather than by a key reference. Namespaces are Python
 dictionaries which expose their values as attributes:
 
-    >>> Namespace()
-    {}
-    >>> ns = Namespace(foo="bar")
-    >>> ns
-    {'foo': 'bar'}
-    >>> ns["foo"]
-    'bar'
-    >>> ns.foo
-    'bar'
-    >>> ns.foo = "baz"
-    >>> ns["foo"]
-    'baz'
-    >>> ns["asdf"] = "fdsa"
-    >>> ns.asdf
-    'fdsa'
+>>> Namespace()
+{}
+>>> ns = Namespace(foo="bar")
+>>> ns
+{'foo': 'bar'}
+>>> ns["foo"]
+'bar'
+>>> ns.foo
+'bar'
+>>> ns.foo = "baz"
+>>> ns["foo"]
+'baz'
+>>> ns["asdf"] = "fdsa"
+>>> ns.asdf
+'fdsa'
 
 Dictionary methods work as expected, e.g. update():
 
-    >>> a = Namespace()
-    >>> a.foo = 1
-    >>> b = Namespace()
-    >>> b.bar = 2
-    >>> a.update(b)
-    >>> a.bar
-    2
+>>> a = Namespace()
+>>> a.foo = 1
+>>> b = Namespace()
+>>> b.bar = 2
+>>> a.update(b)
+>>> a.bar
+2
 
 
 Unicode dates and times
 =======================
 
-    >>> import locale
-    >>> import datetime
-    >>> from ophelia.util import strftime
+>>> import locale
+>>> import datetime
+>>> from ophelia.util import strftime
 
 
 Ophelia provides its own version of strftime which always returns unicode.
@@ -55,31 +54,30 @@ Ophelia provides its own version of strftime which always returns unicode.
 Otherwise, it works the same as the time.strftime function: With only a format
 string given, it formats the current time:
 
-    >>> strftime("%c")
-    u'...'
+>>> strftime("%c")
+u'...'
 
 Our strftime function uses the current locale's encoding to decode
 time.strftime's output, as that is what time.strftime uses to encode it in the
 first place. Let's try out it with the german locale as we have month names
 with nice umlauts there:
 
-    >>> locale.setlocale(locale.LC_ALL, "de_DE")
-    'de_DE'
-    >>> strftime("%B", datetime.date(2007, 3, 1))
-    u'M\xe4rz'
+>>> locale.setlocale(locale.LC_ALL, "de_DE")
+'de_DE'
+>>> strftime("%B", datetime.date(2007, 3, 1))
+u'M\xe4rz'
 
 Not only do we always get unicode output from our strftime function, but we
 can also pass it a unicode format string (which time.strftime would not
 accept):
 
-    >>> strftime(u"Im sch\xf6nen Monat %B...", datetime.date(2007, 3, 1))
-    u'Im sch\xf6nen Monat M\xe4rz...'
+>>> strftime(u"Im sch\xf6nen Monat %B...", datetime.date(2007, 3, 1))
+u'Im sch\xf6nen Monat M\xe4rz...'
 
 However, to avoid confusion with the locale's encoding which we don't even
 want to think about when calling strftime, we cannot pass any encoded strings
 as the format specification:
 
-   >>> strftime("Im sch\xf6nen Monat %B...", datetime.date(2007, 3, 1))
-   Traceback (most recent call last):
-   ...
-   UnicodeDecodeError: 'ascii' codec can't decode byte ... in position ...
+>>> strftime("Im sch\xf6nen Monat %B...", datetime.date(2007, 3, 1))
+Traceback (most recent call last):
+UnicodeDecodeError: 'ascii' codec can't decode byte ... in position ...
