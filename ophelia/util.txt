@@ -59,20 +59,21 @@ u'...'
 
 Our strftime function uses the current locale's encoding to decode
 time.strftime's output, as that is what time.strftime uses to encode it in the
-first place. Let's try out it with the german locale as we have month names
-with nice umlauts there:
+first place. We'd like to try it out but we cannot be sure of the availability
+of any particular interesting locale. Therefore we use a boring one to
+demonstrate the call at all:
 
->>> locale.setlocale(locale.LC_ALL, "de_DE")
-'de_DE'
+>>> locale.setlocale(locale.LC_ALL, "C")
+'C'
 >>> strftime("%B", datetime.date(2007, 3, 1))
-u'M\xe4rz'
+u'March'
 
 Not only do we always get unicode output from our strftime function, but we
 can also pass it a unicode format string (which time.strftime would not
 accept):
 
->>> strftime(u"Im sch\xf6nen Monat %B...", datetime.date(2007, 3, 1))
-u'Im sch\xf6nen Monat M\xe4rz...'
+>>> strftime(u"The third month is named %B...", datetime.date(2007, 3, 1))
+u'The third month is named March...'
 
 However, to avoid confusion with the locale's encoding which we don't even
 want to think about when calling strftime, we cannot pass any encoded strings
