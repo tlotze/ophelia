@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Copyright (c) 2006-2007 Thomas Lotze
+# Copyright (c) 2006-2008 Thomas Lotze
 # See also LICENSE.txt
 
 """Ophelia builds a web site from TAL templates with zero code repetition.
@@ -23,6 +23,7 @@ entry_points = {
 install_requires = [
     "zope.interface",
     "zope.tales",
+    "zope.tal<3.5", # XXX remove this line in 0.4
     "zope.pagetemplate",
     "zope.exceptions",
     ]
