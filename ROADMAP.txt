@@ -11,53 +11,6 @@ later x.y releases.
 Except for the 0.x series, API backwards compatibility within each major
 release series will be given.
 
-
-0.1
----
-
-The state in which Ophelia is able to host www.thomas-lotze.de for the first
-time, whatever the feature set and code quality.
-
-0.2
----
-
-A much cleaned-up version of the 0.1 state, with a feed tool added. This
-hadn't been a planned release but there were so many changes while preparing
-for WSGI integration that releasing them as 0.2 first seemed like the obvious
-thing to do.
-
-0.3
----
-
-This version's goal is to implement a number of standards and best practices,
-besides further clean-up and the usual feature creep, of course.
-
-- internal usage of WSGI
-- zc.buildout based distribution
-- usage of Zope interfaces for API specification
-- testing framework including some unit and functional doc tests
-- more useful tracebacks for errors in scripts and templates
-
-0.3.1
------
-
-This minor release was planned when it became clear that not everything that
-would have been nice to have in 0.3 could be done in time for EuroPython 2007.
-Most of that stuff was postponed until 0.3.2 when 0.3.1 was released to get
-some bug fixes and minor features out of the door.
-
-0.3.2
------
-
-Some small improvements. Cutting this release was necessary in order to get
-rid of the awkward feedparser dependency ASAP.
-
-0.3.3 (next planned release)
-----------------------------
-
-- documentation in the standard Python documentation style
-- use of the Zope3 component architecture to separate core and tools better
-
 0.4
 ---
 
@@ -65,26 +18,23 @@ rid of the awkward feedparser dependency ASAP.
 - a more powerful traversal mechanism
 - unified configuration for all the ways Ophelia can be used
 - buildout recipes to hide the Apache details and get rid of buildout_script
-- remove the feeds tool which doesn't actually belong with Ophelia
+- several backwards-incompatible clean-ups
 
 0.4.1
 -----
 
 - views and traversers for using Ophelia inside Zope3 and Grok applications
 - a syntax checker for input files
+- a tool for including content from Restructured Text files
 
 0.5
 ---
 
-- A document adapter that builds pages from, e.g., JPEG files to display the
-  image along with comments and some EXIF and other metadata.
-
-- A ReST adapter that allows the template text to be written in restructured
-  text. Will need some infrastructure.
-
-- internal caching of processed information, especially when using docutils
-
+- use more Zope3 technologies: i18n, content providers, events
+- more flexible input system, real integration of ReST, possibly image views
+- deliver static content to be fully functional stand-alone
 - directory listings
+- internal caching of processed information, especially when using docutils
 
 1.0
 ---
