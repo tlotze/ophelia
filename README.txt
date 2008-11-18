@@ -23,6 +23,13 @@ Documentation
     interesting
 
 
+Change log
+==========
+
+For a continuously updated change log, see
+<https://svn.thomas-lotze.de/repos/public/Ophelia/trunk/CHANGES.txt>.
+
+
 Contact
 =======
 
@@ -31,3 +38,8 @@ Ophelia is written by Thomas Lotze. Please contact the author at
 contributions to Ophelia.
 
 See also <http://www.thomas-lotze.de/en/software/ophelia/>.
+
+
+.. Local Variables:
+.. mode: rst
+.. End:

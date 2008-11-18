@@ -1,15 +1,16 @@
-Changes between versions
-========================
+======================
+Change log for Ophelia
+======================
 
-0.3.3
------
+0.3.3 (unreleased)
+==================
 
 Bug fixes:
   - file-specific context variables were not set during template evaluation
 
 
-0.3.2
------
+0.3.2 (2008-01-08)
+==================
 
 User-visible:
   - more helpful tracebacks for broken page templates
@@ -30,8 +31,8 @@ Organization:
     using zc.buildout. The feeds tool will stay until 0.4 for compatibility.
 
 
-0.3.1
------
+0.3.1 (2007-12-07)
+==================
 
 User-visible:
   - tools: added the Metadata.mtime method which returns the current input
@@ -57,8 +58,8 @@ Organization:
   - simplified buildout configuration
 
 
-0.3
----
+0.3 (2007-07-06)
+================
 
 User-visible:
   - a WSGI application running Ophelia was added along with a basic
@@ -131,8 +132,8 @@ Organization:
   - added tests
 
 
-0.2
----
+0.2 (2007-02-04)
+================
 
 User-visible:
   - made template and script encodings and the index template name
@@ -200,7 +201,12 @@ Organization:
   - moved opheliatools package to ophelia.tool for minimal namespace impact
 
 
-0.1
----
+0.1 (2006-07-23)
+================
 
 initial "works for me" release
+
+
+.. Local Variables:
+.. mode: rst
+.. End:
