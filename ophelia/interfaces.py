@@ -39,6 +39,11 @@ class IRequestAPI(zope.interface.Interface):
           mod_python, application configuration if using WSGI)
         - the CGI or WSGI environment variables passed by the server
         - if running mod_python, the Apache request object as apache_request
+        - must contain the ``wsgi.input`` variable
+        """)
+
+    input = zope.interface.Attribute(
+        """File-like object from which to read the request body.
         """)
 
     # Further configuration, may be modified by scripts.

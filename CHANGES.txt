@@ -8,6 +8,10 @@ Change log for Ophelia
 Bug fixes:
   - file-specific context variables were not set during template evaluation
 
+API:
+  - added ``input`` request attribute which is a file-like object from which
+  to read the request body
+
 
 0.3.2 (2008-01-08)
 ==================

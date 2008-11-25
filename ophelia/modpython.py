@@ -1,4 +1,4 @@
-# Copyright (c) 2006-2007 Thomas Lotze
+# Copyright (c) 2006-2008 Thomas Lotze
 # See also LICENSE.txt
 
 import sys
@@ -47,6 +47,7 @@ def fixuphandler(apache_request):
     path = apache_request.uri[len(site_path):]
 
     env.update(apache.build_cgi_env(apache_request))
+    env.setdefault('wsgi.input', InputStream(apache_request))
     env.apache_request = apache_request
 
     request = Request(path, template_root, site, **env)
@@ -131,3 +132,21 @@ def report_exception(apache_request):
             apache_request.log_error(line, apache.APLOG_ERR)
 
     raise apache.SERVER_RETURN(apache.DONE)
+
+
+class InputStream(object):
+    """Wrapper for the Apache request that implements the minimal API required
+    of a WSGI-compliant input stream.
+    """
+
+    def __init__(self, apache_request):
+        self.read = apache_request.read
+        self.readline = apache_request.readline
+        self.readlines = apache_request.readlines
+
+    def __iter__(self):
+        while True:
+            line = self.readline()
+            if not line:
+                break
+            yield line

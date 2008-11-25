@@ -1,4 +1,4 @@
-# Copyright (c) 2007 Thomas Lotze
+# Copyright (c) 2007-2008 Thomas Lotze
 # See also LICENSE.txt
 
 """A script entry point for dumping a page built by Ophelia to stdout.
@@ -31,6 +31,7 @@ def dump(config_file="", section="DEFAULT"):
     config.read(cmd_options.config_file)
     env = dict((key.replace('-', '_'), value)
                for key, value in config.items(cmd_options.section))
+    env.setdefault('wsgi.input', sys.stdin)
 
     if path.startswith('/'):
         path = path[1:]

@@ -1,4 +1,4 @@
-# Copyright (c) 2006-2007 Thomas Lotze
+# Copyright (c) 2006-2008 Thomas Lotze
 # See also LICENSE.txt
 
 import os.path
@@ -81,6 +81,7 @@ class Request(object):
         self.site = self.current = site
 
         self.env = Namespace(env)
+        self.input = env['wsgi.input']
 
         self.context = Namespace(
             __request__=self,
