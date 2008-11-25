@@ -95,6 +95,10 @@ The module defines the following items meant to be used in client code:
 :Request: an instance of this class represents the HTTP request and
     orchestrates the execution of scripts and assembly of the HTTP response.
 
+    Please see ``ophelia.interfaces.IRequestAPI`` and
+    ``ophelia.interface.IRequestTraversal`` for a detailed description of the
+    request API.
+
 :get_request: function returning the currently running Request instance
 
 :get_file_context: function returning the namespace of file-related variables
