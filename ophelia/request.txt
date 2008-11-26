@@ -109,6 +109,12 @@ redirection flag:
 >>> request.redirect_index
 False
 
+Another configuration attribute that belongs to the traversal part of the
+interface is the immediate-result switch which defaults to ``False``:
+
+>>> request.immediate_result
+False
+
 Also, the input file splitter has been set up, storing the input encodings:
 
 >>> request.splitter
@@ -133,6 +139,7 @@ passing configuration variables in the environment:
 ...                   redirect_index=True,
 ...                   script_encoding="latin-9",
 ...                   template_encoding="utf-8",
+...                   immediate_result=True,
 ...                   **{"wsgi.input": "mock input stream"})
 
 >>> request.response_encoding
@@ -149,6 +156,9 @@ True
 
 >>> request.splitter.template_encoding
 'utf-8'
+
+>>> request.immediate_result
+True
 
 
 TALES expression evaluation
