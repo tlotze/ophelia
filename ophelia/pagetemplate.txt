@@ -72,6 +72,7 @@ representation:
 ... except Exception:
 ...     print_exception(file=sys.stdout, *sys.exc_info())
 Traceback (most recent call last):
+...
    - /tmp/asdf
    - Line 1, Column 0
    - Expression: <PathExpr standard:'title'>
@@ -94,9 +95,10 @@ template text the problem occurred:
 ... except Exception:
 ...     print_exception(file=sys.stdout, *sys.exc_info())
 Traceback (most recent call last):
+...
    - /tmp/asdf
    - Warning: Compilation failed
-   - Warning: zope.tal.htmltalparser.NestingError:
+   - Warning: <class 'zope.tal.htmltalparser.NestingError'>:
               No tags are open to match </body>, at line 1, column 5
    1:     </body>
    ->      ^
