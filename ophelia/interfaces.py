@@ -1,4 +1,4 @@
-# Copyright (c) 2007 Thomas Lotze
+# Copyright (c) 2007-2008 Thomas Lotze
 # See also LICENSE.txt
 
 """Public interfaces used in Ophelia.
@@ -38,6 +38,8 @@ class IRequestAPI(zope.interface.Interface):
         - site configuration options (PythonOption setting if running
           mod_python, application configuration if using WSGI)
         - the CGI or WSGI environment variables passed by the server
+        - includes HTTP request headers, multiple headers mapped to a
+          comma-separated single header according to RfC 2068, section 4.2
         - if running mod_python, the Apache request object as apache_request
         - must contain the ``wsgi.input`` variable
         """)
@@ -99,6 +101,9 @@ class IRequestAPI(zope.interface.Interface):
 
         Expressions will be evaluated in the usual TALES context after all
         templates have been rendered.
+
+        Multiple values for the same header must be sent in a single header
+        line with a comma-separated value, see RfC 2068, section 4.2.
         """)
 
     content = zope.interface.Attribute(
