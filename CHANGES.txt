@@ -10,7 +10,9 @@ Bug fixes:
 
 API:
   - added ``input`` request attribute which is a file-like object from which
-  to read the request body
+    to read the request body
+  - added ``headers`` request attribute which is a namespace of HTTP headers
+    with leading ``HTTP_`` removed
 
 
 0.3.2 (2008-01-08)

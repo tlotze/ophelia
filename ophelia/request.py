@@ -82,6 +82,9 @@ class Request(object):
 
         self.env = Namespace(env)
         self.input = env['wsgi.input']
+        self.headers = Namespace((key[5:], value)
+                                 for key, value in env.iteritems()
+                                 if key.startswith('HTTP_'))
 
         self.context = Namespace(
             __request__=self,

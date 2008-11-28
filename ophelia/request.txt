@@ -40,6 +40,7 @@ one yet:
 ...                   "/tmp//nonexistent/",
 ...                   "http://localhost:1080",
 ...                   QUERY_STRING="",
+...                   HTTP_HOST="localhost:1080",
 ...                   **{"wsgi.input": input_stream})
 
 >>> request.path
@@ -52,10 +53,19 @@ one yet:
 'http://localhost:1080/'
 
 >>> request.env
-{'QUERY_STRING': '', 'wsgi.input': 'mock input stream'}
+{'QUERY_STRING': '',
+ 'wsgi.input': 'mock input stream',
+ 'HTTP_HOST': 'localhost:1080'}
+
+Two attributes are derived from the environment variables: a file-like object
+from which to read the request body and a namespace of HTTP
+headers:
 
 >>> request.input
 'mock input stream'
+
+>>> request.headers
+{'HOST': 'localhost:1080'}
 
 Traversal state and rendering context have been initialized by now. This
 comprises two sets of attributes, those meant for common user code and those
@@ -134,6 +144,7 @@ passing configuration variables in the environment:
 ...                   "/tmp//nonexistent/",
 ...                   "http://localhost:1080",
 ...                   QUERY_STRING="",
+...                   HTTP_HOST="localhost:1080",
 ...                   response_encoding="utf-16",
 ...                   index_name="default.html",
 ...                   redirect_index=True,

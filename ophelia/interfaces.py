@@ -38,14 +38,19 @@ class IRequestAPI(zope.interface.Interface):
         - site configuration options (PythonOption setting if running
           mod_python, application configuration if using WSGI)
         - the CGI or WSGI environment variables passed by the server
-        - includes HTTP request headers, multiple headers mapped to a
-          comma-separated single header according to RfC 2068, section 4.2
         - if running mod_python, the Apache request object as apache_request
         - must contain the ``wsgi.input`` variable
         """)
 
     input = zope.interface.Attribute(
         """File-like object from which to read the request body.
+        """)
+
+    headers = zope.interface.Attribute(
+        """Namespace of request headers with leading ``HTTP_`` removed.
+
+        Multiple headers are mapped to a comma-separated single header
+        according to RfC 2068, section 4.2.
         """)
 
     # Further configuration, may be modified by scripts.
