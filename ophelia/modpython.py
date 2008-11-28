@@ -46,6 +46,8 @@ def fixuphandler(apache_request):
         return apache.DECLINED
     path = apache_request.uri[len(site_path):]
 
+    # Apache already maps multiple HTTP headers to a comma-separated single
+    # header according to RfC 2068, section 4.2.
     env.update(apache.build_cgi_env(apache_request))
     env.setdefault('wsgi.input', InputStream(apache_request))
     env.apache_request = apache_request
