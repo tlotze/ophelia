@@ -40,6 +40,8 @@ class IRequestAPI(zope.interface.Interface):
         - the CGI or WSGI environment variables passed by the server
         - if running mod_python, the Apache request object as apache_request
         - must contain the ``wsgi.input`` variable
+        - may contain the ``ophelia.response_headers`` namespace of response
+          headers already set by the server environment
         """)
 
     input = zope.interface.Attribute(
@@ -109,6 +111,10 @@ class IRequestAPI(zope.interface.Interface):
 
         Multiple values for the same header must be sent in a single header
         line with a comma-separated value, see RfC 2068, section 4.2.
+
+        If response headers have been set earlier by the server environment,
+        they may be passed to the request through the environment to pre-fill
+        the ``response_headers`` namespace.
         """)
 
     content = zope.interface.Attribute(

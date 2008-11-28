@@ -90,6 +90,19 @@ encoded body text after it is complete:
 
 >>> request.content
 
+As an aside, if response headers have been set earlier by the server
+environment, they may be passed to the request through the environment to
+pre-fill the ``response_headers`` namespace:
+
+>>> Request("/somepage.html", "/tmp//nonexistent/", "http://localhost:1080",
+...         **{"wsgi.input": input_stream,
+...            "ophelia.response_headers": {"Content-Type": "text/plain",
+...                                         "X-Foo": "bar"}}
+... ).response_headers
+{'Content-Type':
+ "python:'text/html; charset=' + __request__.response_encoding",
+ 'X-Foo': 'string:bar'}
+
 The second set of attributes includes the URI and file system path as far as
 they have been traversed, the tail of path segments yet to traverse, and the
 stack of file contexts collected:

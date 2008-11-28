@@ -13,6 +13,8 @@ API:
     to read the request body
   - added ``headers`` request attribute which is a namespace of HTTP headers
     with leading ``HTTP_`` removed
+  - optionally pre-fill ``response_headers`` namespace with response headers
+    set earlier by the server environment
 
 
 0.3.2 (2008-01-08)

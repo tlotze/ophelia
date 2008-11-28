@@ -50,6 +50,9 @@ def fixuphandler(apache_request):
     env.setdefault('wsgi.input', InputStream(apache_request))
     env.apache_request = apache_request
 
+    # Response headers may already have been set during earlier phases of
+    # Apache request processing.
+    env['ophelia.response_headers'] = Namespace(apache_request.headers_out)
     request = Request(path, template_root, site, **env)
     try:
         request.traverse()

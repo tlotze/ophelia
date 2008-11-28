@@ -90,9 +90,14 @@ class Request(object):
             __request__=self,
             )
         self.macros = Namespace()
-        self.response_headers = {
-            "Content-Type":
-            "python:'text/html; charset=' + __request__.response_encoding"}
+
+        preset_response_headers = env.get('ophelia.response_headers', {})
+        self.response_headers = Namespace(
+            (key, 'string:' + value)
+            for key, value in preset_response_headers.iteritems())
+        self.response_headers['Content-Type'] = \
+            "python:'text/html; charset=' + __request__.response_encoding"
+
         self.stack = []
 
         self.splitter = ophelia.input.Splitter(**env)
