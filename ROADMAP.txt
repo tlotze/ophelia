@@ -15,26 +15,29 @@ release series will be given.
 ---
 
 - turn ophelia into a namespace package, break the code into several eggs
+- split the request object into request, response and a handler
 - a more powerful traversal mechanism
 - unified configuration for all the ways Ophelia can be used
-- buildout recipes to hide the Apache details and get rid of buildout_script
 - several backwards-incompatible clean-ups
 
-0.4.1
------
+0.4 series
+----------
 
 - views and traversers for using Ophelia inside Zope3 and Grok applications
 - a syntax checker for input files
 - a tool for including content from Restructured Text files
+- separate error log when running inside Apache
+- RSS reading done right
 
 0.5
 ---
 
-- use more Zope3 technologies: i18n, content providers, events
+- use more Zope3 technology: i18n, content providers, events, local components
 - more flexible input system, real integration of ReST, possibly image views
 - deliver static content to be fully functional stand-alone
 - directory listings
 - internal caching of processed information, especially when using docutils
+- data sources outside the file system, such as http or svn resources
 
 1.0
 ---
@@ -61,3 +64,5 @@ The wishlist:
   * CLI-based converter to static files
 
 - cataloging, local search infrastructure (xapian)
+
+- easy setup using zc.buildout
