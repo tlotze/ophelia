@@ -190,12 +190,15 @@ class Request(object):
 
         # get script and template
         script, text = self.splitter(open(file_path).read())
+        # XXX bad hack:
+        offset = self.splitter._last_template_offset
 
         # get_file_context() will find the file context by its name
         file_context = Namespace(
             __file__ = file_path,
             __text__ = text,
-            __template__ = ophelia.pagetemplate.PageTemplate(text, file_path),
+            __template__ = ophelia.pagetemplate.PageTemplate(
+                text, file_path=file_path, offset=offset),
             )
         if insert:
             self.stack.append(file_context)

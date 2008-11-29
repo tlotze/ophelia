@@ -1,4 +1,4 @@
-# Copyright (c) 2006-2007 Thomas Lotze
+# Copyright (c) 2006-2008 Thomas Lotze
 # See also LICENSE.txt
 
 import re
@@ -8,7 +8,7 @@ import zope.interface
 import ophelia.interfaces
 
 
-XML_DECLARATION = re.compile("<\?xml([^<>]*)\?>")
+XML_DECLARATION = re.compile("(<\?xml([^<>]*)\?>)")
 CODING_PATTERN = re.compile("coding[=:]\s*\"?\s*([-\w.]+)\s*\"?")
 
 
@@ -39,8 +39,16 @@ class Splitter(object):
         parts = XML_DECLARATION.split(content, 1)
         if len(parts) == 1:
             script, xml_options, template = "", "", content
+            line_offset = row_offset = 0
         else:
-            script, xml_options, template = parts
+            script, xml_declaration, xml_options, template = parts
+            pre_lines = (script + xml_declaration).splitlines()
+            line_offset = len(pre_lines) - 1
+            row_offset = len(pre_lines[-1])
+
+        # XXX This is a bad hack in order to keep the splitter API backwards
+        # compatible during the 0.3 series:
+        self._last_template_offset = (line_offset, row_offset)
 
         template_encoding = self.template_encoding
         coding_match = CODING_PATTERN.search(xml_options)
