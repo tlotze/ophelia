@@ -22,6 +22,18 @@ Optionally, a file path may be given that is stored for reference:
 >>> pt.pt_source_file()
 '/tmp/asdf'
 
+As another optional parameter, a tuple of line offset and row offset
+(defaulting to ``(0, 0)``) may be passed that describes the template's
+starting point in the file from which it was read. These offsets will be used
+by traceback supplements that refer to a position in the template.
+
+>>> pt.offset
+(0, 0)
+>>> pt = PageTemplate(
+...     """<h1 tal:content="title" />""", "/tmp/asdf", offset=(5, 7))
+>>> pt.offset
+(5, 7)
+
 In order to render the page template, call it, passing the variables that
 should be available in the TALES namespace. The call takes any number of
 namespaces and name=value pairs as arguments, where names given earlier may be
@@ -103,6 +115,53 @@ Traceback (most recent call last):
    1:     </body>
    ->      ^
    2:     <h1 tal:asdf="title" />
+ValueError: There were errors in the page template text.
+
+If the template starts at an offset from the start of the file from which it
+was read, the line numbers printed in front of the error's context lines (but
+not the line number reported by the warning) will be shifted accordingly:
+
+>>> try:
+...     pt = PageTemplate("""\
+...     <body>
+...     <h1 tal:asdf="title" />
+...     </body>
+...     """, "/tmp/asdf", offset=(5, 0))
+... except Exception:
+...     print_exception(file=sys.stdout, *sys.exc_info())
+Traceback (most recent call last):
+...
+   - /tmp/asdf
+   - Warning: Compilation failed
+   - Warning: <class 'zope.tal.taldefs.TALError'>:
+              bad TAL attribute: 'asdf', at line 2, column 5
+   6:     <body>
+   7:     <h1 tal:asdf="title" />
+   ->      ^
+   8:     </body>
+ValueError: There were errors in the page template text.
+
+Since a template doesn't have to start at the beginning of a line of the file
+(for example, if it is preceded by an XML declaration), an error position in
+the first line of the template causes the display of that line and the error
+pointer to be shifted by the row offset:
+
+>>> try:
+...     pt = PageTemplate("""\
+...     <h1 tal:asdf="title" />
+...     <p>foobar</p>
+...     """, "/tmp/asdf", offset=(5, 7))
+... except Exception:
+...     print_exception(file=sys.stdout, *sys.exc_info())
+Traceback (most recent call last):
+...
+   - /tmp/asdf
+   - Warning: Compilation failed
+   - Warning: <class 'zope.tal.taldefs.TALError'>:
+              bad TAL attribute: 'asdf', at line 1, column 5
+   6: .......    <h1 tal:asdf="title" />
+   ->             ^
+   7:     <p>foobar</p>
 ValueError: There were errors in the page template text.
 
 

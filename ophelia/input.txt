@@ -62,6 +62,61 @@ be inappropriately greedy:
 (u'title = u"A headline"\n<?xml', u' ?>\n<h1 tal:content="title" />\n')
 
 
+Template offset
+===============
+
+In order for the line numbers and row pointer shown in page template traceback
+supplements to refer to the input file as opposed to the template part of it,
+the line and row offset of the template needs to be stored.
+
+XXX During the 0.3 line, this is done through the ``_last_template_offset``
+attribute of the splitter which holds a tuple of line and row offset;
+eventually a better (and backwards-incompatible) API should be defined.
+
+Without a script prepended, the template starts without any offset:
+
+>>> splitter("""\
+... <p/>
+... """)
+(u'', u'<p/>\n')
+>>> splitter._last_template_offset
+(0, 0)
+
+The last line of the script and the XML declaration contribute to the row
+offset of the first line of the template:
+
+>>> splitter("""\
+... pass <?xml?> <p/>
+... """)
+(u'pass', u' <p/>\n')
+>>> splitter._last_template_offset
+(0, 12)
+
+Complete script lines cause a line offset; the remainder of the line
+containing the XML declaration is already part of the template:
+
+>>> splitter("""\
+... title = u'A headline'
+... pass <?xml?>
+... <p/>
+... """)
+(u"title = u'A headline'\npass", u'\n<p/>\n')
+>>> splitter._last_template_offset
+(1, 12)
+
+The algorithm used works correctly for multi-line XML declarations:
+
+>>> splitter("""\
+... title = u'A headline'
+... pass <?xml
+... version="1.1"?>
+... <p/>
+... """)
+(u"title = u'A headline'\npass", u'\n<p/>\n')
+>>> splitter._last_template_offset
+(2, 15)
+
+
 Input encoding
 ==============
 
