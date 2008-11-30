@@ -144,3 +144,8 @@ The ophelia.util module contains some utilities:
 
 :strftime: like ``time.strftime``, but handles unicode and takes into account
     the current locale's character encoding.
+
+
+.. Local Variables:
+.. mode: rst
+.. End:

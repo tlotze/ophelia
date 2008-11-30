@@ -7,11 +7,15 @@
 """
 
 import os.path
+import glob
 from setuptools import setup, find_packages
 
 
-longdesc = open(os.path.join(os.path.dirname(__file__), "doc", "OVERVIEW.txt")
-                ).read()
+project_path = lambda *names: os.path.join(os.path.dirname(__file__), *names)
+
+longdesc = open(project_path("README.txt")).read()
+
+data_files = [("", glob.glob(project_path("*.txt")))]
 
 entry_points = {
     "console_scripts": [
@@ -57,6 +61,7 @@ setup(name="ophelia",
       install_requires=install_requires,
       extras_require=extras_require,
       include_package_data=True,
+      data_files=data_files,
       zip_safe=False,
       test_suite="ophelia.tests.test_suite",
       )

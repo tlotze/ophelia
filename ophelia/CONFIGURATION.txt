@@ -11,6 +11,7 @@ but have different configuration mechanisms. The wsgiref-based HTTP server and
 the ``ophelia-dump`` script read their configuration from a section of an
 INI-style configuration file while the mod_python handler gets the same
 information from PythonOption variables set in the Apache configuration.
+Example configurations can be found below.
 
 Two variables must always be present:
 
@@ -128,3 +129,67 @@ instead of being sent directly to the client:
 :immediate_result:
     Whether to use the unprocessed result of template evaluation as the
     response content.
+
+
+Example configuration for an Apache/mod_python installation
+===========================================================
+
+Assume that the root of your site is published at
+``<http://www.example.com/foo/bar/>``.
+
+Assume further that your site uses the following file system locations on a
+Unix system:
+
+:/var/example/templates/: for the tree of Ophelia templates
+:/var/example/python/:    for the Python packages
+:/var/example/static/:    for the static stuff
+
+To publish this site, add the following to your host's config::
+
+    Alias /foo/bar /var/example/static
+    <Location "/foo/bar">
+        PythonInterpreter main_interpreter
+        PythonPath "['/var/example/python'] + sys.path"
+        PythonOption template_root /var/example/templates
+        PythonOption site http://www.example.com/foo/bar/
+        PythonFixupHandler ophelia.modpython
+    </Location>
+
+This instructs Apache to let Ophelia handle any URI under /foo/bar/. Ophelia
+will build pages from templates where they exist, and Apache will serve files
+from your static content otherwise.
+
+It is possible to set the Ophelia handler only for directories or HTML
+documents by applying some path name heuristics and matching the location
+against a regular expression.
+
+Due to an interaction between Python's restricted mode and how mod_python
+creates multiple Python interpreters, Ophelia must run in mod_python's main
+Python interpreter. This means that if more than one Ophelia site is hosted by
+the same Apache process, they cannot be isolated from each other.
+
+
+Example configuration for the included WSGI server
+==================================================
+
+Create a configuration file, say, opheliasite.cfg::
+
+    [DEFAULT]
+    host = 127.0.0.1
+    port = 8080
+    template_root = /var/example/opheliasite
+    site = http://localhost:8080/
+
+and run the ophelia-wsgiref script on that file::
+
+    ophelia-wsgiref -c opheliasite.cfg
+
+You may want to wrap this call in a run-control script.
+
+The same configuration can be used with the ophelia-dump script, except that
+it doesn't require the host and port to be set.
+
+
+.. Local Variables:
+.. mode: rst
+.. End:
