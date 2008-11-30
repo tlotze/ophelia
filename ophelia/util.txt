@@ -82,3 +82,8 @@ as the format specification:
 >>> strftime("Im sch\xf6nen Monat %B...", datetime.date(2007, 3, 1))
 Traceback (most recent call last):
 UnicodeDecodeError: 'ascii' codec can't decode byte ... in position ...
+
+
+.. Local Variables:
+.. mode: rst
+.. End:

@@ -146,3 +146,8 @@ Now encoding declarations inside input files are no longer necessary:
 ... """)
 (u'title = u"\xdcberschrift"',
  u'\n<h1 tal:content="title">\xdcberschrift</h1>\n')
+
+
+.. Local Variables:
+.. mode: rst
+.. End:

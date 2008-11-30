@@ -122,3 +122,8 @@ great idea):
 
 >>> pt({"None": "asdf"})
 u'<hr class="asdf" />\n'
+
+
+.. Local Variables:
+.. mode: rst
+.. End:

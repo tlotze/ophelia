@@ -48,6 +48,7 @@ time and code and documentation are of satisfactory quality.
 The wishlist:
 
 - zero-boilerplate creation of web sites inlcuding
+
   * hand-written XHTML pages, other input mark-up such as ReST
   * pages generated from JPEG, PNG and PDF files
   * overviews such as photo albums
@@ -57,6 +58,7 @@ The wishlist:
 - straight-forward form submission infrastructure
 
 - interfaces to:
+
   * WSGI servers
   * Apache/mod_python
   * Twisted Web
@@ -66,3 +68,8 @@ The wishlist:
 - cataloging, local search infrastructure (xapian)
 
 - easy setup using zc.buildout
+
+
+.. Local Variables:
+.. mode: rst
+.. End:

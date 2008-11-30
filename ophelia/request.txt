@@ -294,3 +294,8 @@ calculated from the body text:
 ['Content-Length', 'Content-Type']
 >>> request.compiled_headers["Content-Length"]
 '4'
+
+
+.. Local Variables:
+.. mode: rst
+.. End:
