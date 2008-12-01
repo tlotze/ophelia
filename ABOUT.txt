@@ -8,6 +8,9 @@ About Ophelia
 :Web home:
     http://www.thomas-lotze.de/en/software/ophelia/
 
+:Online documentation:
+    http://www.thomas-lotze.de/en/software/ophelia/doc/
+
 :PyPI page:
     http://pypi.python.org/pypi/ophelia/
 

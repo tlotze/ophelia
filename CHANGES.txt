@@ -1,5 +1,5 @@
-Change log for Ophelia
-======================
+Changes
+=======
 
 0.3.3 (unreleased)
 ------------------
