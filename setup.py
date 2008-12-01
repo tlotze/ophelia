@@ -21,7 +21,9 @@ For a continuously updated change log, see
 <https://svn.thomas-lotze.de/repos/public/Ophelia/trunk/CHANGES.txt>.
 """
 
-data_files = [("", glob.glob(project_path("*.txt")))]
+root_files = glob.glob(project_path("*.txt"))
+data_files = [("", [name for name in root_files
+                    if os.path.split(name)[1] != "index.txt"])]
 
 entry_points = {
     "console_scripts": [

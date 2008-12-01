@@ -1,0 +1,14 @@
+.. include:: ../ABOUT.txt
+.. include:: ../ROADMAP.txt
+.. include:: ../CHANGES.txt
+
+Copyright notice
+================
+
+.. literalinclude:: ../COPYRIGHT.txt
+.. literalinclude:: ../LICENSE.txt
+
+
+.. Local Variables:
+.. mode: rst
+.. End:

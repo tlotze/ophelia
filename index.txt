@@ -1,0 +1,26 @@
+Ophelia documentation contents
+==============================
+
+.. toctree::
+    :maxdepth: 2
+
+    README
+    ophelia/CONFIGURATION
+    ophelia/API
+
+    doc/unittests
+
+    doc/about
+
+
+Indices and tables
+==================
+
+- :ref:`genindex`
+- :ref:`modindex`
+- :ref:`search`
+
+
+.. Local Variables:
+.. mode: rst
+.. End:

@@ -1,9 +1,8 @@
-======================
 Change log for Ophelia
 ======================
 
 0.3.3 (unreleased)
-==================
+------------------
 
 Bug fixes:
   - file-specific context variables were not set during template evaluation
@@ -21,9 +20,12 @@ API:
   - optionally pre-fill ``response_headers`` namespace with response headers
     set earlier by the server environment
 
+Organization:
+  - added setup for generating HTML documentation using Sphinx
+
 
 0.3.2 (2008-01-08)
-==================
+------------------
 
 User-visible:
   - more helpful tracebacks for broken page templates
@@ -45,7 +47,7 @@ Organization:
 
 
 0.3.1 (2007-12-07)
-==================
+------------------
 
 User-visible:
   - tools: added the Metadata.mtime method which returns the current input
@@ -72,7 +74,7 @@ Organization:
 
 
 0.3 (2007-07-06)
-================
+----------------
 
 User-visible:
   - a WSGI application running Ophelia was added along with a basic
@@ -146,7 +148,7 @@ Organization:
 
 
 0.2 (2007-02-04)
-================
+----------------
 
 User-visible:
   - made template and script encodings and the index template name
@@ -215,7 +217,7 @@ Organization:
 
 
 0.1 (2006-07-23)
-================
+----------------
 
 initial "works for me" release
 

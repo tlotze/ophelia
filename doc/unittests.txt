@@ -1,0 +1,17 @@
+==========
+Unit tests
+==========
+
+.. toctree::
+    :maxdepth: 2
+    :glob:
+
+    ../ophelia/request
+    ../ophelia/input
+    ../ophelia/pagetemplate
+    ../ophelia/util
+
+
+.. Local Variables:
+.. mode: rst
+.. End:
