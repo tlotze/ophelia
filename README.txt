@@ -178,23 +178,6 @@ For the mod_python API, see
 For the Ophelia API and predefined script and template variables, see API.txt.
 
 
-Change log
-==========
-
-For a continuously updated change log, see
-<https://svn.thomas-lotze.de/repos/public/Ophelia/trunk/CHANGES.txt>.
-
-
-Contact
-=======
-
-Ophelia is written by Thomas Lotze. Please contact the author at
-<thomas@thomas-lotze.de> to provide feedback or suggestions on or
-contributions to Ophelia.
-
-See also <http://www.thomas-lotze.de/en/software/ophelia/>.
-
-
 .. Local Variables:
 .. mode: rst
 .. End:

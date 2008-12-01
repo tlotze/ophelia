@@ -13,7 +13,13 @@ from setuptools import setup, find_packages
 
 project_path = lambda *names: os.path.join(os.path.dirname(__file__), *names)
 
-longdesc = open(project_path("README.txt")).read()
+longdesc = open(project_path("README.txt")).read() + """
+Changes
+=======
+
+For a continuously updated change log, see
+<https://svn.thomas-lotze.de/repos/public/Ophelia/trunk/CHANGES.txt>.
+"""
 
 data_files = [("", glob.glob(project_path("*.txt")))]
 
