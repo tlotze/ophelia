@@ -17,16 +17,16 @@ title = "Ophelia example site"
 
 <p>
   This hypothetical Apache2 configuration would publish the example site at
-  its proper URL, .../Ophelia/ being the file system path to a copy of the
+  its proper URL, .../ophelia/ being the file system path to a copy of the
   Ophelia source:
 </p>
 
 <pre>
-Alias /software/ophelia/example .../Ophelia/doc/example/static
+Alias /software/ophelia/example .../ophelia/example/static
 &lt;Location "/software/ophelia/example"&gt;
     PythonInterpreter main_interpreter
-    PythonPath "['.../Ophelia'] + sys.path"
-    PythonOption template_root .../Ophelia/doc/example/ophelia_pages
+    PythonPath "['.../ophelia'] + sys.path"
+    PythonOption template_root .../ophelia/example/ophelia_pages
     PythonOption site http://www.thomas-lotze.de/software/ophelia/example
     PythonFixupHandler ophelia.modpython
 &lt;/Location&gt;
