@@ -9,6 +9,7 @@ Ophelia documentation contents
     ophelia/API
 
     doc/interfaces
+    doc/modules
     doc/unittests
 
     doc/about
