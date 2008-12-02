@@ -1,9 +1,17 @@
 .. include:: ../ABOUT.txt
-.. include:: ../ROADMAP.txt
-.. include:: ../CHANGES.txt
 
-Copyright notice
-================
+
+====
+
+
+.. toctree::
+
+    ../ROADMAP.txt
+    ../CHANGES.txt
+
+
+====
+
 
 .. literalinclude:: ../COPYRIGHT.txt
 .. literalinclude:: ../LICENSE.txt

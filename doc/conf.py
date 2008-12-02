@@ -61,7 +61,7 @@ release = '0.3.3'
 #today_fmt = '%B %d, %Y'
 
 # List of documents that shouldn't be included in the build.
-unused_docs = ['ABOUT', 'CHANGES', 'COPYRIGHT', 'LICENSE', 'ROADMAP']
+unused_docs = ['ABOUT', 'COPYRIGHT', 'LICENSE']
 
 # List of directories, relative to source directory, that shouldn't be searched
 # for source files.

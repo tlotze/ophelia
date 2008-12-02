@@ -1,3 +1,4 @@
+=======
 Roadmap
 =======
 
@@ -12,7 +13,7 @@ Except for the 0.x series, API backwards compatibility within each major
 release series will be given.
 
 0.4
----
+===
 
 - turn ophelia into a namespace package, break the code into several eggs
 - split the request object into request, response and a handler
@@ -21,7 +22,7 @@ release series will be given.
 - several backwards-incompatible clean-ups
 
 0.4 series
-----------
+==========
 
 - views and traversers for using Ophelia inside Zope3 and Grok applications
 - a syntax checker for input files
@@ -30,7 +31,7 @@ release series will be given.
 - RSS reading done right
 
 0.5
----
+===
 
 - use more Zope3 technology: i18n, content providers, events, local components
 - more flexible input system, real integration of ReST, possibly image views
@@ -40,7 +41,7 @@ release series will be given.
 - data sources outside the file system, such as http or svn resources
 
 1.0
----
+===
 
 The state in which the wishlist has been implemented completely for the first
 time and code and documentation are of satisfactory quality.
