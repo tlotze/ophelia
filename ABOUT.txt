@@ -6,10 +6,10 @@ About Ophelia
     `Thomas Lotze <thomas@thomas-lotze.de>`_
 
 :Web home:
-    http://www.thomas-lotze.de/en/software/ophelia/
+    http://thomas-lotze.de/en/software/ophelia/
 
 :Online documentation:
-    http://www.thomas-lotze.de/en/software/ophelia/doc/
+    http://thomas-lotze.de/en/software/ophelia/doc/
 
 :PyPI page:
     http://pypi.python.org/pypi/ophelia/
