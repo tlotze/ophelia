@@ -33,8 +33,6 @@ be changed during traversal. However, the template root path is normalized by
 os.path.abspath and the site root URI is appended a '/' if it doesn't end with
 one yet:
 
->>> from ophelia.util import Namespace
-
 >>> input_stream = "mock input stream"
 >>> request = Request("example/somepage.html",
 ...                   "/tmp//nonexistent/",

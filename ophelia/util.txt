@@ -5,8 +5,6 @@ Ophelia utilities
 Namespaces
 ==========
 
->>> from ophelia.util import Namespace
-
 Handling a request involves namespaces for a number of things, e.g. for the
 page template context, or the request environment variables. This need is in
 principle served by plain Python dictionaries. However, it sometimes feels
@@ -14,6 +12,7 @@ more convenient and natural to access a particular namespace member as an
 object attribute rather than by a key reference. Namespaces are Python
 dictionaries which expose their values as attributes:
 
+>>> from ophelia.util import Namespace
 >>> Namespace()
 {}
 >>> ns = Namespace(foo="bar")
@@ -44,16 +43,11 @@ Dictionary methods work as expected, e.g. update():
 Unicode dates and times
 =======================
 
->>> import locale
->>> import datetime
->>> from ophelia.util import strftime
-
-
 Ophelia provides its own version of strftime which always returns unicode.
-
-Otherwise, it works the same as the time.strftime function: With only a format
+It works the same as the time.strftime function otherwise. With only a format
 string given, it formats the current time:
 
+>>> from ophelia.util import strftime
 >>> strftime("%c")
 u'...'
 
@@ -63,8 +57,10 @@ first place. We'd like to try it out but we cannot be sure of the availability
 of any particular interesting locale. Therefore we use a boring one to
 demonstrate the call at all:
 
+>>> import locale
 >>> locale.setlocale(locale.LC_ALL, "C")
 'C'
+>>> import datetime
 >>> strftime("%B", datetime.date(2007, 3, 1))
 u'March'
 

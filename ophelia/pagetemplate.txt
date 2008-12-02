@@ -77,14 +77,13 @@ representation:
 
 >>> import sys
 >>> from zope.exceptions.exceptionformatter import print_exception
-
 >>> pt = PageTemplate("""<h1 tal:content="title" />""", "/tmp/asdf")
 >>> try:
 ...     pt()
 ... except Exception:
 ...     print_exception(file=sys.stdout, *sys.exc_info())
 Traceback (most recent call last):
-...
+   ...
    - /tmp/asdf
    - Line 1, Column 0
    - Expression: <PathExpr standard:'title'>
@@ -96,9 +95,6 @@ If the template can't be compiled, the source file path is included along with
 detailed information on what error caused the first failure and where in the
 template text the problem occurred:
 
->>> import sys
->>> from zope.exceptions.exceptionformatter import print_exception
-
 >>> try:
 ...     pt = PageTemplate("""\
 ...     </body>
@@ -107,7 +103,7 @@ template text the problem occurred:
 ... except Exception:
 ...     print_exception(file=sys.stdout, *sys.exc_info())
 Traceback (most recent call last):
-...
+   ...
    - /tmp/asdf
    - Warning: Compilation failed
    - Warning: <class 'zope.tal.htmltalparser.NestingError'>:
@@ -130,7 +126,7 @@ not the line number reported by the warning) will be shifted accordingly:
 ... except Exception:
 ...     print_exception(file=sys.stdout, *sys.exc_info())
 Traceback (most recent call last):
-...
+   ...
    - /tmp/asdf
    - Warning: Compilation failed
    - Warning: <class 'zope.tal.taldefs.TALError'>:
@@ -154,7 +150,7 @@ pointer to be shifted by the row offset:
 ... except Exception:
 ...     print_exception(file=sys.stdout, *sys.exc_info())
 Traceback (most recent call last):
-...
+   ...
    - /tmp/asdf
    - Warning: Compilation failed
    - Warning: <class 'zope.tal.taldefs.TALError'>:
