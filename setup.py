@@ -13,8 +13,8 @@ from setuptools import setup, find_packages
 
 project_path = lambda *names: os.path.join(os.path.dirname(__file__), *names)
 
-longdesc = (open(project_path("README.txt")).read() +
-            open(project_path("ABOUT.txt")).read())
+longdesc = "\n\n".join((open(project_path("README.txt")).read(),
+                        open(project_path("ABOUT.txt")).read()))
 
 root_files = glob.glob(project_path("*.txt"))
 data_files = [("", [name for name in root_files
