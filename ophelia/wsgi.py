@@ -6,13 +6,12 @@ this application.
 """
 
 import sys
-import os.path
 
 import zope.exceptions.exceptionformatter
 
 import ophelia.request
 
-
+
 class Application(object):
     """Ophelia's WSGI application.
     """
@@ -77,7 +76,7 @@ class Application(object):
         </html>
         """.replace(" ", "")
 
-
+
 def wsgiref_server(config_file="", section="DEFAULT"):
     import optparse
     import ConfigParser
