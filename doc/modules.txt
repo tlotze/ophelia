@@ -2,68 +2,18 @@
 Modules
 =======
 
-:mod:`ophelia.request`
-======================
+.. autosummary::
+    :toctree: ./
 
-.. automodule:: ophelia.request
-    :members:
-    :undoc-members:
-
-:mod:`ophelia.input`
-====================
-
-.. automodule:: ophelia.input
-    :members:
-    :undoc-members:
-
-:mod:`ophelia.pagetemplate`
-===========================
-
-.. automodule:: ophelia.pagetemplate
-    :members:
-    :undoc-members:
-
-:mod:`ophelia.util`
-===================
-
-.. automodule:: ophelia.util
-    :members:
-    :undoc-members:
-
-:mod:`ophelia.dump`
-===================
-
-.. automodule:: ophelia.dump
-    :members:
-    :undoc-members:
-
-:mod:`ophelia.wsgi`
-===================
-
-.. automodule:: ophelia.wsgi
-    :members:
-    :undoc-members:
-
-:mod:`ophelia.modpython`
-========================
-
-.. automodule:: ophelia.modpython
-    :members:
-    :undoc-members:
-
-:mod:`ophelia.tool.metadata`
-============================
-
-.. automodule:: ophelia.tool.metadata
-    :members:
-    :undoc-members:
-
-:mod:`ophelia.tool.navigation`
-==============================
-
-.. automodule:: ophelia.tool.navigation
-    :members:
-    :undoc-members:
+    ophelia.request
+    ophelia.input
+    ophelia.pagetemplate
+    ophelia.util
+    ophelia.dump
+    ophelia.wsgi
+    ophelia.modpython
+    ophelia.tool.metadata
+    ophelia.tool.navigation
 
 
 .. Local Variables:

@@ -1,13 +1,17 @@
-# Copyright (c) 2006-2008 Thomas Lotze
+# Copyright (c) 2006-2009 Thomas Lotze
 # See also LICENSE.txt
+
+try:
+    from mod_python import apache, util
+except:
+    # Allow the sphinx autosummary extension to import this module.
+    pass
 
 import sys
 import os.path
 import urlparse
 
 import zope.exceptions.exceptionformatter
-
-from mod_python import apache, util
 
 from ophelia.request import Request, NotFound, Redirect
 from ophelia.util import Namespace
