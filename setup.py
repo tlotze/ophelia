@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Copyright (c) 2006-2008 Thomas Lotze
+# Copyright (c) 2006-2009 Thomas Lotze
 # See also LICENSE.txt
 
 """Ophelia builds a web site from TAL templates with zero code repetition.
@@ -57,7 +57,7 @@ setup(name="ophelia",
       classifiers=classifiers,
       author="Thomas Lotze",
       author_email="thomas@thomas-lotze.de",
-      url="http://www.thomas-lotze.de/en/software/ophelia/",
+      url="http://thomas-lotze.de/en/software/ophelia/",
       license="ZPL 2.1",
       packages=find_packages(),
       entry_points=entry_points,

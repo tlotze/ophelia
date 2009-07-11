@@ -3,13 +3,13 @@ About Ophelia
 =============
 
 :Author:
-    `Thomas Lotze <thomas@thomas-lotze.de>`_
+    `Thomas Lotze (thomas@thomas-lotze.de, http://thomas-lotze.de/)
 
 :Web home:
     http://thomas-lotze.de/en/software/ophelia/
 
 :Online documentation:
-    http://thomas-lotze.de/en/software/ophelia/doc/
+    http://packages.python.org/ophelia/
 
 :PyPI page:
     http://pypi.python.org/pypi/ophelia/
