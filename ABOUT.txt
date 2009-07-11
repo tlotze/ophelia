@@ -3,7 +3,7 @@ About Ophelia
 =============
 
 :Author:
-    `Thomas Lotze (thomas@thomas-lotze.de, http://thomas-lotze.de/)
+    Thomas Lotze (thomas@thomas-lotze.de, http://thomas-lotze.de/)
 
 :Web home:
     http://thomas-lotze.de/en/software/ophelia/
