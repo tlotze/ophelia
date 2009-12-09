@@ -289,10 +289,14 @@ class IRequestTraversal(zope.interface.Interface):
         Returns nothing.
         """
 
-    def process_file(file_path, insert=False):
+    def process_file(file_path, insert=False, context=None):
         """Process an input file that may consist of script and template.
 
         file_path: str, absolute file system path to the file.
+        insert: bool, whether to insert the file context created into the
+                      content stack
+        context: dict, used as the script execution context instead of
+                       self.context (if not None)
 
         Returns (file context namespace, StopTraversal or None).
         """

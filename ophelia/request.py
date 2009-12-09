@@ -185,7 +185,7 @@ class Request(object):
         if stop_traversal:
             del self.tail[:]
 
-    def process_file(self, file_path, insert=False):
+    def process_file(self, file_path, insert=False, context=None):
         __traceback_info__ = "Processing " + file_path
 
         # get script and template
@@ -207,19 +207,21 @@ class Request(object):
         # so any script that might be calling this method can rely on those
         stop_traversal = None
         if script:
-            old_predef_vars = dict((key, self.context.get(key))
+            if context is None:
+                context = self.context
+            old_predef_vars = dict((key, context.get(key))
                                    for key in file_context)
-            self.context.update(file_context)
+            context.update(file_context)
             try:
                 try:
-                    exec script in self.context
+                    exec script in context
                 except StopTraversal, e:
                     stop_traversal = e
                     if  e.text is not None:
                         file_context.__text__ = e.text
                         file_context.__template__.write(e.text)
             finally:
-                self.context.update(old_predef_vars)
+                context.update(old_predef_vars)
 
         # collect the macros
         self.macros.update(file_context.__template__.macros)
