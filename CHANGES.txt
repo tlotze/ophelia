@@ -5,6 +5,10 @@ Changes
 0.4 (unreleased)
 ================
 
+API:
+  - Added an optional parameter to ``process_file`` to allow executing the
+    script in a custom namespace.
+
 
 0.3.3 (2008-12-02)
 ==================
