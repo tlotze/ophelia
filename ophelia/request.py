@@ -70,6 +70,8 @@ class Request(object):
     # more information in self.path.
     next_name = None
 
+    xml_version = '1.1' # XXX temporary solution
+
     def __init__(self, path, template_root, site, **env):
         self.path = path
         self.tail = path.split('/')
@@ -260,7 +262,8 @@ class Request(object):
 
         self.content = self.innerslot
         if not self.immediate_result:
-            self.content = """<?xml version="1.1" encoding="%s" ?>\n%s""" % (
+            self.content = """<?xml version="%s" encoding="%s" ?>\n%s""" % (
+                self.xml_version,
                 self.response_encoding,
                 self.content.encode(self.response_encoding))
 
