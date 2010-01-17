@@ -1,4 +1,4 @@
-# Copyright (c) 2006-2007 Thomas Lotze
+# Copyright (c) 2006-2010 Thomas Lotze
 # See also LICENSE.txt
 
 from urlparse import urljoin
@@ -84,6 +84,9 @@ class Navigation(object):
 
         def display(uri, deeper):
             for href, title in self.menu[uri].entry_pairs:
+                if not title:
+                    lines.append("</dl><dl>")
+                    continue
                 lines.append("<dt>%s</dt>" %
                              self.conditional_link(href, title))
                 if deeper and href in self.menu:

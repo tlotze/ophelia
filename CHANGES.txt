@@ -5,6 +5,10 @@ Changes
 0.4 (unreleased)
 ================
 
+User-visible:
+  - The navigation tool now allows splitting menus into blocks by inserting
+    menu entries with empty titles.
+
 API:
   - Added an optional parameter to ``process_file`` to allow executing the
     script in a custom namespace.
