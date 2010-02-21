@@ -16,6 +16,10 @@ API:
   - Added the ``xml_version`` attribute to the request as a temporary way to
     achieve an XML declaration that says "version=1.0", needed by Atom feeds.
 
+Organization:
+  - simplified the buildout configuration due to new versions of Sphinx and
+    tl.buildout_apache
+
 
 0.3.3 (2008-12-02)
 ==================
