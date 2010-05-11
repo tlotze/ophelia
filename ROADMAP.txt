@@ -48,7 +48,7 @@ time and code and documentation are of satisfactory quality.
 
 The wishlist:
 
-- zero-boilerplate creation of web sites inlcuding
+- zero-boilerplate creation of web sites including
 
   * hand-written XHTML pages, other input mark-up such as ReST
   * pages generated from JPEG, PNG and PDF files
