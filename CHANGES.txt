@@ -16,6 +16,12 @@ API:
   - Added the ``xml_version`` attribute to the request as a temporary way to
     achieve an XML declaration that says "version=1.0", needed by Atom feeds.
 
+Code:
+  - Store the current request and file context in thread-local stacks instead
+    of looking them up by inspecting the execution frame stack. Inspecting the
+    stack was a huge time sink, responsible for 75% of a request's
+    ``__call__`` time on one real-world site.
+
 Organization:
   - simplified the buildout configuration due to new versions of Sphinx and
     tl.buildout_apache

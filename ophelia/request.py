@@ -1,8 +1,9 @@
-# Copyright (c) 2006-2008 Thomas Lotze
+# Copyright (c) 2006-2010 Thomas Lotze
 # See also LICENSE.txt
 
+import functools
 import os.path
-import inspect
+import threading
 import urlparse
 
 import zope.interface
@@ -13,9 +14,6 @@ import ophelia.input
 import ophelia.pagetemplate
 from ophelia.util import Namespace
 
-
-########################
-# exceptions and classes
 
 class StopTraversal(Exception):
     """Flow control device for scripts to stop directory traversal."""
@@ -42,9 +40,41 @@ class Redirect(Exception):
             parts[2] = urlparse.urlsplit(path)[2]
         self.uri = urlparse.urlunsplit(parts)
 
-
-#########
-# request
+
+class ThreadContext(threading.local):
+
+    def __init__(self):
+        self.requests = []
+        self.file_contexts = []
+
+
+_thread_context = ThreadContext()
+
+
+def push_request(func):
+    @functools.wraps(func)
+    def wrapper(request, *args, **kwargs):
+        _thread_context.requests.append(request)
+        try:
+            return func(request, *args, **kwargs)
+        finally:
+            _thread_context.requests.pop()
+    return wrapper
+
+
+def get_request():
+    try:
+        return _thread_context.requests[-1]
+    except IndexError:
+        raise LookupError("Could not find request.")
+
+
+def get_file_context():
+    try:
+        return _thread_context.file_contexts[-1]
+    except IndexError:
+        raise LookupError("Could not find file context namespace.")
+
 
 class Request(object):
     """Ophelia's request object.
@@ -118,6 +148,7 @@ class Request(object):
         self.traverse(**context)
         return self.build()
 
+    @push_request
     def traverse(self, **context):
         self.context.update(context)
         self.history = [self.current]
@@ -214,6 +245,7 @@ class Request(object):
             old_predef_vars = dict((key, context.get(key))
                                    for key in file_context)
             context.update(file_context)
+            _thread_context.file_contexts.append(file_context)
             try:
                 try:
                     exec script in context
@@ -224,6 +256,7 @@ class Request(object):
                         file_context.__template__.write(e.text)
             finally:
                 context.update(old_predef_vars)
+                _thread_context.file_contexts.pop()
 
         # collect the macros
         self.macros.update(file_context.__template__.macros)
@@ -246,6 +279,7 @@ class Request(object):
         self.build_headers()
         return self.compiled_headers, self.content
 
+    @push_request
     def build_content(self):
         while self.stack:
             # get_file_context() will find the file context by its name
@@ -267,6 +301,7 @@ class Request(object):
                 self.response_encoding,
                 self.content.encode(self.response_encoding))
 
+    @push_request
     def build_headers(self):
         self.compiled_headers = {}
         tales_context = TALESEngine.getContext(self.tales_namespace())
@@ -285,24 +320,3 @@ class Request(object):
         file_context, stop_traversal = self.process_file(
             os.path.join(self.dir_path, name))
         return file_context.__template__(self.tales_namespace(file_context))
-
-
-###########
-# functions
-
-def get_request():
-    for frame_record in inspect.stack():
-        candidate = frame_record[0].f_locals.get("self")
-        if isinstance(candidate, Request):
-            return candidate
-    else:
-        raise LookupError("Could not find request.")
-
-
-def get_file_context():
-    for frame_record in inspect.stack():
-        candidate = frame_record[0].f_locals.get("file_context")
-        if isinstance(candidate, Namespace):
-            return candidate
-    else:
-        raise LookupError("Could not find file context namespace.")
