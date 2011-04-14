@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Copyright (c) 2006-2009 Thomas Lotze
+# Copyright (c) 2006-2011 Thomas Lotze
 # See also LICENSE.txt
 
 """Ophelia builds a web site from TAL templates with zero code repetition.
@@ -50,7 +50,7 @@ classifiers = [
     ]
 
 setup(name="ophelia",
-      version="0.4dev",
+      version="0.3.4",
       description=__doc__.strip(),
       long_description=longdesc,
       keywords="web template xhtml tal",

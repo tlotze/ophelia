@@ -2,8 +2,8 @@
 Changes
 =======
 
-0.4 (unreleased)
-================
+0.3.4 (2011-04-14)
+==================
 
 User-visible:
   - The navigation tool now allows splitting menus into blocks by inserting
