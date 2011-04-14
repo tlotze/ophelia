@@ -45,6 +45,12 @@ class Application(object):
             exc_info = sys.exc_info()
             msg = "".join(zope.exceptions.exceptionformatter.format_exception(
                 with_filenames=True, *exc_info))
+            if isinstance(msg, unicode):
+                error_encoding = 'unicode_escape'
+            else:
+                error_encoding = 'string_escape'
+            msg = '\n'.join(line.encode(error_encoding)
+                            for line in msg.splitlines())
             text = "<pre>\n%s\n</pre>" % msg
             self.report_exception(env, msg)
         else:
