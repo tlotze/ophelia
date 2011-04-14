@@ -106,7 +106,7 @@ Traceback (most recent call last):
    ...
    - /tmp/asdf
    - Warning: Compilation failed
-   - Warning: <class 'zope.tal.htmltalparser.NestingError'>:
+   - Warning: zope.tal.htmltalparser.NestingError:
               No tags are open to match </body>, at line 1, column 5
    1:     </body>
    ->      ^
@@ -129,7 +129,7 @@ Traceback (most recent call last):
    ...
    - /tmp/asdf
    - Warning: Compilation failed
-   - Warning: <class 'zope.tal.taldefs.TALError'>:
+   - Warning: zope.tal.taldefs.TALError:
               bad TAL attribute: 'asdf', at line 2, column 5
    6:     <body>
    7:     <h1 tal:asdf="title" />
@@ -153,7 +153,7 @@ Traceback (most recent call last):
    ...
    - /tmp/asdf
    - Warning: Compilation failed
-   - Warning: <class 'zope.tal.taldefs.TALError'>:
+   - Warning: zope.tal.taldefs.TALError:
               bad TAL attribute: 'asdf', at line 1, column 5
    6: .......    <h1 tal:asdf="title" />
    ->             ^
