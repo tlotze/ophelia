@@ -1,4 +1,4 @@
-# Copyright (c) 2007 Thomas Lotze
+# Copyright (c) 2011 Thomas Lotze
 # See also LICENSE.txt
 
 """A WSGI application running Ophelia, and an optional wsgiref server running
@@ -46,11 +46,7 @@ class Application(object):
             msg = "".join(zope.exceptions.exceptionformatter.format_exception(
                 with_filenames=True, *exc_info))
             if isinstance(msg, unicode):
-                error_encoding = 'unicode_escape'
-            else:
-                error_encoding = 'string_escape'
-            msg = '\n'.join(line.encode(error_encoding)
-                            for line in msg.splitlines())
+                msg = msg.encode('utf-8')
             text = "<pre>\n%s\n</pre>" % msg
             self.report_exception(env, msg)
         else:
