@@ -11,7 +11,6 @@ Modules
     ophelia.util
     ophelia.dump
     ophelia.wsgi
-    ophelia.modpython
     ophelia.tool.metadata
     ophelia.tool.navigation
 

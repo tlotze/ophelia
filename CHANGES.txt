@@ -5,6 +5,8 @@ Changes
 0.4 (unreleased)
 ================
 
+- Dropped anything related to Apache and mod_python, continue WSGI-only.
+
 
 0.3.4 (2011-04-14)
 ==================

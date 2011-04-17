@@ -1,4 +1,4 @@
-# Copyright (c) 2007-2008 Thomas Lotze
+# Copyright (c) 2007-2011 Thomas Lotze
 # See also LICENSE.txt
 
 """Public interfaces used in Ophelia.
@@ -35,10 +35,8 @@ class IRequestAPI(zope.interface.Interface):
     env = zope.interface.Attribute(
         """Compound environment namespace.
 
-        - site configuration options (PythonOption setting if running
-          mod_python, application configuration if using WSGI)
+        - site configuration options (WSGI application configuration)
         - the CGI or WSGI environment variables passed by the server
-        - if running mod_python, the Apache request object as apache_request
         - must contain the ``wsgi.input`` variable
         - may contain the ``ophelia.response_headers`` namespace of response
           headers already set by the server environment

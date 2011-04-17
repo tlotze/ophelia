@@ -14,20 +14,3 @@ title = "Ophelia example site"
   and <a href="foo/baz.html">foo/baz</a> pages as well as the
   <a href="asdf/">asdf</a> folder.
 </p>
-
-<p>
-  This hypothetical Apache2 configuration would publish the example site at
-  its proper URL, .../ophelia/ being the file system path to a copy of the
-  Ophelia source:
-</p>
-
-<pre>
-Alias /software/ophelia/example .../ophelia/example/static
-&lt;Location "/software/ophelia/example"&gt;
-    PythonInterpreter main_interpreter
-    PythonPath "['.../ophelia'] + sys.path"
-    PythonOption template_root .../ophelia/example/ophelia_pages
-    PythonOption site http://www.thomas-lotze.de/software/ophelia/example
-    PythonFixupHandler ophelia.modpython
-&lt;/Location&gt;
-</pre>

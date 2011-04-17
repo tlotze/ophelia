@@ -1,10 +1,6 @@
 [buildout]
 extends = base.cfg
 
-[apachesite]
-listen = 127.0.0.1:1080
-servername = localhost:1080
-
 [ophelia]
 host = 127.0.0.1
 port = 2080

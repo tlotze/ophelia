@@ -5,8 +5,8 @@ Overview of Ophelia
 Ophelia creates XHTML pages from templates written in TAL, the Zope Template
 Attribute Language. It is designed to reduce code repetition to zero.
 
-The package contains both a WSGI application running Ophelia as well as a
-request handler for mod_python, the Python module for the Apache2 web server.
+Ophelia is a WSGI application. The package includes a wsgiref-based server
+configured to run Ophelia.
 
 Documentation files cited below can be found inside the package directory,
 along with a number of doctests for the modules.
@@ -17,10 +17,6 @@ Entry points
 
 After you installed Ophelia and wrote some templates, how can you make it
 render web pages?
-
-Use Ophelia with Apache
-    The Python package contains a module ``ophelia.modpython`` that provides a
-    request handler for the mod_python Apache module.
 
 Use Ophelia as a WSGI application
     Ophelia defines an application class compliant with the WSGI standard,
@@ -144,22 +140,6 @@ according to :RFC:`3986` on generic URI syntax, and removes empty path
 segments which are not at the end of the path. If the URL is changed by these
 rules, Ophelia redirects the browser accordingly.
 
-The mod_python handler
-----------------------
-
-Apache2 processes a request in phases, each of which can be handled by modules
-such as mod_python. Ophelia provides a mod_python handler for the content
-generation phase. If a requested URL is configured to be handled by Ophelia,
-the handler tries to find appropriate templates in the file system, and build
-a page from them.
-
-Ophelia's mod_python handler never causes a File Not Found HTTP error.
-Instead, it passes control back to Apache and other modules if it finds it
-can't build a particular resource. Apache falls back to serving static content
-from disk in that case. Ophelia can thus be installed on top of a static site
-to handle just those requests for which templates exist in the template
-directory.
-
 
 Languages and APIs used in templates and scripts
 ================================================
@@ -171,9 +151,6 @@ For Zope page templates, see
 
 For WSGI, the web server gateway interface, see
 <http://www.python.org/dev/peps/pep-0333/>.
-
-For the mod_python API, see
-<http://www.modpython.org/live/current/doc-html/>.
 
 For the Ophelia API and predefined script and template variables, see API.txt.
 
