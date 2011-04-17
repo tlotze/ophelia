@@ -10,6 +10,8 @@ Changes
 - Dropped support for Python 2.4. We now assume that the wsgiref module is a
   part of the Python standard library so the egg's ``wsgiref`` extra is gone.
 
+- Made sure that HTTP response headers are of type ``str``.
+
 
 0.3.4 (2011-04-14)
 ==================
