@@ -8,6 +8,8 @@ Changes
 - Moved the project to the Mercurial version control system with new Bitbucket
   home at <https://bitbucket.org/tlotze/ophelia/>.
 
+- Made sure that HTTP response headers are of type ``str``.
+
 
 0.3.4 (2011-04-14)
 ==================

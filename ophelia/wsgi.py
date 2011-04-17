@@ -52,7 +52,9 @@ class Application(object):
         else:
             status = "200 OK"
 
-        start_response(status, response_headers.items(), exc_info)
+        response_headers = [(key, str(value))
+                            for key, value in response_headers.iteritems()]
+        start_response(status, response_headers, exc_info)
 
         if env["REQUEST_METHOD"] == "GET":
             if body is None:
