@@ -25,8 +25,7 @@ Use Ophelia as a WSGI application
     might care to use.
 
     The wsgiref-based server is installed as the ``ophelia-wsgiref``
-    executable if Ophelia is installed as an egg with the "wsgiref" extra
-    enabled. Its script entry point is ``ophelia.wsgi.wsgiref_server``.
+    executable. Its script entry point is ``ophelia.wsgi.wsgiref_server``.
 
 Dump single pages to stdout
     An executable which is always installed with the ophelia egg is
