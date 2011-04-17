@@ -1,4 +1,4 @@
-# Copyright (c) 2011 Thomas Lotze
+# Copyright (c) 2007-2011 Thomas Lotze
 # See also LICENSE.txt
 
 """A WSGI application running Ophelia, and an optional wsgiref server running
