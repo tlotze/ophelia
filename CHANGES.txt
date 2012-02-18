@@ -5,6 +5,9 @@ Changes
 0.4 (unreleased)
 ================
 
+- Use Python's own ``doctest`` module for tests, got rid of using
+  zope.testing's deprecated fork of it and thus the zope.testing dependency.
+
 
 0.3.5 (2012-02-18)
 ==================

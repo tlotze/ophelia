@@ -1,14 +1,13 @@
-# Copyright (c) 2007-2008 Thomas Lotze
+# Copyright (c) 2007-2012 Thomas Lotze
 # See also LICENSE.txt
 
+import doctest
 import os
 import os.path
 import unittest
-from zope.testing import doctest
 
 
 flags = (doctest.ELLIPSIS |
-         doctest.INTERPRET_FOOTNOTES |
          doctest.NORMALIZE_WHITESPACE |
          doctest.REPORT_NDIFF)
 

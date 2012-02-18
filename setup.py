@@ -36,7 +36,7 @@ install_requires = [
     ]
 
 extras_require = {
-    "test": ["zope.testing"],
+    "test": [],
     "wsgiref": ["wsgiref"],
     }
 
