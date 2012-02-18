@@ -2,8 +2,8 @@
 Changes
 =======
 
-0.4 (unreleased)
-================
+0.3.5 (2012-02-18)
+==================
 
 - Moved the project to the Mercurial version control system with new Bitbucket
   home at <https://bitbucket.org/tlotze/ophelia/>.
