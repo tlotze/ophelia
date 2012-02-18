@@ -14,14 +14,14 @@ About Ophelia
 :PyPI page:
     http://pypi.python.org/pypi/ophelia/
 
-:Subversion home:
-    https://svn.thomas-lotze.de/repos/public/Ophelia/
+:Issue tracker:
+    https://bitbucket.org/tlotze/ophelia/issues/
 
-:Subversion web view:
-    http://svn.thomas-lotze.de/Ophelia/
+:Source code:
+    https://bitbucket.org/tlotze/ophelia/
 
 :Current change log:
-    https://svn.thomas-lotze.de/repos/public/Ophelia/trunk/CHANGES.txt
+    https://bitbucket.org/tlotze/ophelia/raw/tip/CHANGES.txt
 
 
 .. Local Variables:

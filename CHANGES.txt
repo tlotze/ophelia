@@ -5,6 +5,9 @@ Changes
 0.4 (unreleased)
 ================
 
+- Moved the project to the Mercurial version control system with new Bitbucket
+  home at <https://bitbucket.org/tlotze/ophelia/>.
+
 
 0.3.4 (2011-04-14)
 ==================
