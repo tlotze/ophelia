@@ -10,6 +10,12 @@ Changes
 
 - Made sure that HTTP response headers are of type ``str``.
 
+- Added a method ``MetaData.header_date`` that formats a date in RFC 2822
+  format and C locale regardless of the currently active locale. Also format
+  the expires date in the C locale always. This allows setting up web sites
+  with a non-C locale without risking non-ASCII characters in HTTP headers,
+  and non-english month names appearing in RFC 2822 dates more generally.
+
 
 0.3.4 (2011-04-14)
 ==================
