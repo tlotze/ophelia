@@ -18,12 +18,12 @@ HEX_ENCODER = codecs.getencoder("hex_codec")
 def c_locale(function):
     # XXX implement as context manager when 2.4 support has been dropped
     def wrapper(*args, **kw):
-        current_locale = locale.getlocale()
-        locale.setlocale(locale.LC_ALL, 'C')
+        current_locale = locale.getlocale(locale.LC_TIME)
+        locale.setlocale(locale.LC_TIME, 'C')
         try:
             return function(*args, **kw)
         finally:
-            locale.setlocale(locale.LC_ALL, current_locale)
+            locale.setlocale(locale.LC_TIME, current_locale)
     return wrapper
 
 
