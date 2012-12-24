@@ -18,6 +18,7 @@ def test_suite():
                              package="ophelia",
                              optionflags=flags,
                              )
-        for filename in sorted(os.listdir(os.path.dirname(__file__)))
+        for filename in sorted(
+                os.listdir(os.path.dirname(os.path.dirname(__file__))))
         if filename.endswith(".txt")
         ])
