@@ -53,8 +53,7 @@ by TALES expressions, contains:
   - modules
   - loop
 
-  For documentation, see
-  <http://www.zope.org/Documentation/Books/ZopeBook/2_6Edition/AppendixC.stx>.
+  For documentation, see <http://wiki.zope.org/ZPT/TAL>.
 
 * variables added by Ophelia
 

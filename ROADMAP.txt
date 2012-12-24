@@ -36,7 +36,7 @@ post-0.5
 - more flexible input system, real integration of ReST, possibly image views
 - directory listings
 - internal caching of processed information, especially when using docutils
-- data sources outside the file system, such as http or svn resources
+- data sources outside the file system, such as http or vcs resources
 
 1.0
 ===

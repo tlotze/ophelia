@@ -14,14 +14,20 @@ About Ophelia
 :PyPI page:
     http://pypi.python.org/pypi/ophelia/
 
-:Subversion home:
-    https://svn.thomas-lotze.de/repos/public/Ophelia/
+:Issue tracker:
+    https://bitbucket.org/tlotze/ophelia/issues/
 
-:Subversion web view:
-    http://svn.thomas-lotze.de/Ophelia/
+:Source code:
+    https://bitbucket.org/tlotze/ophelia/
 
 :Current change log:
-    https://svn.thomas-lotze.de/repos/public/Ophelia/trunk/CHANGES.txt
+    https://bitbucket.org/tlotze/ophelia/raw/tip/CHANGES.txt
+
+:Support the project:
+   .. image:: flattr-badge-large.png
+       :alt: Flattr this
+       :target:
+          http://flattr.com/thing/515106/Ophelia-build-web-sites-from-templates-with-zero-code-repetition
 
 
 .. Local Variables:

@@ -76,7 +76,7 @@ unused_docs = ['ABOUT', 'COPYRIGHT', 'LICENSE']
 
 # List of directories, relative to source directory, that shouldn't be searched
 # for source files.
-exclude_trees = ['doc/html', 'build', 'parts', dist.name+'.egg-info']
+exclude_trees = ['build', 'parts', dist.name+'.egg-info', 'example', '.hg']
 
 # The reST default role (used for this markup: `text`) to use for all documents.
 #default_role = None
@@ -122,7 +122,7 @@ html_style = 'default.css'
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".
-html_static_path = ['static']
+#html_static_path = ['static']
 
 # If not '', a 'Last updated on:' timestamp is inserted at every page bottom,
 # using the given strftime format.
@@ -133,7 +133,10 @@ html_static_path = ['static']
 #html_use_smartypants = True
 
 # Custom sidebar templates, maps document names to template names.
-#html_sidebars = {}
+html_sidebars = {
+    '**': ['project-links.html', 'localtoc.html', 'relations.html',
+           'sourcelink.html', 'searchbox.html'],
+}
 
 # Additional templates that should be rendered to pages, maps page names to
 # template names.

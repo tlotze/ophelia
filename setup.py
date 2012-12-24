@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Copyright (c) 2006-2011 Thomas Lotze
+# Copyright (c) 2006-2012 Thomas Lotze
 # See also LICENSE.txt
 
 """Ophelia builds a web site from TAL templates with zero code repetition.
@@ -36,7 +36,7 @@ install_requires = [
     ]
 
 extras_require = {
-    "test": ["zope.testing"],
+    "test": [],
     }
 
 classifiers = [

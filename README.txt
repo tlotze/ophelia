@@ -145,8 +145,8 @@ Languages and APIs used in templates and scripts
 
 For the Python language, see <http://docs.python.org/>.
 
-For Zope page templates, see
-<http://www.zope.org/Documentation/Books/ZopeBook/2_6Edition/AppendixC.stx>.
+For the Template attribute language, see
+<http://wiki.zope.org/ZPT/TAL>.
 
 For WSGI, the web server gateway interface, see
 <http://www.python.org/dev/peps/pep-0333/>.

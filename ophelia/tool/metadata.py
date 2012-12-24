@@ -1,18 +1,30 @@
-# Copyright (c) 2006-2007 Thomas Lotze
+# Copyright (c) 2006-2012 Thomas Lotze
 # See also LICENSE.txt
 
-import os
-import datetime
-import md5
 import codecs
-
+import datetime
+import locale
+import md5
 import ophelia.request
 import ophelia.util
+import os
 
 
 RFC2822_FORMAT = "%a, %d %b %Y %H:%M:%S GMT"
 
 HEX_ENCODER = codecs.getencoder("hex_codec")
+
+
+def c_locale(function):
+    # XXX implement as context manager when 2.4 support has been dropped
+    def wrapper(*args, **kw):
+        current_locale = locale.getlocale(locale.LC_TIME)
+        locale.setlocale(locale.LC_TIME, 'C')
+        try:
+            return function(*args, **kw)
+        finally:
+            locale.setlocale(locale.LC_TIME, current_locale)
+    return wrapper
 
 
 class MetaData(object):
@@ -56,8 +68,17 @@ class MetaData(object):
         """
         return ophelia.util.strftime(format, self._date)
 
+    @c_locale
+    def header_date(self):
+        """Format the stored date in RFC 2822 compliant format and C locale.
+
+        returns str
+        """
+        return ophelia.util.strftime(RFC2822_FORMAT, self._date)
+
+    @c_locale
     def expires(self, *args):
-        """Calulate a date relative to now, format by RFC 2822.
+        """Calulate a date relative to now, format by RFC 2822 in C locale.
 
         *args: datetime.timedelta arguments
 
