@@ -8,6 +8,8 @@ Attribute Language. It is designed to reduce code repetition to zero.
 Ophelia is a WSGI application. The package includes a wsgiref-based server
 configured to run Ophelia.
 
+The package requires Python 2.6 or 2.7.
+
 Documentation files cited below can be found inside the package directory,
 along with a number of doctests for the modules.
 
