@@ -1,4 +1,4 @@
-# Copyright (c) 2007-2011 Thomas Lotze
+# Copyright (c) 2007-2012 Thomas Lotze
 # See also LICENSE.txt
 
 """A WSGI application running Ophelia, and an optional wsgiref server running
@@ -35,7 +35,8 @@ class Application(object):
         except ophelia.request.Redirect, e:
             status = "301 Moved permanently"
             text = ('The resource you were trying to access '
-                    'has moved permanently to <a href="%(uri)s">%(uri)s</a>')
+                    'has moved permanently to <a href="%(uri)s">%(uri)s</a>' %
+                    dict(uri=e.uri))
             response_headers["location"] = e.uri
         except ophelia.request.NotFound, e:
             status = "404 Not found"

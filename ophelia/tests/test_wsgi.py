@@ -31,3 +31,10 @@ class BasicApplicationTest(unittest.TestCase):
         self.assertEqual(
             'text/html; charset=utf-8', r.headers['content-type'])
         self.assertIn('<p>bar</p>', r.body)
+
+    def test_redirect(self):
+        r = self.app.get('/redirect.html', status=301)
+        self.assertEqual('http://localhost/smoke.html', r.headers['location'])
+        self.assertEqual('text/html', r.headers['content-type'])
+        self.assertIn('<a href="http://localhost/smoke.html">'
+                      'http://localhost/smoke.html</a>', r.body)

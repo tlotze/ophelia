@@ -19,6 +19,8 @@ Changes
 
 - Fixed the locale setting for date formatting introduced in 0.3.5.
 
+- Fixed the target location link inside the response body of WSGI redirects.
+
 
 0.3.5 (2012-02-18)
 ==================
