@@ -39,6 +39,20 @@ class BasicApplicationTest(unittest.TestCase):
         self.assertIn('<a href="http://localhost/smoke.html">'
                       'http://localhost/smoke.html</a>', r.body)
 
+    def test_redirect_on_disk_directory_without_trailing_slash(self):
+        r = self.app.get('/folder', status=301)
+        self.assertEqual('http://localhost/folder/', r.headers['location'])
+
+    def test_no_redirect_on_disk_directory_with_index_name(self):
+        r = self.app.get('/folder/index.html', status=200)
+        self.assertIn('<p>Folder index</p>', r.body)
+
+    def test_redirect_on_disk_directory_with_index_name(self):
+        r = self.app.get('/folder/index.html',
+                         extra_environ={'redirect_index': 'on'},
+                         status=301)
+        self.assertEqual('http://localhost/folder/', r.headers['location'])
+
     def test_smoke_document(self):
         r = self.app.get('/smoke-document.html', status=200)
         self.assertEqual('text/html', r.headers['content-type'])

@@ -28,8 +28,14 @@ class Request(ophelia.request.Request):
             parts = path.split('/')
             index_name = env.get('index_name', 'index.html')
 
+            if (env.get('redirect_index') and parts[-1] == index_name):
+                raise ophelia.request.Redirect(path=path[:-len(index_name)])
+
             fs_path = os.path.join(document_root, *parts)
             if os.path.isdir(fs_path):
+                if not path.endswith('/'):
+                    raise ophelia.request.Redirect(path=path + '/')
+
                 path = '%s/%s' % (path.rstrip('/'), index_name)
 
             raise ophelia.request.NotFound(path)
