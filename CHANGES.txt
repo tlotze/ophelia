@@ -5,6 +5,12 @@ Changes
 0.4 (unreleased)
 ================
 
+- Use xsendfile to deliver files from disk in the event that the requested
+  path couldn't be traversed using the templates. This makes Ophelia
+  independent of a front-end server for delivering on-disk documents. As a
+  small trade-off, having directory listings created dynamically is presently
+  not possible at all, other than explicitly by writing templates and scripts.
+
 - Dropped anything related to Apache and mod_python, continue WSGI-only.
 
 - Dropped support for Python 2.4. We now assume that the wsgiref module is a

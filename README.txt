@@ -117,6 +117,22 @@ details and traversal internals. In addition to setting variables, scripts may
 also import modules, define functions, access the file system, and generally
 do anything a Python program can do.
 
+Documents on disk
+-----------------
+
+Generally, a site will include documents that cannot be assembled from
+templates as described above. These are assets like images, javascript files
+and style sheets as well as pages that, e.g., may have been exported by some
+other system such as a source-code documentation generator.
+
+In order to mix such content into the URL space of an Ophelia-generated site,
+the template hierarchy must omit the relevant paths and a second directory
+hierarchy which directly corresponds to the URL-space needs to contain the
+documents to be delivered from disk. If Ophelia then finds that it cannot
+serve a request using the templates, it will fall back to the on-disk
+documents. Only if the latter do not include a file corresponding to the
+requested URL will a "404 Not found" error response be sent.
+
 
 How Ophelia behaves
 ===================

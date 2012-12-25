@@ -40,6 +40,17 @@ For boolean variables such as redirect_index, the values "on", "true", or
 "yes" (case-insensitive) are taken to mean True, anything else means False.
 
 
+Delivery of documents straight from disk
+========================================
+
+Generally, a site includes documents that are not assembled from templates.
+They reside within a directory tree of their own whose root needs to be
+configured if needed:
+
+:document_root:
+    Optional, the file system path to the on-disk documents root directory.
+
+
 URL canonicalization and redirection
 ====================================
 

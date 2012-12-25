@@ -5,11 +5,34 @@
 this application.
 """
 
+import ophelia.request
+import os.path
 import sys
-
+import xsendfile
 import zope.exceptions.exceptionformatter
 
-import ophelia.request
+
+class Request(ophelia.request.Request):
+
+    @ophelia.request.push_request
+    def __call__(self):
+        try:
+            return super(Request, self).__call__()
+        except ophelia.request.NotFound:
+            env = self.env
+            document_root = env.get('document_root')
+            if not document_root:
+                raise
+
+            path = env['PATH_INFO']
+            parts = path.split('/')
+            index_name = env.get('index_name', 'index.html')
+
+            fs_path = os.path.join(document_root, *parts)
+            if os.path.isdir(fs_path):
+                path = '%s/%s' % (path.rstrip('/'), index_name)
+
+            raise ophelia.request.NotFound(path)
 
 
 class Application(object):
@@ -23,7 +46,7 @@ class Application(object):
 
         context = env.get("ophelia.context", {})
 
-        request = ophelia.request.Request(
+        request = Request(
             path, env.pop("template_root"), env.pop("site"), **env)
 
         response_headers = {"Content-Type": "text/html"}
@@ -31,7 +54,11 @@ class Application(object):
         exc_info = None
 
         try:
-            response_headers, body = request(**context)
+            try:
+                response_headers, body = request(**context)
+            except ophelia.request.NotFound, e:
+                env['PATH_INFO'] = e.args[0]
+                return self.sendfile(env, start_response)
         except ophelia.request.Redirect, e:
             status = "301 Moved permanently"
             text = ('The resource you were trying to access '
@@ -39,8 +66,7 @@ class Application(object):
                     dict(uri=e.uri))
             response_headers["location"] = e.uri
         except ophelia.request.NotFound, e:
-            status = "404 Not found"
-            text = "The resource you were trying to access could not be found."
+            return self.sendfile(env, start_response)
         except Exception, e:
             status = "500 Internal server error"
             exc_info = sys.exc_info()
@@ -63,6 +89,11 @@ class Application(object):
             return [body]
         else:
             return []
+
+    def sendfile(self, env, start_response):
+        xsendfile_app = xsendfile.XSendfileApplication(
+            env['document_root'], 'serve')
+        return xsendfile_app(env, start_response)
 
     def report_exception(self, env, msg):
         sys.stderr.write(msg)

@@ -1,4 +1,4 @@
-# Copyright (c) 2007-2012 Thomas Lotze
+# Copyright (c) 2012 Thomas Lotze
 # See also LICENSE.txt
 
 import ophelia.wsgi
@@ -38,3 +38,8 @@ class BasicApplicationTest(unittest.TestCase):
         self.assertEqual('text/html', r.headers['content-type'])
         self.assertIn('<a href="http://localhost/smoke.html">'
                       'http://localhost/smoke.html</a>', r.body)
+
+    def test_smoke_document(self):
+        r = self.app.get('/smoke-document.html', status=200)
+        self.assertEqual('text/html', r.headers['content-type'])
+        self.assertIn('<p tal:content="foo" />', r.body)
