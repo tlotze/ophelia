@@ -23,7 +23,6 @@ data_files = [("", [name for name in root_files
 
 entry_points = {
     "console_scripts": [
-    "ophelia-dump = ophelia.dump:dump",
     "ophelia-wsgiref = ophelia.wsgi:wsgiref_server",
     ],
     }

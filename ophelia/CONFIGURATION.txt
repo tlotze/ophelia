@@ -6,10 +6,9 @@ Configuring Ophelia
 Configuration files
 ===================
 
-Ophelia comes with two clients that all exercise its request handler: an
-wsgiref-based HTTP server and the ``ophelia-dump`` script. They read their
-configuration from a section of an INI-style configuration file. An example
-configurations can be found below.
+Ophelia comes with a wsgiref-based HTTP server that exercises the Ophelia
+request handler. It reads its configuration from a section of an INI-style
+configuration file. An example configurations can be found below.
 
 Two variables must always be present:
 
@@ -167,9 +166,6 @@ and run the ophelia-wsgiref script on that file::
     ophelia-wsgiref -c opheliasite.cfg
 
 You may want to wrap this call in a run-control script.
-
-The same configuration can be used with the ophelia-dump script, except that
-it doesn't require the host and port to be set.
 
 
 .. Local Variables:

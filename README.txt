@@ -29,13 +29,6 @@ Use Ophelia as a WSGI application
     The wsgiref-based server is installed as the ``ophelia-wsgiref``
     executable. Its script entry point is ``ophelia.wsgi.wsgiref_server``.
 
-Dump single pages to stdout
-    An executable which is always installed with the ophelia egg is
-    ``ophelia-dump``. This script has Ophelia render the response
-    corresponding to the path you specify, and prints it to ``sys.stdout``,
-    optionally with HTTP headers. The script's entry point is
-    ``ophelia.dump.dump``.
-
 Both scripts provide some usage instructions when called with the ``--help``
 option. They read a configuration file; see CONFIGURATION.txt for details.
 

@@ -19,6 +19,8 @@ Changes
 - Dropped the version restriction on zope.tal, updated tests. Page templates
   no longer grow a trailing new-line character when rendering themselves.
 
+- Dropped the ``ophelia-dump`` script which has never been really useful.
+
 - Re-organised tests, added programmatic tests for the WSGI interface.
 
 - Use Python's own ``doctest`` module for tests, got rid of using
