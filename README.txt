@@ -26,11 +26,15 @@ Use Ophelia as a WSGI application
     Ophelia's own wsgiref-based HTTP server or run it by any WSGI server you
     might care to use.
 
-    The wsgiref-based server is installed as the ``ophelia-wsgiref``
-    executable. Its script entry point is ``ophelia.wsgi.wsgiref_server``.
+Try the wsgiref-based server that comes with Ophelia
+    A rather simplistic and non-production-ready wsgiref-based server set up
+    to use the provided WSGI application is installed as the
+    ``ophelia-wsgiref`` executable. Its script entry point is
+    ``ophelia.wsgi.wsgiref_server``.
 
-Both scripts provide some usage instructions when called with the ``--help``
-option. They read a configuration file; see CONFIGURATION.txt for details.
+    The script provides some usage instructions when called with the
+    ``--help`` option. It reads a configuration file; see CONFIGURATION.txt
+    for details.
 
 
 What kind of sites is Ophelia good for?
