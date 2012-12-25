@@ -5,6 +5,6 @@ port = ${port}
 
 [app:main]
 use = egg:ophelia
-set template_root = ${example_dir}/ophelia_pages
-set document_root = ${example_dir}/static
+set template_root = ${example_dir}/templates
+set document_root = ${example_dir}/documents
 set site = http://${host}:${port}/

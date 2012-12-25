@@ -31,6 +31,8 @@ Changes
 - Allow configuration settings to be passed to the WSGI application upon
   initialisation.
 
+- Re-organised the small example site that comes with the source.
+
 - Re-organised tests, added programmatic tests for the WSGI interface.
 
 - Use Python's own ``doctest`` module for tests, got rid of using
