@@ -23,7 +23,6 @@ class BasicApplicationTest(unittest.TestCase):
             extra_environ={
                 'site': 'http://localhost/',
                 'template_root': fixture('templates'),
-                'document_root': fixture('documents'),
                 })
 
     def test_smoke(self):
@@ -39,6 +38,27 @@ class BasicApplicationTest(unittest.TestCase):
         self.assertIn('<a href="http://localhost/smoke.html">'
                       'http://localhost/smoke.html</a>', r.body)
 
+
+class OnDiskDocumentsTest(unittest.TestCase):
+
+    def setUp(self):
+        self.app = webtest.TestApp(
+            ophelia.wsgi.Application(),
+            extra_environ={
+                'site': 'http://localhost/',
+                'template_root': fixture('templates'),
+                'document_root': fixture('documents'),
+                })
+
+    def test_smoke_document(self):
+        r = self.app.get('/smoke-document.html', status=200)
+        self.assertEqual('text/html', r.headers['content-type'])
+        self.assertIn('<p tal:content="foo" />', r.body)
+
+    def test_on_disk_default_index_name(self):
+        r = self.app.get('/', status=200)
+        self.assertIn('<p>Root index</p>', r.body)
+
     def test_redirect_on_disk_directory_without_trailing_slash(self):
         r = self.app.get('/folder', status=301)
         self.assertEqual('http://localhost/folder/', r.headers['location'])
@@ -53,8 +73,10 @@ class BasicApplicationTest(unittest.TestCase):
                          status=301)
         self.assertEqual('http://localhost/folder/', r.headers['location'])
 
-    def test_smoke_document(self):
-        r = self.app.get('/smoke-document.html', status=200)
+    def test_on_disk_index_name_is_configurable(self):
+        r = self.app.get('/',
+                         extra_environ={'index_name': 'smoke-document.html'},
+                         status=200)
         self.assertEqual('text/html', r.headers['content-type'])
         self.assertIn('<p tal:content="foo" />', r.body)
 
