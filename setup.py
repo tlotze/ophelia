@@ -38,7 +38,7 @@ install_requires = [
 
 extras_require = {
     "test": [
-        'setuptools',
+        'distribute',
         'webtest',
         ],
     }
