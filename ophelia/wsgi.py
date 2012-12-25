@@ -46,10 +46,7 @@ class Application(object):
     """
 
     def __call__(self, env, start_response):
-        path = env["PATH_INFO"]
-        if path.startswith('/'):
-            path = path[1:]
-
+        path = env["PATH_INFO"].lstrip('/')
         context = env.get("ophelia.context", {})
 
         request = Request(
