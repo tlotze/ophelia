@@ -19,6 +19,9 @@ Changes
 - Dropped the version restriction on zope.tal, updated tests. Page templates
   no longer grow a trailing new-line character when rendering themselves.
 
+- Dropped ``ophelia.tool.feed`` since it was never properly designed, tested
+  nor even documented.
+
 - Dropped the ``ophelia-dump`` script which has never been really useful.
 
 - Simplified the ``ophelia-wsgiref`` example server so that it no longer reads
@@ -35,6 +38,7 @@ Changes
   to be called ``ophelia.xxx``.
 
 - Deprecated the ``tools`` package as it was never designed for general use.
+  Need to keep them around for the sake of some known web sites using them.
 
 - Re-organised the small example site that comes with the source.
 
