@@ -31,7 +31,6 @@ install_requires = [
     "xsendfile",
     "zope.interface",
     "zope.tales",
-    "zope.tal<3.5", # XXX remove this line in 0.4
     "zope.pagetemplate",
     "zope.exceptions",
     ]

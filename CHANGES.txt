@@ -16,6 +16,9 @@ Changes
 - Dropped support for Python 2.4. We now assume that the wsgiref module is a
   part of the Python standard library so the egg's ``wsgiref`` extra is gone.
 
+- Dropped the version restriction on zope.tal, updated tests. Page templates
+  no longer grow a trailing new-line character when rendering themselves.
+
 - Re-organised tests, added programmatic tests for the WSGI interface.
 
 - Use Python's own ``doctest`` module for tests, got rid of using

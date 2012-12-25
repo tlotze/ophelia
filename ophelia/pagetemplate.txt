@@ -40,16 +40,16 @@ namespaces and name=value pairs as arguments, where names given earlier may be
 overridden by names given later:
 
 >>> pt({"title": "A title"})
-u'<h1>A title</h1>\n'
+u'<h1>A title</h1>'
 
 >>> pt(title="The same title")
-u'<h1>The same title</h1>\n'
+u'<h1>The same title</h1>'
 
 >>> pt({"title": "A title"}, {"title": "A different title"})
-u'<h1>A different title</h1>\n'
+u'<h1>A different title</h1>'
 
 >>> pt({"title": "A title"}, title="Yet another title")
-u'<h1>Yet another title</h1>\n'
+u'<h1>Yet another title</h1>'
 
 If the template can't be compiled, it raises an exception as soon as
 compilation is attempted, which is on instantiation as well as on any update:
@@ -170,13 +170,13 @@ is available by the name "None":
 
 >>> pt = PageTemplate("""<hr tal:attributes="class None" />""")
 >>> pt()
-u'<hr />\n'
+u'<hr />'
 
 That predefined variable "None" can be overridden (not that that would be a
 great idea):
 
 >>> pt({"None": "asdf"})
-u'<hr class="asdf" />\n'
+u'<hr class="asdf" />'
 
 
 .. Local Variables:
