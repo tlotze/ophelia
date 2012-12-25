@@ -34,6 +34,8 @@ Changes
 - Declared the ``ophelia`` package a namespace to allow contribution packages
   to be called ``ophelia.xxx``.
 
+- Deprecated the ``tools`` package as it was never designed for general use.
+
 - Re-organised the small example site that comes with the source.
 
 - Re-organised tests, added programmatic tests for the WSGI interface.

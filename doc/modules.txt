@@ -10,8 +10,6 @@ Modules
     ophelia.pagetemplate
     ophelia.util
     ophelia.wsgi
-    ophelia.tool.metadata
-    ophelia.tool.navigation
 
 
 .. Local Variables:
