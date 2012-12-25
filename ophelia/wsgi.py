@@ -75,8 +75,6 @@ class Application(object):
                     'has moved permanently to <a href="%(uri)s">%(uri)s</a>' %
                     dict(uri=e.uri))
             response_headers["location"] = e.uri
-        except ophelia.request.NotFound, e:
-            return self.sendfile(env, start_response)
         except Exception, e:
             status = "500 Internal server error"
             exc_info = sys.exc_info()
