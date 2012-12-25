@@ -4,8 +4,12 @@
 import ophelia.wsgi
 import os.path
 import pkg_resources
-import unittest
 import webtest
+
+try:
+    import unittest2 as unittest
+except ImportError:
+    import unittest
 
 
 FIXTURES = pkg_resources.resource_filename('ophelia', 'tests/fixtures')

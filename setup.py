@@ -6,9 +6,10 @@
 """Ophelia builds a web site from TAL templates with zero code repetition.
 """
 
-import os.path
-import glob
 from setuptools import setup, find_packages
+import glob
+import os.path
+import sys
 
 
 project_path = lambda *names: os.path.join(os.path.dirname(__file__), *names)
@@ -41,6 +42,10 @@ extras_require = {
         'webtest',
         ],
     }
+
+# BBB Python 2.6 compatibility
+if sys.version_info < (2, 7):
+    extras_require['test'].append('unittest2')
 
 classifiers = [
     "Development Status :: 3 - Alpha",
