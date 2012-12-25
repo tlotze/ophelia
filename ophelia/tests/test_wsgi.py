@@ -22,12 +22,10 @@ def fixture(*parts):
 class BasicApplicationTest(unittest.TestCase):
 
     def setUp(self):
-        self.app = webtest.TestApp(
-            ophelia.wsgi.Application(),
-            extra_environ={
-                'site': 'http://localhost/',
-                'template_root': fixture('templates'),
-                })
+        self.app = webtest.TestApp(ophelia.wsgi.Application({
+                    'site': 'http://localhost/',
+                    'template_root': fixture('templates'),
+                    }))
 
     def test_smoke(self):
         r = self.app.get('/smoke.html', status=200)
@@ -46,13 +44,11 @@ class BasicApplicationTest(unittest.TestCase):
 class OnDiskDocumentsTest(unittest.TestCase):
 
     def setUp(self):
-        self.app = webtest.TestApp(
-            ophelia.wsgi.Application(),
-            extra_environ={
-                'site': 'http://localhost/',
-                'template_root': fixture('templates'),
-                'document_root': fixture('documents'),
-                })
+        self.app = webtest.TestApp(ophelia.wsgi.Application({
+                    'site': 'http://localhost/',
+                    'template_root': fixture('templates'),
+                    'document_root': fixture('documents'),
+                    }))
 
     def test_smoke_document(self):
         r = self.app.get('/smoke-document.html', status=200)

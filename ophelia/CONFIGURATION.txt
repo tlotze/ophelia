@@ -3,12 +3,26 @@ Configuring Ophelia
 ===================
 
 
-Configuration files
-===================
+Configuring Ophelia involves a number of settings variables. They can be
+passed as a dictionary to the Ophelia WSGI application,
+``ophelia.wsgi.Application``, upon instantiation. The package also comes with
+a console script that runs a wsgiref-based server; it reads the same settings
+variables from an ini-style configuration file. Regardless of how the WSGI
+application is being served, all settings may also be overridden by
+accordingly named variables set in the WSGI environment of each individual
+request.
 
-Ophelia comes with a wsgiref-based HTTP server that exercises the Ophelia
-request handler. It reads its configuration from a section of an INI-style
-configuration file. An example configurations can be found below.
+The settings variables will end up in the environment namespace stored on the
+request object. It is possible to set any number of other variables that are
+not recognized by Ophelia using the same configuration mechanism. This allows
+configuring Python modules and scripts that belong to your site's content.
+
+The rest of this section contains a description of all variables as well as an
+example of a configuration file for the wsgiref server.
+
+
+Basic configuration
+===================
 
 Two variables must always be present:
 
@@ -21,19 +35,7 @@ Two variables must always be present:
 
 In addition, the variables described below may be specified in order to
 influence the request handler's behaviour. All of them have sensible default
-values. They will end up in the environment namespace stored on the request
-object, along with any other variables that are not recognized by Ophelia.
-This allows configuring Python modules and scripts that belong to your site's
-content.
-
-While the above pertains to all three clients, the wsgiref server needs
-additional information:
-
-:host:
-    The network interface to bind to.
-
-:port:
-    The TCP port to listen at on that interface.
+values.
 
 For boolean variables such as redirect_index, the values "on", "true", or
 "yes" (case-insensitive) are taken to mean True, anything else means False.
@@ -167,6 +169,15 @@ containing one section named "DEFAULT" that holds all the settings::
 and run the ophelia-wsgiref script on that file::
 
     $ ophelia-wsgiref wsgiref.cfg
+
+As the example shows, the wsgiref server needs two pieces of additional
+information:
+
+:host:
+    The network interface to bind to.
+
+:port:
+    The TCP port to listen at on that interface.
 
 
 .. Local Variables:

@@ -7,6 +7,7 @@ this application.
 
 import ConfigParser
 import ophelia.request
+import ophelia.util
 import os.path
 import sys
 import wsgiref.simple_server
@@ -47,7 +48,11 @@ class Application(object):
     """Ophelia's WSGI application.
     """
 
+    def __init__(self, options=None):
+        self.options = options or {}
+
     def __call__(self, env, start_response):
+        env = ophelia.util.Namespace(self.options, **env)
         path = env["PATH_INFO"].lstrip('/')
         context = env.get("ophelia.context", {})
 
@@ -127,11 +132,7 @@ def wsgiref_server():
     options = dict((key.replace('-', '_'), value)
                    for key, value in config.items('DEFAULT'))
 
-    app = Application()
-
-    def configured_app(environ, start_response):
-        environ.update(options)
-        return app(environ, start_response)
+    configured_app = Application(options)
 
     httpd = wsgiref.simple_server.make_server(
         options.pop("host"), int(options.pop("port")), configured_app)

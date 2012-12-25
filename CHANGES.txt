@@ -25,6 +25,9 @@ Changes
   a particular section of its configuration file; have Ophelia's development
   buildout create a separate configuration file for the included example site.
 
+- Allow configuration settings to be passed to the WSGI application upon
+  initialisation.
+
 - Re-organised tests, added programmatic tests for the WSGI interface.
 
 - Use Python's own ``doctest`` module for tests, got rid of using
