@@ -47,14 +47,13 @@ extras_require = {
 if sys.version_info < (2, 7):
     extras_require['test'].append('unittest2')
 
-classifiers = [
-    "Development Status :: 3 - Alpha",
-    "Environment :: Web Environment",
-    "License :: OSI Approved :: Zope Public License",
-    "Programming Language :: Python",
-    "Topic :: Internet :: WWW/HTTP",
-    "Topic :: Internet :: WWW/HTTP :: Dynamic Content",
-    ]
+classifiers = """\
+Environment :: Web Environment
+License :: OSI Approved :: Zope Public License
+Programming Language :: Python
+Topic :: Internet :: WWW/HTTP
+Topic :: Internet :: WWW/HTTP :: Dynamic Content
+"""[:-1].split('\n')
 
 setup(name="ophelia",
       version="0.4dev",
