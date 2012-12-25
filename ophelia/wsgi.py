@@ -5,9 +5,11 @@
 this application.
 """
 
+import ConfigParser
 import ophelia.request
 import os.path
 import sys
+import wsgiref.simple_server
 import xsendfile
 import zope.exceptions.exceptionformatter
 
@@ -116,20 +118,14 @@ class Application(object):
         """.replace(" ", "")
 
 
-def wsgiref_server(config_file="", section="DEFAULT"):
-    import optparse
-    import ConfigParser
-    import wsgiref.simple_server
 
-    oparser = optparse.OptionParser()
-    oparser.add_option("-c", dest="config_file", default=config_file)
-    oparser.add_option("-s", dest="section", default=section)
-    cmd_options, args = oparser.parse_args()
+def wsgiref_server():
+    config_file = sys.argv[1]
 
     config = ConfigParser.ConfigParser()
-    config.read(cmd_options.config_file)
+    config.read(config_file)
     options = dict((key.replace('-', '_'), value)
-                   for key, value in config.items(cmd_options.section))
+                   for key, value in config.items('DEFAULT'))
 
     app = Application()
 

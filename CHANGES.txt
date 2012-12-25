@@ -21,6 +21,10 @@ Changes
 
 - Dropped the ``ophelia-dump`` script which has never been really useful.
 
+- Simplified the ``ophelia-wsgiref`` example server so that it no longer reads
+  a particular section of its configuration file; have Ophelia's development
+  buildout create a separate configuration file for the included example site.
+
 - Re-organised tests, added programmatic tests for the WSGI interface.
 
 - Use Python's own ``doctest`` module for tests, got rid of using

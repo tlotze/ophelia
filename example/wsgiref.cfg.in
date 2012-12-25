@@ -1,0 +1,6 @@
+[DEFAULT]
+host = ${host}
+port = ${port}
+template_root = ${example_dir}/ophelia_pages
+document_root = ${example_dir}/static
+site = http://${host}:${port}/

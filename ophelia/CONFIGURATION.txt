@@ -153,19 +153,20 @@ instead of being sent directly to the client:
 Example configuration for the included WSGI server
 ==================================================
 
-Create a configuration file, say, opheliasite.cfg::
+First of all, note that the wsgiref-based server may be usable for development
+but certainly not for production. Therefore, its configuration mechanism is
+rather simplistic. Create a configuration file, say, ``wsgiref.cfg``,
+containing one section named "DEFAULT" that holds all the settings::
 
     [DEFAULT]
     host = 127.0.0.1
     port = 8080
-    template_root = /var/example/opheliasite
+    template_root = /var/example/templates
     site = http://localhost:8080/
 
 and run the ophelia-wsgiref script on that file::
 
-    ophelia-wsgiref -c opheliasite.cfg
-
-You may want to wrap this call in a run-control script.
+    $ ophelia-wsgiref wsgiref.cfg
 
 
 .. Local Variables:
