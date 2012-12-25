@@ -10,7 +10,7 @@ Changes
 - Dropped support for Python 2.4. We now assume that the wsgiref module is a
   part of the Python standard library so the egg's ``wsgiref`` extra is gone.
 
-- Re-organised tests to make room for programmatic test modules.
+- Re-organised tests, added programmatic tests for the WSGI interface.
 
 - Use Python's own ``doctest`` module for tests, got rid of using
   zope.testing's deprecated fork of it and thus the zope.testing dependency.

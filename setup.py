@@ -36,7 +36,10 @@ install_requires = [
     ]
 
 extras_require = {
-    "test": [],
+    "test": [
+        'setuptools',
+        'webtest',
+        ],
     }
 
 classifiers = [
