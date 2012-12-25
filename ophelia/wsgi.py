@@ -92,7 +92,7 @@ class Application(object):
 
     def sendfile(self, env, start_response):
         xsendfile_app = xsendfile.XSendfileApplication(
-            env['document_root'], 'serve')
+            env['document_root'], env.get('xsendfile', 'serve'))
         return xsendfile_app(env, start_response)
 
     def report_exception(self, env, msg):

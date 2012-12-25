@@ -45,10 +45,21 @@ Delivery of documents straight from disk
 
 Generally, a site includes documents that are not assembled from templates.
 They reside within a directory tree of their own whose root needs to be
-configured if needed:
+configured if needed. Also, if Ophelia sits behind a reverse proxy, documents
+from disk may be delivered more efficiently by using something like the
+X-Sendfile mechanism:
 
 :document_root:
     Optional, the file system path to the on-disk documents root directory.
+
+:xsendfile:
+    One of "standard", "nginx" or "serve". Defaults to "serve" which means
+    on-disk documents are delivered directly by the Ophelia application. The
+    "standard" value causes an X-Sendfile header to be sent (such as, e.g.,
+    Apache understands) while the "nginx" value causes an X-Accel-Redirect
+    header for consumption by an nginx reverse proxy to be sent instead. In
+    the latter case, the nginx server needs to have the ``/-internal-/``
+    location configured as an "internal" alias of the document root directory.
 
 
 URL canonicalization and redirection

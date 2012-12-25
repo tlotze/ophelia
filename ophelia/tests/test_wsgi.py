@@ -43,3 +43,19 @@ class BasicApplicationTest(unittest.TestCase):
         r = self.app.get('/smoke-document.html', status=200)
         self.assertEqual('text/html', r.headers['content-type'])
         self.assertIn('<p tal:content="foo" />', r.body)
+
+    def test_x_sendfile_header(self):
+        r = self.app.get('/smoke-document.html',
+                         extra_environ={'xsendfile': 'standard'},
+                         status=200)
+        self.assertEqual(fixture('documents', 'smoke-document.html'),
+                         r.headers['x-sendfile'])
+        self.assertEqual('', r.body)
+
+    def test_x_accel_redirect_header(self):
+        r = self.app.get('/smoke-document.html',
+                         extra_environ={'xsendfile': 'nginx'},
+                         status=200)
+        self.assertEqual('/-internal-/smoke-document.html',
+                         r.headers['x-accel-redirect'])
+        self.assertEqual('', r.body)
