@@ -25,6 +25,9 @@ entry_points = {
     "console_scripts": [
     "ophelia-wsgiref = ophelia.wsgi:wsgiref_server",
     ],
+    'paste.app_factory': [
+        'main=ophelia.wsgi:paste_app_factory',
+        ],
     }
 
 install_requires = [

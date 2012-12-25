@@ -1,0 +1,10 @@
+[server:main]
+use = egg:paste#http
+host = ${host}
+port = ${port}
+
+[app:main]
+use = egg:ophelia
+set template_root = ${example_dir}/ophelia_pages
+set document_root = ${example_dir}/static
+set site = http://${host}:${port}/

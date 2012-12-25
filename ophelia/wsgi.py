@@ -123,6 +123,11 @@ class Application(object):
         """.replace(" ", "")
 
 
+def paste_app_factory(global_conf, **local_conf):
+    options = global_conf.copy()
+    options.update(local_conf)
+    return Application(options)
+
 
 def wsgiref_server():
     config_file = sys.argv[1]

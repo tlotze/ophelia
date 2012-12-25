@@ -6,7 +6,8 @@ Ophelia creates XHTML pages from templates written in TAL, the Zope Template
 Attribute Language. It is designed to reduce code repetition to zero.
 
 Ophelia is a WSGI application. The package includes a wsgiref-based server
-configured to run Ophelia.
+configured to run Ophelia as well as an application factory for use with
+paster.
 
 The package requires Python 2.6 or 2.7.
 
@@ -35,6 +36,12 @@ Try the wsgiref-based server that comes with Ophelia
     The script provides some usage instructions when called with the
     ``--help`` option. It reads a configuration file; see CONFIGURATION.txt
     for details.
+
+Use paster to plug the application into a WSGI server
+    Ophelia provides a ``paste.app_factory#main`` entry point at
+    ``ophelia.wsgi.paste_app_factory``. This can be used to run Ophelia inside
+    any WSGI server that can read paste "ini" files. See CONFIGURATION.txt for
+    an example.
 
 
 What kind of sites is Ophelia good for?

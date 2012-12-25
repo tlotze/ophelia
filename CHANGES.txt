@@ -25,6 +25,9 @@ Changes
   a particular section of its configuration file; have Ophelia's development
   buildout create a separate configuration file for the included example site.
 
+- Added a paste application factory and some example configuration for running
+  Ophelia in a WSGI container configured by a paste "ini" file.
+
 - Allow configuration settings to be passed to the WSGI application upon
   initialisation.
 

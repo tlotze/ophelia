@@ -2,15 +2,17 @@
 Configuring Ophelia
 ===================
 
-
 Configuring Ophelia involves a number of settings variables. They can be
 passed as a dictionary to the Ophelia WSGI application,
 ``ophelia.wsgi.Application``, upon instantiation. The package also comes with
-a console script that runs a wsgiref-based server; it reads the same settings
-variables from an ini-style configuration file. Regardless of how the WSGI
-application is being served, all settings may also be overridden by
-accordingly named variables set in the WSGI environment of each individual
-request.
+a console script that runs a wsgiref-based server and reads the same settings
+variables from an ini-style configuration file, as well as a paste application
+factory that lets Ophelia be plugged into any WSGI server that can handle a
+paste "ini" file.
+
+Regardless of how the WSGI application is being served, all settings may also
+be overridden by accordingly named variables set in the WSGI environment of
+each individual request.
 
 The settings variables will end up in the environment namespace stored on the
 request object. It is possible to set any number of other variables that are
@@ -178,6 +180,31 @@ information:
 
 :port:
     The TCP port to listen at on that interface.
+
+
+Example paste configuration
+===========================
+
+The simplest possible paste configuration will just run the paste HTTP server
+on the Ophelia WSGI application, without any middleware. Create a file, say,
+``paste.ini``::
+
+    [server:main]
+    use = egg:paste#http
+    host = 127.0.0.1
+    port = 8080
+
+    [app:main]
+    use = egg:ophelia
+    set template_root = /var/example/templates
+    set document_root = /var/example/documents
+    set site = http://localhost:8080/
+
+and run a paste server from it::
+
+    $ paster serve paste.ini
+    Starting server in PID 12345.
+    serving on http://127.0.0.1:8080
 
 
 .. Local Variables:
