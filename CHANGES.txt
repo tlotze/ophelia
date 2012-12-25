@@ -31,6 +31,9 @@ Changes
 - Allow configuration settings to be passed to the WSGI application upon
   initialisation.
 
+- Declared the ``ophelia`` package a namespace to allow contribution packages
+  to be called ``ophelia.xxx``.
+
 - Re-organised the small example site that comes with the source.
 
 - Re-organised tests, added programmatic tests for the WSGI interface.
