@@ -1,18 +1,4 @@
 .. include:: ../ABOUT.txt
-
-
-====
-
-
-.. toctree::
-
-    ../ROADMAP.txt
-    ../CHANGES.txt
-
-
-====
-
-
 .. literalinclude:: ../COPYRIGHT.txt
 .. literalinclude:: ../LICENSE.txt
 

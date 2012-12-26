@@ -1,9 +1,9 @@
-=======
-Modules
-=======
+=============
+API reference
+=============
 
 .. autosummary::
-    :toctree: ./
+    :toctree: ./_api/
 
     ophelia.request
     ophelia.input

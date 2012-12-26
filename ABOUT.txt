@@ -24,7 +24,7 @@ About Ophelia
     https://bitbucket.org/tlotze/ophelia/raw/tip/CHANGES.txt
 
 :Support the project:
-   .. image:: flattr-badge-large.png
+   .. image:: http://api.flattr.com/button/flattr-badge-large.png
        :alt: Flattr this
        :target:
           http://flattr.com/thing/515106/Ophelia-build-web-sites-from-templates-with-zero-code-repetition

@@ -1,6 +1,6 @@
-=======
-Changes
-=======
+======================
+Change log for Ophelia
+======================
 
 0.4 (unreleased)
 ================
@@ -48,6 +48,8 @@ Changes
 
 - Use Python's own ``doctest`` module for tests, got rid of using
   zope.testing's deprecated fork of it and thus the zope.testing dependency.
+
+- Applied most of the conventions of ``tl.pkg`` to the package source.
 
 - Made sure that HTTP response headers are of type ``str``.
 

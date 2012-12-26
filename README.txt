@@ -1,6 +1,6 @@
-===================
-Overview of Ophelia
-===================
+===================================================================
+Ophelia – build a web site from templates with zero code repetition
+===================================================================
 
 Ophelia creates XHTML pages from templates written in TAL, the Zope Template
 Attribute Language. It is designed to reduce code repetition to zero.
