@@ -78,5 +78,4 @@ setup(name="ophelia",
       include_package_data=True,
       data_files=data_files,
       zip_safe=False,
-      test_suite="ophelia.tests.test_suite",
       )
