@@ -136,6 +136,8 @@ def boolean(value):
 def paste_app_factory(global_conf, **local_conf):
     options = global_conf.copy()
     options.update(local_conf)
+    options = dict((key.replace('-', '_'), value)
+                   for key, value in options.items())
     return Application(options)
 
 
