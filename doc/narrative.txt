@@ -1,0 +1,16 @@
+=======================
+Narrative documentation
+=======================
+
+.. toctree::
+    :maxdepth: 2
+
+    ophelia-request
+    ophelia-input
+    ophelia-pagetemplate
+    ophelia-util
+
+
+.. Local Variables:
+.. mode: rst
+.. End:

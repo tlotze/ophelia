@@ -2,8 +2,8 @@
 Interface definitions
 =====================
 
-:mod:`ophelia.interfaces` -- Public interfaces used in Ophelia
-==============================================================
+Public interfaces used in Ophelia
+=================================
 
 .. automodule:: ophelia.interfaces
     :synopsis: Public interfaces used in Ophelia.

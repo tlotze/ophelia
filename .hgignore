@@ -2,10 +2,9 @@ syntax: glob
 
 bin
 build
-buildout.cfg
 develop-eggs
 dist
-doc/ophelia.*
 eggs
 .installed.cfg
+local.cfg
 parts

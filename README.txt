@@ -1,12 +1,15 @@
-===================
-Overview of Ophelia
-===================
+===================================================================
+Ophelia – build a web site from templates with zero code repetition
+===================================================================
 
 Ophelia creates XHTML pages from templates written in TAL, the Zope Template
 Attribute Language. It is designed to reduce code repetition to zero.
 
-The package contains both a WSGI application running Ophelia as well as a
-request handler for mod_python, the Python module for the Apache2 web server.
+Ophelia is a WSGI application. The package includes a wsgiref-based server
+configured to run Ophelia as well as an application factory for use with
+paster.
+
+The package requires Python 2.6 or 2.7.
 
 Documentation files cited below can be found inside the package directory,
 along with a number of doctests for the modules.
@@ -18,29 +21,27 @@ Entry points
 After you installed Ophelia and wrote some templates, how can you make it
 render web pages?
 
-Use Ophelia with Apache
-    The Python package contains a module ``ophelia.modpython`` that provides a
-    request handler for the mod_python Apache module.
-
 Use Ophelia as a WSGI application
     Ophelia defines an application class compliant with the WSGI standard,
     :PEP:`333`: ``ophelia.wsgi.Application``. You can either try it by running
     Ophelia's own wsgiref-based HTTP server or run it by any WSGI server you
     might care to use.
 
-    The wsgiref-based server is installed as the ``ophelia-wsgiref``
-    executable if Ophelia is installed as an egg with the "wsgiref" extra
-    enabled. Its script entry point is ``ophelia.wsgi.wsgiref_server``.
+Try the wsgiref-based server that comes with Ophelia
+    A rather simplistic and non-production-ready wsgiref-based server set up
+    to use the provided WSGI application is installed as the
+    ``ophelia-wsgiref`` executable. Its script entry point is
+    ``ophelia.wsgi.wsgiref_server``.
 
-Dump single pages to stdout
-    An executable which is always installed with the ophelia egg is
-    ``ophelia-dump``. This script has Ophelia render the response
-    corresponding to the path you specify, and prints it to ``sys.stdout``,
-    optionally with HTTP headers. The script's entry point is
-    ``ophelia.dump.dump``.
+    The script provides some usage instructions when called with the
+    ``--help`` option. It reads a configuration file; see CONFIGURATION.txt
+    for details.
 
-Both scripts provide some usage instructions when called with the ``--help``
-option. They read a configuration file; see CONFIGURATION.txt for details.
+Use paster to plug the application into a WSGI server
+    Ophelia provides a ``paste.app_factory#main`` entry point at
+    ``ophelia.wsgi.paste_app_factory``. This can be used to run Ophelia inside
+    any WSGI server that can read paste "ini" files. See CONFIGURATION.txt for
+    an example.
 
 
 What kind of sites is Ophelia good for?
@@ -122,6 +123,22 @@ details and traversal internals. In addition to setting variables, scripts may
 also import modules, define functions, access the file system, and generally
 do anything a Python program can do.
 
+Documents on disk
+-----------------
+
+Generally, a site will include documents that cannot be assembled from
+templates as described above. These are assets like images, javascript files
+and style sheets as well as pages that, e.g., may have been exported by some
+other system such as a source-code documentation generator.
+
+In order to mix such content into the URL space of an Ophelia-generated site,
+the template hierarchy must omit the relevant paths and a second directory
+hierarchy which directly corresponds to the URL-space needs to contain the
+documents to be delivered from disk. If Ophelia then finds that it cannot
+serve a request using the templates, it will fall back to the on-disk
+documents. Only if the latter do not include a file corresponding to the
+requested URL will a "404 Not found" error response be sent.
+
 
 How Ophelia behaves
 ===================
@@ -144,22 +161,6 @@ according to :RFC:`3986` on generic URI syntax, and removes empty path
 segments which are not at the end of the path. If the URL is changed by these
 rules, Ophelia redirects the browser accordingly.
 
-The mod_python handler
-----------------------
-
-Apache2 processes a request in phases, each of which can be handled by modules
-such as mod_python. Ophelia provides a mod_python handler for the content
-generation phase. If a requested URL is configured to be handled by Ophelia,
-the handler tries to find appropriate templates in the file system, and build
-a page from them.
-
-Ophelia's mod_python handler never causes a File Not Found HTTP error.
-Instead, it passes control back to Apache and other modules if it finds it
-can't build a particular resource. Apache falls back to serving static content
-from disk in that case. Ophelia can thus be installed on top of a static site
-to handle just those requests for which templates exist in the template
-directory.
-
 
 Languages and APIs used in templates and scripts
 ================================================
@@ -171,9 +172,6 @@ For the Template attribute language, see
 
 For WSGI, the web server gateway interface, see
 <http://www.python.org/dev/peps/pep-0333/>.
-
-For the mod_python API, see
-<http://www.modpython.org/live/current/doc-html/>.
 
 For the Ophelia API and predefined script and template variables, see API.txt.
 

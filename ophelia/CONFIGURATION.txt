@@ -2,16 +2,29 @@
 Configuring Ophelia
 ===================
 
+Configuring Ophelia involves a number of settings variables. They can be
+passed as a dictionary to the Ophelia WSGI application,
+``ophelia.wsgi.Application``, upon instantiation. The package also comes with
+a console script that runs a wsgiref-based server and reads the same settings
+variables from an ini-style configuration file, as well as a paste application
+factory that lets Ophelia be plugged into any WSGI server that can handle a
+paste "ini" file.
 
-Configuration files
+Regardless of how the WSGI application is being served, all settings may also
+be overridden by accordingly named variables set in the WSGI environment of
+each individual request.
+
+The settings variables will end up in the environment namespace stored on the
+request object. It is possible to set any number of other variables that are
+not recognized by Ophelia using the same configuration mechanism. This allows
+configuring Python modules and scripts that belong to your site's content.
+
+The rest of this section contains a description of all variables as well as an
+example of a configuration file for the wsgiref server.
+
+
+Basic configuration
 ===================
-
-Ophelia comes with a number of clients that all exercise its request handler,
-but have different configuration mechanisms. The wsgiref-based HTTP server and
-the ``ophelia-dump`` script read their configuration from a section of an
-INI-style configuration file while the mod_python handler gets the same
-information from PythonOption variables set in the Apache configuration.
-Example configurations can be found below.
 
 Two variables must always be present:
 
@@ -24,22 +37,36 @@ Two variables must always be present:
 
 In addition, the variables described below may be specified in order to
 influence the request handler's behaviour. All of them have sensible default
-values. They will end up in the environment namespace stored on the request
-object, along with any other variables that are not recognized by Ophelia.
-This allows configuring Python modules and scripts that belong to your site's
-content.
-
-While the above pertains to all three clients, the wsgiref server needs
-additional information:
-
-:host:
-    The network interface to bind to.
-
-:port:
-    The TCP port to listen at on that interface.
+values.
 
 For boolean variables such as redirect_index, the values "on", "true", or
 "yes" (case-insensitive) are taken to mean True, anything else means False.
+
+:debug:
+    Whether to include debug information such as formatted tracebacks in error
+    responses. This option is turned off by default.
+
+
+Delivery of documents straight from disk
+========================================
+
+Generally, a site includes documents that are not assembled from templates.
+They reside within a directory tree of their own whose root needs to be
+configured if needed. Also, if Ophelia sits behind a reverse proxy, documents
+from disk may be delivered more efficiently by using something like the
+X-Sendfile mechanism:
+
+:document_root:
+    Optional, the file system path to the on-disk documents root directory.
+
+:xsendfile:
+    One of "standard", "nginx" or "serve". Defaults to "serve" which means
+    on-disk documents are delivered directly by the Ophelia application. The
+    "standard" value causes an X-Sendfile header to be sent (such as, e.g.,
+    Apache understands) while the "nginx" value causes an X-Accel-Redirect
+    header for consumption by an nginx reverse proxy to be sent instead. In
+    the latter case, the nginx server needs to have the ``/-internal-/``
+    location configured as an "internal" alias of the document root directory.
 
 
 URL canonicalization and redirection
@@ -131,63 +158,57 @@ instead of being sent directly to the client:
     response content.
 
 
-Example configuration for an Apache/mod_python installation
-===========================================================
-
-Assume that the root of your site is published at
-``<http://www.example.com/foo/bar/>``.
-
-Assume further that your site uses the following file system locations on a
-Unix system:
-
-:/var/example/templates/: for the tree of Ophelia templates
-:/var/example/python/:    for the Python packages
-:/var/example/static/:    for the static stuff
-
-To publish this site, add the following to your host's config::
-
-    Alias /foo/bar /var/example/static
-    <Location "/foo/bar">
-        PythonInterpreter main_interpreter
-        PythonPath "['/var/example/python'] + sys.path"
-        PythonOption template_root /var/example/templates
-        PythonOption site http://www.example.com/foo/bar/
-        PythonFixupHandler ophelia.modpython
-    </Location>
-
-This instructs Apache to let Ophelia handle any URI under /foo/bar/. Ophelia
-will build pages from templates where they exist, and Apache will serve files
-from your static content otherwise.
-
-It is possible to set the Ophelia handler only for directories or HTML
-documents by applying some path name heuristics and matching the location
-against a regular expression.
-
-Due to an interaction between Python's restricted mode and how mod_python
-creates multiple Python interpreters, Ophelia must run in mod_python's main
-Python interpreter. This means that if more than one Ophelia site is hosted by
-the same Apache process, they cannot be isolated from each other.
-
-
 Example configuration for the included WSGI server
 ==================================================
 
-Create a configuration file, say, opheliasite.cfg::
+First of all, note that the wsgiref-based server may be usable for development
+but certainly not for production. Therefore, its configuration mechanism is
+rather simplistic. Create a configuration file, say, ``wsgiref.cfg``,
+containing one section named "DEFAULT" that holds all the settings::
 
     [DEFAULT]
     host = 127.0.0.1
     port = 8080
-    template_root = /var/example/opheliasite
+    template_root = /var/example/templates
     site = http://localhost:8080/
 
 and run the ophelia-wsgiref script on that file::
 
-    ophelia-wsgiref -c opheliasite.cfg
+    $ ophelia-wsgiref wsgiref.cfg
 
-You may want to wrap this call in a run-control script.
+As the example shows, the wsgiref server needs two pieces of additional
+information:
 
-The same configuration can be used with the ophelia-dump script, except that
-it doesn't require the host and port to be set.
+:host:
+    The network interface to bind to.
+
+:port:
+    The TCP port to listen at on that interface.
+
+
+Example paste configuration
+===========================
+
+The simplest possible paste configuration will just run the paste HTTP server
+on the Ophelia WSGI application, without any middleware. Create a file, say,
+``paste.ini``::
+
+    [server:main]
+    use = egg:paste#http
+    host = 127.0.0.1
+    port = 8080
+
+    [app:main]
+    use = egg:ophelia
+    set template_root = /var/example/templates
+    set document_root = /var/example/documents
+    set site = http://localhost:8080/
+
+and run a paste server from it::
+
+    $ paster serve paste.ini
+    Starting server in PID 12345.
+    serving on http://127.0.0.1:8080
 
 
 .. Local Variables:

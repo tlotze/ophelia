@@ -1,0 +1,6 @@
+[DEFAULT]
+host = ${host}
+port = ${port}
+template_root = ${example_dir}/templates
+document_root = ${example_dir}/documents
+site = http://${host}:${port}/
