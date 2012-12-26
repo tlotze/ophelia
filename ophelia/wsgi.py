@@ -87,8 +87,11 @@ class Application(object):
                 with_filenames=True, *exc_info))
             if isinstance(msg, unicode):
                 msg = msg.encode('utf-8')
-            text = "<pre>\n%s\n</pre>" % msg
             logger.error(msg)
+            if boolean(env.get('debug', False)):
+                text = '<pre>\n%s\n</pre>' % msg
+            else:
+                text = 'Something went wrong with the server software.'
         else:
             status = "200 OK"
 
@@ -121,6 +124,13 @@ class Application(object):
           </body>
         </html>
         """.replace(" ", "")
+
+
+def boolean(value):
+    if isinstance(value, basestring):
+        return value.lower() in ("on", "true", "yes")
+    else:
+        return bool(value)
 
 
 def paste_app_factory(global_conf, **local_conf):

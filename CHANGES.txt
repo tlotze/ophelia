@@ -34,6 +34,8 @@ Changes
 - Allow configuration settings to be passed to the WSGI application upon
   initialisation.
 
+- Added a debug mode for the WSGI application.
+
 - Declared the ``ophelia`` package a namespace to allow contribution packages
   to be called ``ophelia.xxx``.
 

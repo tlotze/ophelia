@@ -42,6 +42,10 @@ values.
 For boolean variables such as redirect_index, the values "on", "true", or
 "yes" (case-insensitive) are taken to mean True, anything else means False.
 
+:debug:
+    Whether to include debug information such as formatted tracebacks in error
+    responses. This option is turned off by default.
+
 
 Delivery of documents straight from disk
 ========================================

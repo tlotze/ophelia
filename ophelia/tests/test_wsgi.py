@@ -45,6 +45,15 @@ class BasicApplicationTest(unittest.TestCase):
         self.assertIn('<a href="http://localhost/smoke.html">'
                       'http://localhost/smoke.html</a>', r.body)
 
+    def test_debug_mode_is_off_by_default(self):
+        r = self.app.get('/raise.html', status=500)
+        self.assertNotIn('message', r.body)
+
+    def test_debug_mode_switched_on(self):
+        r = self.app.get(
+            '/raise.html', status=500, extra_environ={'debug': 'on'})
+        self.assertIn('message', r.body)
+
 
 class OnDiskDocumentsTest(unittest.TestCase):
 
