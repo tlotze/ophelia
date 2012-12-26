@@ -1,6 +1,7 @@
 # Copyright (c) 2012 Thomas Lotze
 # See also LICENSE.txt
 
+import logging
 import ophelia.wsgi
 import os.path
 import pkg_resources
@@ -26,6 +27,10 @@ class BasicApplicationTest(unittest.TestCase):
                     'site': 'http://localhost/',
                     'template_root': fixture('templates'),
                     }))
+        logger = logging.getLogger('ophelia')
+        for handler in list(logger.handlers):
+            if isinstance(handler, logging.StreamHandler):
+                logger.removeHandler(handler)
 
     def test_smoke(self):
         r = self.app.get('/smoke.html', status=200)

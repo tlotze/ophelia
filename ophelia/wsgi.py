@@ -6,6 +6,7 @@ this application.
 """
 
 import ConfigParser
+import logging
 import ophelia.request
 import ophelia.util
 import os.path
@@ -13,6 +14,10 @@ import sys
 import wsgiref.simple_server
 import xsendfile
 import zope.exceptions.exceptionformatter
+
+
+logger = logging.getLogger('ophelia')
+logger.addHandler(logging.StreamHandler())
 
 
 class Request(ophelia.request.Request):
@@ -83,7 +88,7 @@ class Application(object):
             if isinstance(msg, unicode):
                 msg = msg.encode('utf-8')
             text = "<pre>\n%s\n</pre>" % msg
-            self.report_exception(env, msg)
+            logger.error(msg)
         else:
             status = "200 OK"
 
@@ -102,9 +107,6 @@ class Application(object):
         xsendfile_app = xsendfile.XSendfileApplication(
             env['document_root'], env.get('xsendfile', 'serve'))
         return xsendfile_app(env, start_response)
-
-    def report_exception(self, env, msg):
-        sys.stderr.write(msg)
 
     error_body = """\
         <html>
