@@ -9,21 +9,19 @@ Except for the 0.x series, API backwards compatibility within each major
 release series will be given. New features start new x.y series while bug
 fixes give rise to maintenance x.y.z releases.
 
-0.4
-===
+Many of the following ideas might be implemented in separate packages that
+might share the ophelia namespace, rather than in the core.
 
-- efficient static content delivery so as to be fully functional stand-alone
-- drop mod_python support as Apache and mod_python have become a pain to
-  maintain and deploy
-- clean WSGI configuration that works well with zc.buildout-based deployment
 
 0.5
 ===
 
-- turn ophelia into a namespace package, break the code into several eggs
 - split the request object into request, response and a handler
 - a more powerful traversal mechanism
+- a concept for error handling
 - several backwards-incompatible clean-ups
+- improved factoring and test coverage
+
 
 post-0.5
 ========
@@ -38,13 +36,9 @@ post-0.5
 - internal caching of processed information, especially when using docutils
 - data sources outside the file system, such as http or vcs resources
 
-1.0
-===
 
-The state in which the wishlist has been implemented completely for the first
-time and code and documentation are of satisfactory quality.
-
-The wishlist:
+Further ideas
+=============
 
 - zero-boilerplate creation of web sites including
 
@@ -60,7 +54,7 @@ The wishlist:
   do part of the content generation, both calling them from inside Ophelia
   content and providing means to call Ophelia from their code
 
-- cataloging, local search infrastructure (xapian)
+- cataloging, local search infrastructure (maybe using xapian or solr)
 
 
 .. Local Variables:
