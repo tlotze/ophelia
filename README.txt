@@ -39,9 +39,9 @@ Try the wsgiref-based server that comes with Ophelia
 
 Use paster to plug the application into a WSGI server
     Ophelia provides a ``paste.app_factory#main`` entry point at
-    ``ophelia.wsgi.paste_app_factory``. This can be used to run Ophelia inside
-    any WSGI server that can read paste "ini" files. See CONFIGURATION.txt for
-    an example.
+    ``ophelia.wsgi.Application.paste_app_factory``. This can be used to run
+    Ophelia inside any WSGI server that can read paste "ini" files. See
+    CONFIGURATION.txt for an example.
 
 
 What kind of sites is Ophelia good for?
