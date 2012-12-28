@@ -56,6 +56,14 @@ class Application(object):
     def __init__(self, options=None):
         self.options = options or {}
 
+    @classmethod
+    def paste_app_factory(cls, global_conf, **local_conf):
+        options = global_conf.copy()
+        options.update(local_conf)
+        options = dict((key.replace('-', '_'), value)
+                       for key, value in options.items())
+        return cls(options)
+
     def __call__(self, env, start_response):
         env = ophelia.util.Namespace(self.options, **env)
         path = env["PATH_INFO"].lstrip('/')

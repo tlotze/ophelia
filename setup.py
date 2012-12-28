@@ -26,7 +26,7 @@ entry_points = """\
     ophelia-wsgiref = ophelia.wsgi:wsgiref_server
 
     [paste.app_factory]
-    main = ophelia.wsgi:paste_app_factory
+    main = ophelia.wsgi:Application.paste_app_factory
 """
 
 install_requires = [
