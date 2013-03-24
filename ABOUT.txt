@@ -19,7 +19,8 @@ About Ophelia
     https://bitbucket.org/tlotze/ophelia/issues/
 
 :Source code:
-    https://bitbucket.org/tlotze/ophelia/
+    https://bitbucket.org/tlotze/ophelia/ and
+    https://github.com/tlotze/ophelia
 
 :Current change log:
     https://bitbucket.org/tlotze/ophelia/raw/tip/CHANGES.txt
