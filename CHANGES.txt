@@ -8,6 +8,8 @@ Change log for Ophelia
 - Updated project files to reflect the new secondary, GitHub home at
   <https://github.com/tlotze/ophelia>.
 
+- Updated buildout configuration to keep working with zc.buildout 1.
+
 
 0.4 (2013-01-02)
 ================
