@@ -61,7 +61,7 @@ Topic :: Internet :: WWW/HTTP :: Dynamic Content
 """[:-1].split('\n')
 
 setup(name="ophelia",
-      version='0.4.1',
+      version='0.5.dev0',
       description=__doc__.strip(),
       long_description=longdesc,
       keywords="web template xhtml tal wsgi python",
