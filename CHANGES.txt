@@ -2,8 +2,8 @@
 Change log for Ophelia
 ======================
 
-0.5 (unreleased)
-================
+0.4.1 (2013-05-07)
+==================
 
 - Updated project files to reflect the new secondary, GitHub home at
   <https://github.com/tlotze/ophelia>.
