@@ -10,6 +10,9 @@ Change log for Ophelia
 
 - Updated buildout configuration to keep working with zc.buildout 1.
 
+- Fixed a memory leak in Namespaces that would occur with Python versions
+  prior to 2.7.4.
+
 
 0.4 (2013-01-02)
 ================

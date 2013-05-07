@@ -1,4 +1,4 @@
-# Copyright (c) 2007 Thomas Lotze
+# Copyright (c) 2007-2013 Thomas Lotze
 # See also LICENSE.txt
 
 import locale
@@ -11,9 +11,20 @@ class Namespace(dict):
        mapping items.
     """
 
-    def __init__(self, *args, **kwargs):
-        self.__dict__ = self
-        super(Namespace, self).__init__(*args, **kwargs)
+    def __getattribute__(self, name):
+        try:
+            return self[name]
+        except KeyError:
+            return getattr(super(Namespace, self), name)
+
+    def __setattr__(self, name, value):
+        self[name] = value
+
+    def __delattr__(self, name):
+        try:
+            del self[name]
+        except KeyError:
+            raise AttributeError(name)
 
 
 def strftime(format, t=None):
